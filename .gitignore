@@ -5,3 +5,4 @@ __pycache__/
 runtime_data/
 .pytest_cache/
 .gradio/
+ai_cache/

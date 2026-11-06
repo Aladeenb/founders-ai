@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 ROUTER_URL = "https://router.huggingface.co/v1"
 DEFAULT_MODEL = "deepseek-ai/DeepSeek-V3.2"
-DEFAULT_FALLBACK = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+DEFAULT_FALLBACK = "Qwen/Qwen3-235B-A22B-Instruct-2507"
 TIMEOUT_SECONDS = 20
 DEFAULT_MAX_TOKENS = 400
 
@@ -36,11 +36,11 @@ def models() -> list[str]:
     return [primary] if fallback == primary else [primary, fallback]
 
 
-def _client() -> OpenAI:
+def _client(timeout: float = TIMEOUT_SECONDS) -> OpenAI:
     token = os.getenv("HF_TOKEN")
     if not token:
         raise LLMError("The AI service is not configured yet (missing HF_TOKEN).")
-    return OpenAI(base_url=ROUTER_URL, api_key=token, timeout=TIMEOUT_SECONDS, max_retries=0)
+    return OpenAI(base_url=ROUTER_URL, api_key=token, timeout=timeout, max_retries=0)
 
 
 def _complete(client: OpenAI, model: str, messages: list[dict], max_tokens: int, json_mode: bool) -> str:
@@ -78,17 +78,66 @@ def extract_json(text: str) -> dict:
         return json.loads(match.group(0))
 
 
-def chat_json(messages: list[dict], schema: type[T], max_tokens: int = DEFAULT_MAX_TOKENS) -> tuple[T, str]:
+def chat_json(messages: list[dict], schema: type[T], max_tokens: int = DEFAULT_MAX_TOKENS,
+              timeout: float = TIMEOUT_SECONDS) -> tuple[T, str]:
     """Return (validated model instance, model_used)."""
-    client = _client()
+    from core import cache
+    key = {"schema": schema.__name__, "messages": messages, "max_tokens": max_tokens}
+    hit = cache.get("chat", key)
+    if hit is not None:
+        try:
+            return schema.model_validate(hit["data"]), hit["model"]
+        except ValidationError:
+            pass
+    client = _client(timeout)
     for model in models():
         for attempt in range(2):
             try:
                 text = _complete(client, model, messages, max_tokens, json_mode=True)
-                return schema.model_validate(extract_json(text)), model
+                data = extract_json(text)
+                result = schema.model_validate(data)
+                cache.put("chat", key, {"data": data, "model": model})
+                return result, model
             except (json.JSONDecodeError, ValidationError) as exc:
                 log.warning("Invalid JSON model=%s attempt=%d: %s", model, attempt, exc)
             except Exception as exc:
                 log.warning("LLM call failed model=%s attempt=%d: %s", model, attempt, exc)
                 break
     raise LLMError("The AI service gave an unexpected answer. Please try again.")
+
+
+# ---------------- vision (reading image-only pages) ----------------
+
+DEFAULT_VISION = "google/gemma-4-31B-it"
+DEFAULT_VISION_FALLBACK = "Qwen/Qwen3-VL-235B-A22B-Instruct"
+VISION_TIMEOUT = 30
+
+
+def vision_models() -> list[str]:
+    primary = os.getenv("VISION_MODEL") or DEFAULT_VISION
+    fallback = os.getenv("VISION_FALLBACK") or DEFAULT_VISION_FALLBACK
+    return [primary] if fallback == primary else [primary, fallback]
+
+
+def read_image(png: bytes, prompt: str, max_tokens: int = 700) -> str:
+    """Text a vision model reads from an image. Raises LLMError if every model fails."""
+    import base64
+    import hashlib
+    from core import cache
+    key = {"png": hashlib.sha256(png).hexdigest(), "prompt": prompt}
+    hit = cache.get("vision", key)
+    if hit is not None:
+        return hit
+    url = "data:image/png;base64," + base64.b64encode(png).decode()
+    messages = [{"role": "user", "content": [{"type": "text", "text": prompt},
+                                             {"type": "image_url", "image_url": {"url": url}}]}]
+    client = _client(VISION_TIMEOUT)
+    for model in vision_models():
+        try:
+            text = _complete(client, model, messages, max_tokens, json_mode=False)
+            if text:
+                cache.put("vision", key, text)
+                return text
+        except Exception as exc:
+            log.warning("Vision call failed model=%s: %s", model, exc)
+    raise LLMError("Couldn't read that image right now.")

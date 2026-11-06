@@ -40,8 +40,29 @@ def pair_allowed(a: Profile, b: Profile) -> bool:
     return (not a.seeking or b.role in a.seeking) and (not b.seeking or a.role in b.seeking)
 
 
+ALL_STAGES = ("pre-seed", "seed", "series a", "series b")
+
+
 def _stages(text: str) -> set[str]:
-    return {s.strip().lower() for s in text.split(",") if s.strip()}
+    """Investor stages from plain words: 'early stage' -> pre-seed + seed, 'growth' -> series b, 'any' -> all.
+
+    Words we can't read give an empty set, which callers treat as unknown (never a mismatch).
+    """
+    t = (text or "").lower().replace("-", " ").replace("_", " ")
+    out = set()
+    if any(w in t for w in ("any stage", "all stage", "stage agnostic", "agnostic")):
+        return set(ALL_STAGES)
+    if "pre seed" in t or "preseed" in t or "angel" in t:
+        out.add("pre-seed")
+    if "early" in t:
+        out |= {"pre-seed", "seed"}
+    if "seed" in t.replace("pre seed", "").replace("preseed", ""):
+        out.add("seed")
+    if "series a" in t or " a round" in t or t.strip() == "a":
+        out.add("series a")
+    if "series b" in t or "growth" in t or "later stage" in t:
+        out.add("series b")
+    return out
 
 
 def clear_mismatch(a: Profile, b: Profile) -> bool:
@@ -49,7 +70,8 @@ def clear_mismatch(a: Profile, b: Profile) -> bool:
     roles = {a.role: a, b.role: b}
     founder, investor = roles.get("founder"), roles.get("investor")
     if founder and investor and founder.stage and investor.public_terms.get("stages"):
-        if founder.stage.lower() not in _stages(investor.public_terms["stages"]):
+        stages = _stages(investor.public_terms["stages"])
+        if stages and founder.stage.lower() not in stages:
             return True
     return False
 
