@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+runtime_data/
+.pytest_cache/
+.gradio/

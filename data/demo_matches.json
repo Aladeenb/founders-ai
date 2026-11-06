@@ -1,0 +1,164 @@
+{
+  "f-layla": {
+    "fits": {
+      "i-nadia": [
+        "strong",
+        "Nadia focuses on GCC fintech seed deals and can help with bank partnerships, aligning with your invoice financing focus."
+      ],
+      "i-khalid": [
+        "weak",
+        "Focuses on deep tech, not fintech."
+      ],
+      "i-hamad": [
+        "possible",
+        "Hamad invests in GCC fintech, but his family office's focus includes healthtech and proptech."
+      ],
+      "i-omar": [
+        "weak",
+        "Focuses on healthtech and insurtech."
+      ],
+      "i-ali": [
+        "weak",
+        "Focuses on logistics and mobility."
+      ],
+      "i-noura": [
+        "weak",
+        "Focuses on proptech and consumer."
+      ]
+    },
+    "matches": [
+      {
+        "score": 100,
+        "reason": "Nadia focuses on GCC fintech seed deals and can help with bank partnerships, aligning with your invoice financing focus.",
+        "fit": "strong",
+        "id": "i-nadia"
+      },
+      {
+        "score": 67,
+        "reason": "Hamad invests in GCC fintech, but his family office's focus includes healthtech and proptech.",
+        "fit": "possible",
+        "id": "i-hamad"
+      }
+    ]
+  },
+  "i-omar": {
+    "fits": {
+      "f-yusuf": [
+        "strong",
+        "Yusuf runs a seed-stage healthtech SaaS with recurring revenue from GCC clinics and insurer integrations, exactly matching your focus."
+      ],
+      "f-lucas": [
+        "weak",
+        "Focuses on proptech, not healthtech or insurtech."
+      ],
+      "f-layla": [
+        "weak",
+        "Focuses on SME invoice financing, not healthtech."
+      ],
+      "f-hassan": [
+        "weak",
+        "Focuses on climate tech for manufacturers."
+      ],
+      "f-zain": [
+        "weak",
+        "Focuses on B2B BNPL fintech, not healthtech."
+      ],
+      "f-ahmed": [
+        "weak",
+        "Focuses on retail tech in Egypt."
+      ]
+    },
+    "matches": [
+      {
+        "score": 100,
+        "reason": "Yusuf runs a seed-stage healthtech SaaS with recurring revenue from GCC clinics and insurer integrations, exactly matching your focus.",
+        "fit": "strong",
+        "id": "f-yusuf"
+      }
+    ]
+  },
+  "t-sara": {
+    "fits": {
+      "f-karim": [
+        "strong",
+        "Karim leads a drone robotics startup seeking a senior computer vision engineer for warehouse inspection."
+      ],
+      "f-noor": [
+        "weak",
+        "Focuses on NLP and legaltech, not computer vision or robotics."
+      ],
+      "f-ines": [
+        "weak",
+        "Seeks a full-stack engineer for travel AI, not computer vision."
+      ],
+      "f-hana": [
+        "weak",
+        "Focuses on NLP and translation, not computer vision or robotics."
+      ],
+      "f-bilal": [
+        "weak",
+        "Seeks a Unity engineer for mobile gaming, not computer vision."
+      ],
+      "f-tariq": [
+        "weak",
+        "Focuses on embedded systems and IoT, not computer vision."
+      ]
+    },
+    "matches": [
+      {
+        "score": 96,
+        "reason": "Karim leads a drone robotics startup seeking a senior computer vision engineer for warehouse inspection.",
+        "fit": "strong",
+        "id": "f-karim"
+      }
+    ]
+  },
+  "t-ravi": {
+    "fits": {
+      "f-reem": [
+        "strong",
+        "Reem's fintech startup in Qatar needs a founding backend engineer for payments, aligning with your payments and lending infrastructure expertise."
+      ],
+      "f-oliver": [
+        "weak",
+        "Focuses on AI, not fintech."
+      ],
+      "f-hana": [
+        "weak",
+        "Focuses on AI translation, not fintech."
+      ],
+      "f-ahmed": [
+        "possible",
+        "Ahmed's fintech startup seeks a founding backend engineer for payments, though it's based in Egypt, not the Gulf region you prefer."
+      ],
+      "f-zain": [
+        "strong",
+        "Zain's Saudi fintech BNPL startup needs a senior backend engineer for credit, matching your fintech and backend payments experience."
+      ],
+      "f-hassan": [
+        "weak",
+        "Focuses on climate tech, not fintech."
+      ]
+    },
+    "matches": [
+      {
+        "score": 91,
+        "reason": "Reem's fintech startup in Qatar needs a founding backend engineer for payments, aligning with your payments and lending infrastructure expertise.",
+        "fit": "strong",
+        "id": "f-reem"
+      },
+      {
+        "score": 87,
+        "reason": "Zain's Saudi fintech BNPL startup needs a senior backend engineer for credit, matching your fintech and backend payments experience.",
+        "fit": "strong",
+        "id": "f-zain"
+      },
+      {
+        "score": 62,
+        "reason": "Ahmed's fintech startup seeks a founding backend engineer for payments, though it's based in Egypt, not the Gulf region you prefer.",
+        "fit": "possible",
+        "id": "f-ahmed"
+      }
+    ]
+  }
+}

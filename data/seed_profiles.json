@@ -1,0 +1,2009 @@
+[
+  {
+    "id": "f-layla",
+    "display_name": "Layla Haddad",
+    "role": "founder",
+    "headline": "Founder & CEO, Rimal Ledger — invoice financing for Gulf SMEs",
+    "public_bio": "Rimal Ledger lets small businesses in Qatar and Saudi Arabia get paid on their invoices in 48 hours instead of 90 days. 140 SMEs live, $3.2M financed to date, growing 18% month on month. Ex-credit risk lead at a regional bank.",
+    "looking_for": "A seed lead investor focused on fintech in the GCC who can help with bank partnerships.",
+    "seeking": [
+      "investor"
+    ],
+    "tags": [
+      "fintech",
+      "B2B",
+      "SME lending",
+      "GCC",
+      "embedded finance"
+    ],
+    "location": "Doha, Qatar",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$1.5M seed",
+      "valuation": "$8M–$12M pre-money, open to discussion",
+      "timeline": "Close by end of Q1 2027",
+      "use_of_funds": "Credit engine, Saudi expansion"
+    },
+    "private_limits": [
+      "Will not accept a pre-money valuation below $10M",
+      "Will not give up more than 15% in this round",
+      "Strongly prefers a lead who can introduce Gulf banks"
+    ],
+    "secret_terms": [
+      "$10M",
+      "15%"
+    ]
+  },
+  {
+    "id": "f-yusuf",
+    "display_name": "Yusuf Al-Mansoori",
+    "role": "founder",
+    "headline": "Co-founder, Sanad Health — scheduling and insurance claims for GCC clinics",
+    "public_bio": "Sanad Health runs bookings, reminders and insurance claims for outpatient clinics. 62 paying clinics in the UAE, $41k monthly recurring revenue, claim rejection rates cut by a third.",
+    "looking_for": "Seed investors in healthtech who understand GCC insurers.",
+    "seeking": [
+      "investor"
+    ],
+    "tags": [
+      "healthtech",
+      "SaaS",
+      "insurtech",
+      "UAE",
+      "GCC"
+    ],
+    "location": "Dubai, UAE",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$2M seed on a SAFE",
+      "valuation": "$8M–$12M cap",
+      "timeline": "First close in 8 weeks",
+      "use_of_funds": "Saudi launch, insurer integrations"
+    },
+    "private_limits": [
+      "Would accept a valuation cap as low as $9M for the right lead",
+      "Wants the round closed within 10 weeks"
+    ],
+    "secret_terms": [
+      "$9M",
+      "10 weeks"
+    ]
+  },
+  {
+    "id": "f-karim",
+    "display_name": "Karim Fawzi",
+    "role": "founder",
+    "headline": "Founder, Bayt Robotics — drone inspection for warehouses",
+    "public_bio": "Bayt Robotics builds indoor drones that scan warehouse shelves overnight and flag stock errors. Pilots with two Saudi retailers. Hardware and vision team of 9 working together in our Riyadh lab.",
+    "looking_for": "A senior computer vision engineer to lead our perception stack.",
+    "seeking": [
+      "engineer"
+    ],
+    "tags": [
+      "robotics",
+      "computer vision",
+      "drones",
+      "hardware",
+      "Saudi Arabia"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": "seed",
+    "public_terms": {
+      "role": "Senior computer vision engineer",
+      "work_style": "On-site in our Riyadh lab, 5 days a week",
+      "salary": "$70k–$90k",
+      "equity": "0.3%–0.6%",
+      "start": "As soon as possible"
+    },
+    "private_limits": [
+      "Cannot go above $95k salary",
+      "On-site work is non-negotiable because the team tests hardware daily"
+    ],
+    "secret_terms": [
+      "$95k"
+    ]
+  },
+  {
+    "id": "f-mariam",
+    "display_name": "Mariam Al-Kuwari",
+    "role": "founder",
+    "headline": "Founder, Darb Logistics — same-day delivery for Qatari online stores",
+    "public_bio": "Darb gives Instagram and Shopify sellers in Qatar same-day delivery with one integration. 300 merchants, 9,000 deliveries a month, profitable on a per-delivery basis.",
+    "looking_for": "Pre-seed investors in logistics, and an operations lead who has scaled a delivery fleet.",
+    "seeking": [
+      "investor",
+      "operator"
+    ],
+    "tags": [
+      "logistics",
+      "e-commerce",
+      "last mile",
+      "Qatar"
+    ],
+    "location": "Doha, Qatar",
+    "stage": "pre-seed",
+    "public_terms": {
+      "raising": "$600k pre-seed",
+      "valuation": "$3M–$4M cap",
+      "role": "Head of operations",
+      "salary": "$60k–$80k plus equity"
+    },
+    "private_limits": [
+      "Will not go below a $3.2M cap",
+      "Can stretch to $85k for an exceptional ops lead"
+    ],
+    "secret_terms": [
+      "$3.2M",
+      "$85k"
+    ]
+  },
+  {
+    "id": "f-daniel",
+    "display_name": "Daniel Okafor",
+    "role": "founder",
+    "headline": "CEO, Lumen Grid — financing solar mini-grids in West Africa",
+    "public_bio": "Lumen Grid finances and operates solar mini-grids for 120 villages in Nigeria and Ghana, with pay-as-you-go billing. $1.8M annual revenue, 94% collection rate.",
+    "looking_for": "Series A climate investors comfortable with emerging markets.",
+    "seeking": [
+      "investor"
+    ],
+    "tags": [
+      "climate",
+      "energy",
+      "solar",
+      "Africa",
+      "infrastructure"
+    ],
+    "location": "London, UK",
+    "stage": "series a",
+    "public_terms": {
+      "raising": "$6M Series A",
+      "valuation": "$25M–$30M pre-money",
+      "timeline": "Close in Q2 2027"
+    },
+    "private_limits": [
+      "Will not accept less than $24M pre-money",
+      "Needs at least $3M from equity, not debt"
+    ],
+    "secret_terms": [
+      "$24M",
+      "$3M"
+    ]
+  },
+  {
+    "id": "f-hana",
+    "display_name": "Hana Suzuki",
+    "role": "founder",
+    "headline": "Founder, Kotoba Labs — enterprise translation between Arabic and Asian languages",
+    "public_bio": "Kotoba Labs translates contracts and technical manuals between Arabic, Japanese and Korean for engineering firms. 11 enterprise customers, models fine-tuned on domain data.",
+    "looking_for": "A machine learning engineer with Arabic NLP experience. Remote is fine.",
+    "seeking": [
+      "engineer"
+    ],
+    "tags": [
+      "AI",
+      "NLP",
+      "translation",
+      "Arabic",
+      "enterprise"
+    ],
+    "location": "Dubai, UAE",
+    "stage": "seed",
+    "public_terms": {
+      "role": "ML engineer, Arabic NLP",
+      "work_style": "Remote within ±3 hours of Dubai",
+      "salary": "$90k–$120k",
+      "equity": "0.5%–1%"
+    },
+    "private_limits": [
+      "Can go up to $130k for someone with production LLM experience"
+    ],
+    "secret_terms": [
+      "$130k"
+    ]
+  },
+  {
+    "id": "f-ahmed",
+    "display_name": "Ahmed Rashid",
+    "role": "founder",
+    "headline": "Founder, Souq Sync — inventory and supplier credit for small shops in Egypt",
+    "public_bio": "Souq Sync is a phone app that helps kiosks and grocery shops track stock, reorder from distributors and pay later with supplier credit. 8,500 shops, growing through distributor partnerships.",
+    "looking_for": "A head of growth who has scaled an SMB app in Egypt, and a founding backend engineer for our payments and credit stack.",
+    "seeking": [
+      "operator",
+      "engineer",
+      "investor"
+    ],
+    "tags": [
+      "fintech",
+      "retail tech",
+      "SMB",
+      "Egypt",
+      "payments"
+    ],
+    "location": "Cairo, Egypt",
+    "stage": "seed",
+    "public_terms": {
+      "roles": "Head of growth; founding backend engineer (payments)",
+      "salary": "Growth $45k–$60k; engineering $70k–$100k",
+      "work_style": "Cairo or remote within MENA",
+      "equity": "1%–1.5%",
+      "raising": "$1M seed"
+    },
+    "private_limits": [
+      "Can offer up to 2% equity to the right person",
+      "Will not accept a cap below $5M"
+    ],
+    "secret_terms": [
+      "2%",
+      "$5M"
+    ]
+  },
+  {
+    "id": "f-priya",
+    "display_name": "Priya Raman",
+    "role": "founder",
+    "headline": "Founder, Verdant Farms — vertical farms built for desert climates",
+    "public_bio": "Verdant Farms grows leafy greens in containerised vertical farms using 90% less water. One farm supplying 14 Abu Dhabi restaurants, second site under construction.",
+    "looking_for": "Pre-seed investors in agritech and climate with patience for hardware.",
+    "seeking": [
+      "investor"
+    ],
+    "tags": [
+      "agritech",
+      "climate",
+      "food security",
+      "UAE",
+      "hardware"
+    ],
+    "location": "Abu Dhabi, UAE",
+    "stage": "pre-seed",
+    "public_terms": {
+      "raising": "$800k pre-seed",
+      "valuation": "$4M–$5M cap",
+      "timeline": "Close in 3 months"
+    },
+    "private_limits": [
+      "Will not take a cap below $3.5M",
+      "Wants no investor with a board seat at this stage"
+    ],
+    "secret_terms": [
+      "$3.5M"
+    ]
+  },
+  {
+    "id": "f-tariq",
+    "display_name": "Tariq Mahmoud",
+    "role": "founder",
+    "headline": "Founder, Nafas Air — low-cost air quality sensors for schools",
+    "public_bio": "Nafas Air builds solar-powered air quality sensors and a dashboard for schools and municipalities. 40 units deployed in Doha schools in a pilot.",
+    "looking_for": "An embedded systems engineer to own our sensor firmware.",
+    "seeking": [
+      "engineer"
+    ],
+    "tags": [
+      "climate",
+      "IoT",
+      "hardware",
+      "embedded",
+      "Qatar"
+    ],
+    "location": "Doha, Qatar",
+    "stage": "pre-seed",
+    "public_terms": {
+      "role": "Embedded firmware engineer",
+      "work_style": "Hybrid in Doha, 2 days on-site",
+      "salary": "$55k–$75k",
+      "equity": "1%–2%"
+    },
+    "private_limits": [
+      "Can pay up to $80k",
+      "Could accept fully remote for a very senior hire"
+    ],
+    "secret_terms": [
+      "$80k"
+    ]
+  },
+  {
+    "id": "f-elena",
+    "display_name": "Elena Rossi",
+    "role": "founder",
+    "headline": "Co-founder, Tessera Learn — Arabic learning app for adults",
+    "public_bio": "Tessera Learn teaches spoken Gulf and Levantine Arabic with short daily lessons and AI conversation practice. 60k monthly users, 4.8 app store rating.",
+    "looking_for": "Seed investors in edtech and a full-stack engineer.",
+    "seeking": [
+      "investor",
+      "engineer"
+    ],
+    "tags": [
+      "edtech",
+      "consumer",
+      "AI",
+      "Arabic",
+      "mobile"
+    ],
+    "location": "Berlin, Germany",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$1.2M seed",
+      "valuation": "$6M–$8M cap",
+      "role": "Full-stack engineer",
+      "work_style": "Remote in Europe or MENA",
+      "salary": "€70k–€90k"
+    },
+    "private_limits": [
+      "Will not go below a $6M cap",
+      "Can go to €95k for a senior engineer"
+    ],
+    "secret_terms": [
+      "$6M",
+      "€95k"
+    ]
+  },
+  {
+    "id": "f-faisal",
+    "display_name": "Faisal Al-Thani",
+    "role": "founder",
+    "headline": "CEO, Masar Mobility — fleet software for electric delivery vans",
+    "public_bio": "Masar Mobility helps delivery companies plan routes and charging for electric fleets. Running 1,100 vehicles across Qatar and the UAE.",
+    "looking_for": "A chief operating officer who has scaled a mobility or logistics company.",
+    "seeking": [
+      "operator",
+      "investor"
+    ],
+    "tags": [
+      "mobility",
+      "EV",
+      "logistics",
+      "SaaS",
+      "GCC"
+    ],
+    "location": "Doha, Qatar",
+    "stage": "series a",
+    "public_terms": {
+      "role": "Chief operating officer",
+      "salary": "$150k–$190k",
+      "equity": "1%–1.5%",
+      "work_style": "On-site in Doha",
+      "raising": "$8M Series A"
+    },
+    "private_limits": [
+      "Can stretch to $210k for a proven COO",
+      "Will not go below $35M pre-money"
+    ],
+    "secret_terms": [
+      "$210k",
+      "$35M"
+    ]
+  },
+  {
+    "id": "f-noor",
+    "display_name": "Noor Saleh",
+    "role": "founder",
+    "headline": "Founder, Hikma AI — contract review for Arabic legal documents",
+    "public_bio": "Hikma AI reads Arabic and bilingual contracts and flags risky clauses for in-house legal teams. 9 paying law firms in Jordan and Saudi Arabia.",
+    "looking_for": "An ML engineer for Arabic language models, and seed investors in legaltech.",
+    "seeking": [
+      "engineer",
+      "investor"
+    ],
+    "tags": [
+      "AI",
+      "legaltech",
+      "NLP",
+      "Arabic",
+      "Jordan"
+    ],
+    "location": "Amman, Jordan",
+    "stage": "seed",
+    "public_terms": {
+      "role": "ML engineer, NLP",
+      "work_style": "Remote-friendly",
+      "salary": "$60k–$85k",
+      "equity": "0.5%–1%",
+      "raising": "$1M seed"
+    },
+    "private_limits": [
+      "Can pay up to $95k for the right engineer",
+      "Will not accept a cap below $5M"
+    ],
+    "secret_terms": [
+      "$95k",
+      "$5M"
+    ]
+  },
+  {
+    "id": "i-nadia",
+    "display_name": "Nadia Karim",
+    "role": "investor",
+    "headline": "Partner, Dune Ventures — seed fintech and B2B software in the Gulf",
+    "public_bio": "Dune Ventures leads seed rounds in GCC fintech and B2B software. 22 portfolio companies. Nadia spent 10 years in corporate banking and works closely with regional banks.",
+    "looking_for": "Seed-stage fintech founders in the GCC with early revenue.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "fintech",
+      "B2B",
+      "SaaS",
+      "GCC",
+      "embedded finance"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$500k–$1M, usually leading",
+      "sectors": "Fintech, B2B SaaS",
+      "geography": "GCC",
+      "value_add": "Bank partnerships, regulatory introductions"
+    },
+    "private_limits": [
+      "Will not invest above a $14M pre-money valuation",
+      "Wants a board seat when leading"
+    ],
+    "secret_terms": [
+      "$14M"
+    ]
+  },
+  {
+    "id": "i-omar",
+    "display_name": "Omar Farouk",
+    "role": "investor",
+    "headline": "Principal, Pearl Gate Capital — healthtech and insurtech in the GCC",
+    "public_bio": "Pearl Gate Capital backs seed-stage healthtech and insurtech companies across the Gulf. Omar previously ran partnerships at a regional health insurer.",
+    "looking_for": "Seed healthtech founders with recurring revenue from clinics or insurers.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "healthtech",
+      "insurtech",
+      "SaaS",
+      "GCC",
+      "UAE"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "stages": "seed",
+      "cheque_size": "$500k–$1.5M",
+      "sectors": "Healthtech, insurtech",
+      "geography": "GCC",
+      "value_add": "Insurer introductions"
+    },
+    "private_limits": [
+      "Will go up to an $11M valuation cap, no higher",
+      "Needs at least $30k monthly recurring revenue"
+    ],
+    "secret_terms": [
+      "$11M",
+      "$30k"
+    ]
+  },
+  {
+    "id": "i-james",
+    "display_name": "James Whitfield",
+    "role": "investor",
+    "headline": "Angel investor, former fintech operator",
+    "public_bio": "James was an early employee at a European payments company and now writes small angel cheques into fintech and edtech across Europe and the Middle East.",
+    "looking_for": "Pre-seed and seed founders in fintech or edtech.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "fintech",
+      "edtech",
+      "angel",
+      "Europe",
+      "MENA"
+    ],
+    "location": "London, UK",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$25k–$100k",
+      "sectors": "Fintech, edtech",
+      "geography": "Europe, MENA"
+    },
+    "private_limits": [
+      "Will not write more than $75k into a single company this year"
+    ],
+    "secret_terms": [
+      "$75k"
+    ]
+  },
+  {
+    "id": "i-fatima",
+    "display_name": "Fatima Al-Suwaidi",
+    "role": "investor",
+    "headline": "General Partner, Oasis Impact Fund — climate and agritech",
+    "public_bio": "Oasis Impact Fund invests in climate, water and food security companies across the Middle East and Africa.",
+    "looking_for": "Seed and Series A climate and agritech companies with measurable impact.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "climate",
+      "agritech",
+      "impact",
+      "MENA",
+      "Africa",
+      "energy"
+    ],
+    "location": "Abu Dhabi, UAE",
+    "stage": null,
+    "public_terms": {
+      "stages": "seed, series a",
+      "cheque_size": "$1M–$3M",
+      "sectors": "Climate, agritech, water",
+      "geography": "MENA, Africa"
+    },
+    "private_limits": [
+      "Will not exceed $28M pre-money for Series A"
+    ],
+    "secret_terms": [
+      "$28M"
+    ]
+  },
+  {
+    "id": "i-chen",
+    "display_name": "Chen Wei",
+    "role": "investor",
+    "headline": "Partner, Silk Route Ventures — logistics and mobility across Asia and the Gulf",
+    "public_bio": "Silk Route Ventures backs Series A logistics, mobility and supply chain software companies connecting Asia and the Gulf.",
+    "looking_for": "Series A logistics and mobility software with strong revenue growth.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "logistics",
+      "mobility",
+      "SaaS",
+      "Asia",
+      "GCC",
+      "EV"
+    ],
+    "location": "Singapore",
+    "stage": null,
+    "public_terms": {
+      "stages": "series a",
+      "cheque_size": "$2M–$5M",
+      "sectors": "Logistics, mobility, B2B SaaS",
+      "geography": "Asia, GCC"
+    },
+    "private_limits": [
+      "Will not go above $40M pre-money"
+    ],
+    "secret_terms": [
+      "$40M"
+    ]
+  },
+  {
+    "id": "i-rania",
+    "display_name": "Rania Mansour",
+    "role": "investor",
+    "headline": "Syndicate lead, Nile Angels Circle — consumer and retail tech",
+    "public_bio": "Rania leads a syndicate of 80 angels investing in Egyptian and North African consumer and retail tech.",
+    "looking_for": "Pre-seed and seed consumer or retail tech in Egypt.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "retail tech",
+      "consumer",
+      "Egypt",
+      "SMB",
+      "marketplace"
+    ],
+    "location": "Cairo, Egypt",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$50k–$200k",
+      "sectors": "Retail tech, consumer",
+      "geography": "Egypt, North Africa"
+    },
+    "private_limits": [
+      "Will not go above a $6M cap"
+    ],
+    "secret_terms": [
+      "$6M"
+    ]
+  },
+  {
+    "id": "i-khalid",
+    "display_name": "Khalid Al-Marri",
+    "role": "investor",
+    "headline": "Director, Al Bidda Capital — deep tech and AI in Qatar",
+    "public_bio": "Al Bidda Capital invests in deep tech, robotics and AI companies building in Qatar and the wider Gulf.",
+    "looking_for": "Pre-seed and seed deep tech founders willing to build in Qatar.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "deep tech",
+      "robotics",
+      "AI",
+      "hardware",
+      "Qatar",
+      "IoT"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$250k–$750k",
+      "sectors": "Deep tech, robotics, AI",
+      "geography": "Qatar, GCC"
+    },
+    "private_limits": [
+      "Requires a Qatar entity within 12 months"
+    ],
+    "secret_terms": [
+      "12 months"
+    ]
+  },
+  {
+    "id": "i-sofia",
+    "display_name": "Sofia Lindqvist",
+    "role": "investor",
+    "headline": "Partner, Northlight VC — climate and energy",
+    "public_bio": "Northlight VC is a European climate fund backing energy access and grid companies in Europe and Africa.",
+    "looking_for": "Seed and Series A energy and climate infrastructure companies.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "climate",
+      "energy",
+      "infrastructure",
+      "Europe",
+      "Africa",
+      "solar"
+    ],
+    "location": "Stockholm, Sweden",
+    "stage": null,
+    "public_terms": {
+      "stages": "seed, series a",
+      "cheque_size": "$1M–$4M",
+      "sectors": "Energy, climate infrastructure",
+      "geography": "Europe, Africa"
+    },
+    "private_limits": [
+      "Will go up to $27M pre-money for a strong Series A"
+    ],
+    "secret_terms": [
+      "$27M"
+    ]
+  },
+  {
+    "id": "i-ali",
+    "display_name": "Ali Hassan",
+    "role": "investor",
+    "headline": "Head of Caravan Ventures, the venture arm of a Gulf logistics group",
+    "public_bio": "Caravan Ventures invests in logistics and mobility startups that could partner with our parent group's warehouses and fleets.",
+    "looking_for": "Logistics, last-mile and mobility startups in the GCC.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "logistics",
+      "mobility",
+      "last mile",
+      "GCC",
+      "corporate VC"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed, series a",
+      "cheque_size": "$500k–$2M",
+      "sectors": "Logistics, mobility",
+      "geography": "GCC",
+      "value_add": "Pilots with our parent group"
+    },
+    "private_limits": [
+      "Needs a commercial pilot agreement alongside any investment"
+    ],
+    "secret_terms": [
+      "pilot agreement"
+    ]
+  },
+  {
+    "id": "i-maya",
+    "display_name": "Maya Patel",
+    "role": "investor",
+    "headline": "Angel investor, former AI research lead",
+    "public_bio": "Maya led applied AI research teams for a decade and now invests small cheques in AI-first companies in education, law and languages.",
+    "looking_for": "AI-first founders in edtech, legaltech or language technology.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "AI",
+      "NLP",
+      "edtech",
+      "legaltech",
+      "angel"
+    ],
+    "location": "Remote",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$25k–$150k",
+      "sectors": "AI applications",
+      "geography": "Global"
+    },
+    "private_limits": [
+      "Will not invest above an $8M cap"
+    ],
+    "secret_terms": [
+      "$8M"
+    ]
+  },
+  {
+    "id": "i-hamad",
+    "display_name": "Hamad Al-Kaabi",
+    "role": "investor",
+    "headline": "Investment director, Wadi Family Office",
+    "public_bio": "Wadi Family Office invests directly in Gulf startups in health, finance and real estate technology.",
+    "looking_for": "Seed and Series A companies in healthtech, fintech or proptech in the GCC.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "healthtech",
+      "fintech",
+      "proptech",
+      "GCC",
+      "family office"
+    ],
+    "location": "Abu Dhabi, UAE",
+    "stage": null,
+    "public_terms": {
+      "stages": "seed, series a",
+      "cheque_size": "$1M–$2M",
+      "sectors": "Healthtech, fintech, proptech",
+      "geography": "GCC"
+    },
+    "private_limits": [
+      "Will not lead a round"
+    ],
+    "secret_terms": [
+      "will not lead"
+    ]
+  },
+  {
+    "id": "i-amina",
+    "display_name": "Amina Diallo",
+    "role": "investor",
+    "headline": "Partner, Baobab Seed Fund — first cheques in Africa and the Middle East",
+    "public_bio": "Baobab Seed Fund writes first cheques into fintech and agritech founders across Africa and the Middle East.",
+    "looking_for": "Pre-seed fintech and agritech founders.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "fintech",
+      "agritech",
+      "Africa",
+      "MENA",
+      "pre-seed"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed",
+      "cheque_size": "$100k–$300k",
+      "sectors": "Fintech, agritech",
+      "geography": "Africa, MENA"
+    },
+    "private_limits": [
+      "Will not go above a $5M cap"
+    ],
+    "secret_terms": [
+      "$5M"
+    ]
+  },
+  {
+    "id": "t-sara",
+    "display_name": "Sara Nasser",
+    "role": "engineer",
+    "headline": "Senior computer vision engineer — drones and edge AI",
+    "public_bio": "Seven years building perception systems: object detection for delivery drones, on-device models for industrial cameras. PyTorch, ONNX, ROS. Led a team of four.",
+    "looking_for": "A founding or senior computer vision role at a robotics or drone startup.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "computer vision",
+      "robotics",
+      "drones",
+      "edge AI",
+      "PyTorch"
+    ],
+    "location": "Amman, Jordan",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Prefers remote",
+      "salary": "Senior market rate",
+      "equity": "Open to meaningful equity",
+      "start": "January 2027"
+    },
+    "private_limits": [
+      "Remote only: will not relocate or work on-site",
+      "Minimum salary $140k"
+    ],
+    "secret_terms": [
+      "$140k"
+    ]
+  },
+  {
+    "id": "t-ravi",
+    "display_name": "Ravi Menon",
+    "role": "engineer",
+    "headline": "Backend engineer — payments and lending infrastructure",
+    "public_bio": "Built ledger and payment systems at two fintechs in Dubai. Go, Postgres, Kafka. Comfortable with regulators and audits.",
+    "looking_for": "An early engineering role at a fintech startup in the Gulf.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "fintech",
+      "backend",
+      "payments",
+      "Go",
+      "GCC"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Hybrid or on-site in Dubai or Doha",
+      "salary": "$100k–$130k",
+      "start": "February 2027"
+    },
+    "private_limits": [
+      "Will not accept less than $105k",
+      "Needs at least 0.5% equity"
+    ],
+    "secret_terms": [
+      "$105k",
+      "0.5%"
+    ]
+  },
+  {
+    "id": "t-lina",
+    "display_name": "Lina Barakat",
+    "role": "engineer",
+    "headline": "ML engineer — Arabic language models",
+    "public_bio": "Fine-tuned and deployed Arabic language models for search and customer support. Published work on dialect identification. Python, PyTorch, vLLM.",
+    "looking_for": "An ML role working on Arabic NLP at an AI startup. Remote.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "AI",
+      "NLP",
+      "Arabic",
+      "LLMs",
+      "PyTorch"
+    ],
+    "location": "Beirut, Lebanon",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Remote",
+      "salary": "$85k–$115k",
+      "equity": "Yes, 0.5% or more"
+    },
+    "private_limits": [
+      "Minimum $90k",
+      "Will not work more than 2 hours outside Beirut time zone overlap"
+    ],
+    "secret_terms": [
+      "$90k"
+    ]
+  },
+  {
+    "id": "t-marcus",
+    "display_name": "Marcus Bell",
+    "role": "engineer",
+    "headline": "Full-stack engineer — consumer apps and edtech",
+    "public_bio": "Shipped three consumer apps from zero to 100k users. React, React Native, Python, Postgres. Previously at a language learning company.",
+    "looking_for": "A full-stack role at an edtech or consumer startup, remote in Europe.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "full-stack",
+      "React",
+      "edtech",
+      "consumer",
+      "mobile"
+    ],
+    "location": "Lisbon, Portugal",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Remote in Europe",
+      "salary": "€75k–€95k",
+      "start": "December 2026"
+    },
+    "private_limits": [
+      "Minimum €80k",
+      "No more than one trip a quarter"
+    ],
+    "secret_terms": [
+      "€80k"
+    ]
+  },
+  {
+    "id": "t-yara",
+    "display_name": "Yara Al-Hajri",
+    "role": "engineer",
+    "headline": "Embedded and IoT engineer — low-power sensors",
+    "public_bio": "Designs firmware for battery and solar-powered sensors. C, Rust, Zephyr RTOS, LoRaWAN. Built environmental monitors for a Doha municipality project.",
+    "looking_for": "An embedded role at a climate or IoT hardware startup in Doha.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "embedded",
+      "IoT",
+      "hardware",
+      "climate",
+      "Qatar"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Hybrid in Doha",
+      "salary": "$60k–$80k",
+      "equity": "Interested"
+    },
+    "private_limits": [
+      "Minimum $65k",
+      "Needs at least 1% equity at pre-seed"
+    ],
+    "secret_terms": [
+      "$65k",
+      "1%"
+    ]
+  },
+  {
+    "id": "t-diego",
+    "display_name": "Diego Alvarez",
+    "role": "engineer",
+    "headline": "Mobile engineer — Flutter and offline-first apps",
+    "public_bio": "Builds offline-first mobile apps for markets with patchy connectivity. Flutter, Kotlin, SQLite sync. Relocating from Madrid to Dubai next year.",
+    "looking_for": "A mobile lead role at a startup serving small businesses or emerging markets.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "mobile",
+      "Flutter",
+      "offline-first",
+      "SMB",
+      "emerging markets"
+    ],
+    "location": "Madrid, Spain",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Remote now, Dubai from mid-2027",
+      "salary": "$70k–$90k"
+    },
+    "private_limits": [
+      "Minimum $72k",
+      "Needs visa sponsorship in the UAE"
+    ],
+    "secret_terms": [
+      "$72k"
+    ]
+  },
+  {
+    "id": "t-aisha",
+    "display_name": "Aisha Rahman",
+    "role": "engineer",
+    "headline": "Data engineer — pipelines for logistics and mobility",
+    "public_bio": "Built real-time data platforms for a ride-hailing company and a delivery startup. Python, Spark, dbt, BigQuery. Based in Doha.",
+    "looking_for": "A data role at a logistics or mobility startup in Qatar.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "data engineering",
+      "logistics",
+      "mobility",
+      "Python",
+      "Qatar"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "work_style": "On-site or hybrid in Doha",
+      "salary": "$80k–$100k"
+    },
+    "private_limits": [
+      "Minimum $82k"
+    ],
+    "secret_terms": [
+      "$82k"
+    ]
+  },
+  {
+    "id": "t-zaid",
+    "display_name": "Zaid Khoury",
+    "role": "operator",
+    "headline": "Head of growth — consumer and SMB apps in Egypt and Jordan",
+    "public_bio": "Grew a Cairo grocery app from 20k to 600k users and ran distributor partnerships for an SMB fintech. Performance marketing, field sales, referral loops.",
+    "looking_for": "A head of growth role at a seed-stage startup serving small businesses.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "growth",
+      "SMB",
+      "Egypt",
+      "marketplace",
+      "consumer"
+    ],
+    "location": "Cairo, Egypt",
+    "stage": null,
+    "public_terms": {
+      "salary": "$50k–$65k",
+      "equity": "1% or more",
+      "start": "January 2027"
+    },
+    "private_limits": [
+      "Minimum $48k if equity is at least 1.5%"
+    ],
+    "secret_terms": [
+      "$48k",
+      "1.5%"
+    ]
+  },
+  {
+    "id": "t-grace",
+    "display_name": "Grace Thompson",
+    "role": "operator",
+    "headline": "COO — scaled an electric mobility company across three countries",
+    "public_bio": "Former COO of a European e-scooter and EV fleet operator, grew operations from 1 to 14 cities. Moving to Doha with family.",
+    "looking_for": "A COO role at a Series A mobility or logistics company in the Gulf.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "operations",
+      "mobility",
+      "EV",
+      "logistics",
+      "scale-up"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "salary": "$170k–$210k",
+      "equity": "1%+",
+      "work_style": "On-site in Doha"
+    },
+    "private_limits": [
+      "Minimum $180k",
+      "Needs school fees support for two children"
+    ],
+    "secret_terms": [
+      "$180k"
+    ]
+  },
+  {
+    "id": "t-salma",
+    "display_name": "Salma Idris",
+    "role": "operator",
+    "headline": "Operations lead — last-mile delivery fleets",
+    "public_bio": "Ran a 400-driver delivery fleet in Riyadh and Doha, cut late deliveries by 40%. Strong with dispatch software and driver onboarding.",
+    "looking_for": "A head of operations role at an early logistics startup.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "operations",
+      "logistics",
+      "last mile",
+      "GCC"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "salary": "$70k–$85k",
+      "equity": "Yes",
+      "start": "Within 1 month"
+    },
+    "private_limits": [
+      "Minimum $72k"
+    ],
+    "secret_terms": [
+      "$72k"
+    ]
+  },
+  {
+    "id": "t-ben",
+    "display_name": "Ben Adeyemi",
+    "role": "operator",
+    "headline": "Head of sales — B2B SaaS in Africa and the Gulf",
+    "public_bio": "Built sales teams for two B2B SaaS companies selling to banks and logistics firms. Closed the first $1M in revenue at both.",
+    "looking_for": "A first sales leader role at a B2B startup.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "sales",
+      "B2B",
+      "SaaS",
+      "fintech",
+      "Africa"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "salary": "$90k base plus commission",
+      "equity": "0.5%–1%"
+    },
+    "private_limits": [
+      "Minimum $85k base"
+    ],
+    "secret_terms": [
+      "$85k"
+    ]
+  },
+  {
+    "id": "t-mona",
+    "display_name": "Mona Al-Sayed",
+    "role": "operator",
+    "headline": "Product manager — healthtech and insurance workflows",
+    "public_bio": "Product lead for a claims platform used by 300 clinics. Knows UAE insurer integrations and clinic operations.",
+    "looking_for": "A senior product role at a seed healthtech startup.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "product",
+      "healthtech",
+      "insurtech",
+      "UAE"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "salary": "$95k–$120k",
+      "equity": "0.5%+",
+      "work_style": "Hybrid in Dubai"
+    },
+    "private_limits": [
+      "Minimum $100k"
+    ],
+    "secret_terms": [
+      "$100k"
+    ]
+  },
+  {
+    "id": "f-reem",
+    "display_name": "Reem Al-Ansari",
+    "role": "founder",
+    "headline": "Founder, Thamra — earned wage access for Gulf frontline workers",
+    "public_bio": "Thamra lets construction and hospitality workers in Qatar draw earned wages before payday through their employer. 14 employers and 9,000 workers live, with zero-fee withdrawals funded by employers.",
+    "looking_for": "A founding backend engineer for our payments ledger, and a head of employer partnerships.",
+    "seeking": [
+      "engineer",
+      "operator"
+    ],
+    "tags": [
+      "fintech",
+      "payments",
+      "payroll",
+      "Qatar",
+      "B2B"
+    ],
+    "location": "Doha, Qatar",
+    "stage": "seed",
+    "public_terms": {
+      "roles": "Founding backend engineer; head of employer partnerships",
+      "salary": "Engineering $95k–$125k; partnerships $80k–$100k",
+      "equity": "0.75%–1.5%",
+      "work_style": "Hybrid in Doha, 3 days in the office",
+      "start": "Early 2027 (January to March)"
+    },
+    "private_limits": [
+      "Can go up to $135k for a senior payments engineer",
+      "Will not hire fully remote for the engineering lead"
+    ],
+    "secret_terms": [
+      "$135k"
+    ]
+  },
+  {
+    "id": "f-zain",
+    "display_name": "Zain Qureshi",
+    "role": "founder",
+    "headline": "Co-founder, Qist — buy now, pay later for B2B purchases in Saudi Arabia",
+    "public_bio": "Qist lets small retailers buy stock from wholesalers and pay in 30 to 90 days. Live with 40 wholesalers and 2,300 retailers in Riyadh and Jeddah, $1.1M monthly volume.",
+    "looking_for": "Seed investors in Saudi fintech, and a senior engineer for our credit decisioning service.",
+    "seeking": [
+      "investor",
+      "engineer"
+    ],
+    "tags": [
+      "fintech",
+      "BNPL",
+      "B2B",
+      "Saudi Arabia",
+      "credit"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$3M seed",
+      "valuation": "$14M–$18M pre-money",
+      "role": "Senior backend engineer, credit",
+      "salary": "$110k–$140k",
+      "work_style": "On-site or hybrid in Riyadh"
+    },
+    "private_limits": [
+      "Will not accept below $15M pre-money",
+      "Can pay up to $150k with relocation support"
+    ],
+    "secret_terms": [
+      "$15M",
+      "$150k"
+    ]
+  },
+  {
+    "id": "f-lucas",
+    "display_name": "Lucas Moreau",
+    "role": "founder",
+    "headline": "Founder, Sakan Homes — rent-to-own homes for residents in Dubai",
+    "public_bio": "Sakan Homes buys apartments and lets long-term residents rent them with part of the rent building toward ownership. 48 families housed, 3% monthly churn, partnered with two developers.",
+    "looking_for": "Seed investors in proptech, and an operations lead who has run property management at scale.",
+    "seeking": [
+      "investor",
+      "operator"
+    ],
+    "tags": [
+      "proptech",
+      "real estate",
+      "UAE",
+      "consumer",
+      "fintech"
+    ],
+    "location": "Dubai, UAE",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$2.5M equity seed, plus a debt facility",
+      "valuation": "$10M–$13M cap",
+      "role": "Head of operations",
+      "salary": "$90k–$110k"
+    },
+    "private_limits": [
+      "Will not go below a $10.5M cap",
+      "Needs at least $1M of the round in equity"
+    ],
+    "secret_terms": [
+      "$10.5M",
+      "$1M"
+    ]
+  },
+  {
+    "id": "f-amal",
+    "display_name": "Amal Yousef",
+    "role": "founder",
+    "headline": "Founder, Fasla — Arabic-first podcast and audio creator platform",
+    "public_bio": "Fasla helps Arabic creators record, publish and earn from podcasts with listener subscriptions. 1,200 creators and 180k monthly listeners across Egypt, Saudi Arabia and Morocco.",
+    "looking_for": "A senior mobile engineer, and pre-seed investors in consumer media.",
+    "seeking": [
+      "engineer",
+      "investor"
+    ],
+    "tags": [
+      "consumer",
+      "media",
+      "creator economy",
+      "Arabic",
+      "mobile"
+    ],
+    "location": "Cairo, Egypt",
+    "stage": "pre-seed",
+    "public_terms": {
+      "raising": "$700k pre-seed",
+      "valuation": "$4M–$5M cap",
+      "role": "Senior mobile engineer (Flutter or React Native)",
+      "salary": "$40k–$60k",
+      "work_style": "Remote within MENA"
+    },
+    "private_limits": [
+      "Will not go below a $3.8M cap",
+      "Can pay up to $65k for a mobile lead"
+    ],
+    "secret_terms": [
+      "$3.8M",
+      "$65k"
+    ]
+  },
+  {
+    "id": "f-oliver",
+    "display_name": "Oliver Grant",
+    "role": "founder",
+    "headline": "Co-founder, Kiln AI — bilingual AI support agents for Gulf businesses",
+    "public_bio": "Kiln AI answers customer messages in Arabic and English over WhatsApp and web chat for telecom, retail and banking teams. 23 customers, resolving 61% of conversations without a human.",
+    "looking_for": "An LLM engineer to own retrieval and evaluation, and a head of sales for enterprise accounts.",
+    "seeking": [
+      "engineer",
+      "operator"
+    ],
+    "tags": [
+      "AI",
+      "LLMs",
+      "customer support",
+      "Arabic",
+      "B2B SaaS"
+    ],
+    "location": "Dubai, UAE",
+    "stage": "seed",
+    "public_terms": {
+      "roles": "LLM engineer; head of sales",
+      "salary": "Engineering $120k–$150k; sales $100k base plus commission",
+      "equity": "0.5%–1%",
+      "work_style": "Remote-friendly, with quarterly offsites in Dubai"
+    },
+    "private_limits": [
+      "Can stretch to $165k for an engineer with production retrieval experience"
+    ],
+    "secret_terms": [
+      "$165k"
+    ]
+  },
+  {
+    "id": "f-sana",
+    "display_name": "Sana Mirza",
+    "role": "founder",
+    "headline": "Founder, Rahma Care — booking platform for home nursing in Saudi Arabia",
+    "public_bio": "Rahma Care matches families with licensed home nurses and physiotherapists in Riyadh. 350 caregivers on the platform and 2,000 visits a month.",
+    "looking_for": "A head of operations for caregiver supply, and a full-stack engineer.",
+    "seeking": [
+      "operator",
+      "engineer"
+    ],
+    "tags": [
+      "healthtech",
+      "marketplace",
+      "home care",
+      "Saudi Arabia"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": "seed",
+    "public_terms": {
+      "roles": "Head of operations; full-stack engineer",
+      "salary": "Operations $85k–$105k; engineering $80k–$110k",
+      "work_style": "Operations on-site in Riyadh; engineering remote-friendly"
+    },
+    "private_limits": [
+      "Can offer up to 1.2% equity to the operations lead"
+    ],
+    "secret_terms": [
+      "1.2%"
+    ]
+  },
+  {
+    "id": "f-hassan",
+    "display_name": "Hassan Al-Obaidi",
+    "role": "founder",
+    "headline": "Founder, Wafra Carbon — carbon accounting for Gulf manufacturers",
+    "public_bio": "Wafra Carbon connects to factory meters and invoices to measure emissions and prepare reports for buyers and regulators. 17 manufacturers in the UAE and Oman.",
+    "looking_for": "Seed climate investors, and a data engineer to build our meter integrations.",
+    "seeking": [
+      "investor",
+      "engineer"
+    ],
+    "tags": [
+      "climate",
+      "carbon",
+      "B2B SaaS",
+      "industrial",
+      "UAE"
+    ],
+    "location": "Abu Dhabi, UAE",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$2M seed",
+      "valuation": "$9M–$11M pre-money",
+      "role": "Data engineer",
+      "salary": "$85k–$105k",
+      "work_style": "Hybrid in Abu Dhabi"
+    },
+    "private_limits": [
+      "Will not accept below $9.5M pre-money"
+    ],
+    "secret_terms": [
+      "$9.5M"
+    ]
+  },
+  {
+    "id": "f-ines",
+    "display_name": "Inès Laurent",
+    "role": "founder",
+    "headline": "Founder, Dalil Travel — AI trip planning for pilgrims and Gulf tourism",
+    "public_bio": "Dalil Travel builds day-by-day plans with hotels, transport and group bookings for Umrah travellers and tourists visiting the Gulf. 30 travel agencies use it in pilot.",
+    "looking_for": "A full-stack engineer, and pre-seed investors in travel or AI.",
+    "seeking": [
+      "engineer",
+      "investor"
+    ],
+    "tags": [
+      "travel",
+      "AI",
+      "consumer",
+      "Saudi Arabia",
+      "marketplace"
+    ],
+    "location": "Jeddah, Saudi Arabia",
+    "stage": "pre-seed",
+    "public_terms": {
+      "raising": "$500k pre-seed",
+      "valuation": "$3M–$4M cap",
+      "role": "Full-stack engineer (TypeScript, Python)",
+      "salary": "$70k–$90k",
+      "work_style": "Remote, with trips to Jeddah"
+    },
+    "private_limits": [
+      "Will not go below a $3M cap",
+      "Can pay up to $95k"
+    ],
+    "secret_terms": [
+      "$95k"
+    ]
+  },
+  {
+    "id": "f-bilal",
+    "display_name": "Bilal Siddiqui",
+    "role": "founder",
+    "headline": "Founder, Raqam Games — mobile puzzle games made for Arabic players",
+    "public_bio": "Raqam Games makes casual puzzle games with Arabic stories and local humour. Two titles live, 1.4M installs, profitable on paid user acquisition in Saudi Arabia.",
+    "looking_for": "A senior Unity engineer, and seed investors in gaming.",
+    "seeking": [
+      "engineer",
+      "investor"
+    ],
+    "tags": [
+      "gaming",
+      "mobile",
+      "consumer",
+      "Saudi Arabia",
+      "Unity"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": "seed",
+    "public_terms": {
+      "raising": "$1.8M seed",
+      "valuation": "$8M–$10M pre-money",
+      "role": "Senior Unity engineer",
+      "salary": "$80k–$110k",
+      "work_style": "Remote or Riyadh"
+    },
+    "private_limits": [
+      "Will not go below $8.5M pre-money",
+      "Can pay up to $120k plus a signing bonus"
+    ],
+    "secret_terms": [
+      "$8.5M",
+      "$120k"
+    ]
+  },
+  {
+    "id": "f-dana",
+    "display_name": "Dana Al-Sabah",
+    "role": "founder",
+    "headline": "CEO, Mahara — job-ready training and placement for Gulf nationals",
+    "public_bio": "Mahara runs 12-week programmes in data, sales and customer success, then places graduates with employers who pay a placement fee. 2,100 graduates placed in Kuwait and Saudi Arabia.",
+    "looking_for": "A VP of operations to scale cohorts, and Series A investors in edtech or HR tech.",
+    "seeking": [
+      "operator",
+      "investor"
+    ],
+    "tags": [
+      "edtech",
+      "HR tech",
+      "workforce",
+      "Kuwait",
+      "GCC"
+    ],
+    "location": "Kuwait City, Kuwait",
+    "stage": "series a",
+    "public_terms": {
+      "raising": "$7M Series A",
+      "valuation": "$30M–$36M pre-money",
+      "role": "VP of operations",
+      "salary": "$140k–$170k",
+      "work_style": "Kuwait City or Riyadh"
+    },
+    "private_limits": [
+      "Will not go below $30M pre-money",
+      "Can stretch to $180k for the VP of operations"
+    ],
+    "secret_terms": [
+      "$30M",
+      "$180k"
+    ]
+  },
+  {
+    "id": "i-youssef",
+    "display_name": "Youssef Benali",
+    "role": "investor",
+    "headline": "Partner, Majra Ventures — AI-first software across MENA",
+    "public_bio": "Majra Ventures backs pre-seed and seed companies building AI products for businesses in the Middle East and North Africa. 15 portfolio companies.",
+    "looking_for": "Founders building AI products with early paying customers.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "AI",
+      "LLMs",
+      "B2B SaaS",
+      "MENA",
+      "developer tools"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$250k–$1M",
+      "sectors": "AI applications, B2B SaaS",
+      "geography": "MENA"
+    },
+    "private_limits": [
+      "Will not invest above a $12M cap"
+    ],
+    "secret_terms": [
+      "$12M"
+    ]
+  },
+  {
+    "id": "i-noura",
+    "display_name": "Noura Al-Rashidi",
+    "role": "investor",
+    "headline": "Angel investor — proptech and consumer brands in the GCC",
+    "public_bio": "Noura built and sold a real estate brokerage in Kuwait and now invests in proptech and consumer startups across the Gulf.",
+    "looking_for": "Seed founders in proptech or consumer with strong unit economics.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "proptech",
+      "real estate",
+      "consumer",
+      "GCC",
+      "angel"
+    ],
+    "location": "Kuwait City, Kuwait",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed",
+      "cheque_size": "$50k–$250k",
+      "sectors": "Proptech, consumer",
+      "geography": "GCC"
+    },
+    "private_limits": [
+      "Will not go above a $12M cap"
+    ],
+    "secret_terms": [
+      "$12M"
+    ]
+  },
+  {
+    "id": "i-david",
+    "display_name": "David Kim",
+    "role": "investor",
+    "headline": "Partner, Harbor Bridge Capital — Series A B2B software",
+    "public_bio": "Harbor Bridge Capital leads Series A rounds in B2B software with a growing portfolio in the Middle East and South Asia.",
+    "looking_for": "Series A B2B software companies with at least $2M in annual revenue.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "B2B SaaS",
+      "Series A",
+      "edtech",
+      "HR tech",
+      "MENA"
+    ],
+    "location": "London, UK",
+    "stage": null,
+    "public_terms": {
+      "stages": "series a",
+      "cheque_size": "$3M–$8M",
+      "sectors": "B2B software, workforce, edtech",
+      "geography": "MENA, South Asia, Europe"
+    },
+    "private_limits": [
+      "Will not go above $38M pre-money"
+    ],
+    "secret_terms": [
+      "$38M"
+    ]
+  },
+  {
+    "id": "i-mansour",
+    "display_name": "Mansour Al-Qahtani",
+    "role": "investor",
+    "headline": "Head of Qimma Ventures, the venture arm of a Saudi media group",
+    "public_bio": "Qimma Ventures invests in gaming, media and creator companies that can partner with our group's channels and studios in Saudi Arabia.",
+    "looking_for": "Gaming and media founders building for Arabic audiences.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "gaming",
+      "media",
+      "creator economy",
+      "Saudi Arabia",
+      "corporate VC"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed, seed, series a",
+      "cheque_size": "$500k–$3M",
+      "sectors": "Gaming, media, creators",
+      "geography": "Saudi Arabia, MENA",
+      "value_add": "Distribution through our channels"
+    },
+    "private_limits": [
+      "Wants a right of first refusal on any future sale"
+    ],
+    "secret_terms": [
+      "right of first refusal"
+    ]
+  },
+  {
+    "id": "i-elif",
+    "display_name": "Elif Demir",
+    "role": "investor",
+    "headline": "Partner, Anatolia Green Fund — industrial climate tech",
+    "public_bio": "Anatolia Green Fund invests in software and hardware that cut emissions in manufacturing, construction and logistics across Turkey and the Gulf.",
+    "looking_for": "Seed and Series A industrial climate companies with paying customers.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "climate",
+      "industrial",
+      "carbon",
+      "B2B SaaS",
+      "Turkey",
+      "GCC"
+    ],
+    "location": "Istanbul, Turkey",
+    "stage": null,
+    "public_terms": {
+      "stages": "seed, series a",
+      "cheque_size": "$750k–$3M",
+      "sectors": "Industrial climate, carbon software",
+      "geography": "Turkey, GCC"
+    },
+    "private_limits": [
+      "Will not go above $12M pre-money at seed"
+    ],
+    "secret_terms": [
+      "$12M"
+    ]
+  },
+  {
+    "id": "i-zara",
+    "display_name": "Zara Ahmed",
+    "role": "investor",
+    "headline": "Scout for a US seed fund — first cheques in AI and fintech",
+    "public_bio": "Zara writes small first cheques on behalf of a US seed fund into technical founders in the Middle East, Pakistan and the diaspora.",
+    "looking_for": "Technical founders at pre-seed in AI or fintech.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "AI",
+      "fintech",
+      "pre-seed",
+      "scout",
+      "global"
+    ],
+    "location": "Remote",
+    "stage": null,
+    "public_terms": {
+      "stages": "pre-seed",
+      "cheque_size": "$50k–$150k",
+      "sectors": "AI, fintech",
+      "geography": "Global"
+    },
+    "private_limits": [
+      "Will not go above a $6M cap"
+    ],
+    "secret_terms": [
+      "$6M"
+    ]
+  },
+  {
+    "id": "i-tomas",
+    "display_name": "Tomás Herrera",
+    "role": "investor",
+    "headline": "Partner, Lumbre Capital — edtech and future of work",
+    "public_bio": "Lumbre Capital backs edtech and workforce companies in emerging markets, with a new focus on the Gulf.",
+    "looking_for": "Seed and Series A edtech or workforce companies with proven placement or completion rates.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "edtech",
+      "HR tech",
+      "workforce",
+      "emerging markets",
+      "GCC"
+    ],
+    "location": "Madrid, Spain",
+    "stage": null,
+    "public_terms": {
+      "stages": "seed, series a",
+      "cheque_size": "$500k–$2.5M",
+      "sectors": "Edtech, workforce",
+      "geography": "Emerging markets, GCC"
+    },
+    "private_limits": [
+      "Will not go above $32M pre-money for Series A"
+    ],
+    "secret_terms": [
+      "$32M"
+    ]
+  },
+  {
+    "id": "t-fares",
+    "display_name": "Fares Nasr",
+    "role": "engineer",
+    "headline": "Senior backend engineer — lending and credit systems",
+    "public_bio": "Eight years building loan origination and credit scoring services at a Saudi bank and a BNPL startup. Java, Kotlin, Postgres, event-driven systems.",
+    "looking_for": "A senior or lead backend role at a Gulf fintech.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "fintech",
+      "backend",
+      "credit",
+      "Kotlin",
+      "Saudi Arabia"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Riyadh, hybrid or on-site",
+      "salary": "$120k–$150k",
+      "start": "March 2027"
+    },
+    "private_limits": [
+      "Minimum $125k",
+      "Needs at least 0.3% equity"
+    ],
+    "secret_terms": [
+      "$125k",
+      "0.3%"
+    ]
+  },
+  {
+    "id": "t-mei",
+    "display_name": "Mei Lin",
+    "role": "engineer",
+    "headline": "LLM engineer — retrieval, evaluation and agents",
+    "public_bio": "Built retrieval and evaluation pipelines for an enterprise search company. Python, PyTorch, vector search, LLM evaluation. Speaks English and Mandarin.",
+    "looking_for": "An LLM engineering role at an AI startup with real customers.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "AI",
+      "LLMs",
+      "retrieval",
+      "Python",
+      "evaluation"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Remote or Dubai",
+      "salary": "$130k–$160k",
+      "equity": "0.5% or more"
+    },
+    "private_limits": [
+      "Minimum $140k"
+    ],
+    "secret_terms": [
+      "$140k"
+    ]
+  },
+  {
+    "id": "t-joao",
+    "display_name": "João Pereira",
+    "role": "engineer",
+    "headline": "Senior Unity engineer — casual and puzzle games",
+    "public_bio": "Shipped five casual mobile games with 20M combined installs. Unity, C#, live ops and A/B testing for monetisation.",
+    "looking_for": "A senior game engineering role at a small studio.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "gaming",
+      "Unity",
+      "mobile",
+      "C#",
+      "live ops"
+    ],
+    "location": "Lisbon, Portugal",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Remote",
+      "salary": "$85k–$110k",
+      "start": "January 2027"
+    },
+    "private_limits": [
+      "Minimum $90k",
+      "Will not relocate"
+    ],
+    "secret_terms": [
+      "$90k"
+    ]
+  },
+  {
+    "id": "t-nadine",
+    "display_name": "Nadine Azar",
+    "role": "engineer",
+    "headline": "Full-stack product engineer — TypeScript and Python",
+    "public_bio": "Six years building web products end to end at a travel startup and an e-commerce company. React, Next.js, Node, Python, Postgres.",
+    "looking_for": "An early full-stack role at a consumer or travel startup. Remote.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "full-stack",
+      "TypeScript",
+      "React",
+      "travel",
+      "consumer"
+    ],
+    "location": "Beirut, Lebanon",
+    "stage": null,
+    "public_terms": {
+      "work_style": "Remote",
+      "salary": "$70k–$95k",
+      "equity": "Yes"
+    },
+    "private_limits": [
+      "Minimum $75k"
+    ],
+    "secret_terms": [
+      "$75k"
+    ]
+  },
+  {
+    "id": "t-rashid",
+    "display_name": "Rashid Al-Kindi",
+    "role": "operator",
+    "headline": "Head of partnerships — banks, payroll providers and employers",
+    "public_bio": "Signed partnership deals with six Gulf banks and 40 employers for a payroll fintech. Strong network in Qatar and Oman.",
+    "looking_for": "A head of partnerships role at a B2B fintech in the Gulf.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "partnerships",
+      "fintech",
+      "B2B",
+      "Qatar",
+      "banking"
+    ],
+    "location": "Doha, Qatar",
+    "stage": null,
+    "public_terms": {
+      "salary": "$85k–$105k",
+      "equity": "0.5%+",
+      "work_style": "Doha"
+    },
+    "private_limits": [
+      "Minimum $90k"
+    ],
+    "secret_terms": [
+      "$90k"
+    ]
+  },
+  {
+    "id": "t-chloe",
+    "display_name": "Chloé Martin",
+    "role": "operator",
+    "headline": "Head of sales — enterprise SaaS in the Gulf",
+    "public_bio": "Built the Gulf sales team for a European customer service software company, from zero to $4M in annual revenue. Sells to telecom, retail and banks.",
+    "looking_for": "A first head of sales role at a seed or Series A B2B startup.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "sales",
+      "B2B SaaS",
+      "enterprise",
+      "AI",
+      "UAE"
+    ],
+    "location": "Dubai, UAE",
+    "stage": null,
+    "public_terms": {
+      "salary": "$110k base plus commission",
+      "equity": "0.5%–1%"
+    },
+    "private_limits": [
+      "Minimum $100k base"
+    ],
+    "secret_terms": [
+      "$100k"
+    ]
+  },
+  {
+    "id": "t-yasmin",
+    "display_name": "Yasmin Fathi",
+    "role": "operator",
+    "headline": "Community and creator growth lead",
+    "public_bio": "Grew an Arabic creator community from 5k to 300k members and ran creator programmes for a regional streaming app.",
+    "looking_for": "A growth or community lead role at a consumer or creator startup.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "growth",
+      "community",
+      "creator economy",
+      "consumer",
+      "Egypt"
+    ],
+    "location": "Cairo, Egypt",
+    "stage": null,
+    "public_terms": {
+      "salary": "$40k–$55k",
+      "equity": "Yes",
+      "work_style": "Cairo or remote"
+    },
+    "private_limits": [
+      "Minimum $42k"
+    ],
+    "secret_terms": [
+      "$42k"
+    ]
+  },
+  {
+    "id": "t-kofi",
+    "display_name": "Kofi Mensah",
+    "role": "operator",
+    "headline": "VP operations — marketplaces and home services",
+    "public_bio": "Scaled supply and operations for a home services marketplace across four cities, managing 1,500 service providers.",
+    "looking_for": "A head or VP of operations role at a marketplace startup in the Gulf.",
+    "seeking": [
+      "founder"
+    ],
+    "tags": [
+      "operations",
+      "marketplace",
+      "home services",
+      "Saudi Arabia",
+      "scale-up"
+    ],
+    "location": "Riyadh, Saudi Arabia",
+    "stage": null,
+    "public_terms": {
+      "salary": "$100k–$140k",
+      "equity": "0.5%+",
+      "work_style": "On-site"
+    },
+    "private_limits": [
+      "Minimum $105k"
+    ],
+    "secret_terms": [
+      "$105k"
+    ]
+  }
+]

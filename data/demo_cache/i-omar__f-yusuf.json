@@ -1,0 +1,131 @@
+{
+  "id": "n-436cf86156",
+  "profile_a_id": "i-omar",
+  "profile_b_id": "f-yusuf",
+  "turns": [
+    {
+      "speaker_id": "i-omar",
+      "message": "Omar Farouk from Pearl Gate Capital. We invest in GCC healthtech at seed. Your clinic SaaS and insurer integrations fit. What's your current monthly recurring revenue?",
+      "private_thought": "Their MRR must be at least $30k to proceed.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-yusuf",
+      "message": "Sanad Health's current MRR is $41k, as stated in our profile. Our focus is on GCC clinics and insurer integrations. What cheque size are you considering for a lead role?",
+      "private_thought": "Confirmed MRR. Need to see if their cheque fits our round and if they can lead.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-omar",
+      "message": "Our cheque range is $500k–$1.5M, suitable for a lead. The $41k MRR is above our threshold. Your valuation cap range includes workable levels. How soon after a close would you launch in Saudi?",
+      "private_thought": "MRR is good, cap range overlaps our $11M limit.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-yusuf",
+      "message": "We plan to launch in Saudi within 3 months of the round closing. Our timeline for a first close is 8 weeks. Does your cheque range align with leading a $2M round?",
+      "private_thought": "Saudi launch timeline matches our use of funds. Need to confirm lead cheque size fits.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-omar",
+      "message": "Yes, our cheque range can lead a $2M round. The Saudi launch timeline works. What insurer integrations are planned?",
+      "private_thought": "Valuation range includes workable caps, MRR is sufficient, cheque fits round.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-yusuf",
+      "message": "We plan to deepen integrations with major GCC insurers, details Yusuf can share in a meeting. Does Pearl Gate's value-add include introductions to specific insurers?",
+      "private_thought": "Our valuation floor is $9M, which fits their workable range.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-omar",
+      "message": "The match looks workable. Valuation cap range includes levels we can work with, MRR meets our threshold, cheque fits a lead role, and geography aligns. Omar can share specific insurer introductions in a meeting. Recommend you and Yusuf meet to discuss details.",
+      "private_thought": "All key criteria satisfied; meeting is the next step.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-yusuf",
+      "message": "The match looks workable. Valuation cap, cheque size, timeline and sector align. Yusuf's insurer integration plans and your value-add are complementary. Recommend you and Omar meet to discuss specifics.",
+      "private_thought": "All criteria satisfied; meeting is the next step.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "worth_meeting",
+    "score": 85,
+    "reasons": [
+      "Both parties confirmed alignment on sector (healthtech/insurtech), geography (GCC), and stage (seed).",
+      "Omar's cheque range ($500k–$1.5M) can lead Yusuf's $2M round, and Yusuf's MRR ($41k) meets Omar's threshold.",
+      "The Saudi launch timeline (3 months post-close) and insurer integration focus are complementary to Omar's value-add of insurer introductions."
+    ],
+    "agreed": [
+      "Cheque size range fits a lead role in the $2M round.",
+      "Valuation cap range ($8M–$12M) includes workable levels.",
+      "Geography (GCC) and sector (healthtech/insurtech) alignment."
+    ],
+    "open_questions": [
+      "Specific details of planned insurer integrations.",
+      "Which specific insurers Omar can introduce."
+    ],
+    "meeting_questions": [
+      "Yusuf, can you share more about the specific GCC insurers you plan to integrate with and the expected impact on claim rejection rates?",
+      "Omar, which insurer introductions can Pearl Gate provide, and how do you typically assist with those relationships?",
+      "How would you both envision structuring the investment timeline to meet the 8-week first close target?"
+    ],
+    "intro_message": "Hi Omar and Yusuf, your conversation highlighted a strong fit: Omar's lead investment capacity aligns with Sanad Health's seed round, your shared focus on GCC healthtech and insurer integrations is clear, and the timelines are compatible. A direct meeting is the perfect next step to dive into the specifics of insurer partnerships and investment structure."
+  },
+  "memo_ar": {
+    "verdict": "worth_meeting",
+    "score": 85,
+    "reasons": [
+      "أكد الطرفان التوافق في القطاع (تكنولوجيا الصحة/تكنولوجيا التأمين)، والجغرافيا (مجلس التعاون الخليجي)، والمرحلة (التمويل الأولي).",
+      "نطاق شيك عمر (500 ألف دولار إلى 1.5 مليون دولار) يمكن أن يقود جولة يوسف البالغة 2 مليون دولار، ويحقق إيرادات يوسف الشهرية المتكررة (41 ألف دولار) عتبة عمر المعيارية.",
+      "الجدول الزمني للإطلاق في السعودية (3 أشهر بعد الإغلاق) وتركيز التكامل مع شركات التأمين يتكاملان مع القيمة المضافة التي يقدمها عمر عبر تقديماته لشركات التأمين."
+    ],
+    "agreed": [
+      "نطاق حجم الشيك يتناسب مع دور قيادي في جولة الـ 2 مليون دولار.",
+      "نطاق سقف التقييم (8 ملايين دولار إلى 12 مليون دولار) يتضمن مستويات قابلة للتطبيق.",
+      "التوافق الجغرافي (مجلس التعاون الخليجي) والقطاعي (تكنولوجيا الصحة/تكنولوجيا التأمين)."
+    ],
+    "open_questions": [
+      "التفاصيل المحددة لخطط تكامل شركات التأمين.",
+      "شركات التأمين المحددة التي يمكن أن يقدمها عمر."
+    ],
+    "meeting_questions": [
+      "يوسف، هل يمكنك مشاركة المزيد عن شركات التأمين المحددة في مجلس التعاون الخليجي التي تخطط للدمج معها، والتأثير المتوقع على معدلات رفض المطالبات؟",
+      "عمر، ما هي تقديمات شركات التأمين التي يمكن أن تقدمها Pearl Gate، وكيف تساعد عادةً في إدارة تلك العلاقات؟",
+      "كيف تتخيلان معًا هيكلة الجدول الزمني للاستثمار لتحقيق هدف الإغلاق الأول خلال 8 أسابيع؟"
+    ],
+    "intro_message": "مرحبًا عمر ويوسف، سلط حواركما الضوء على توافق قوي: قدرة عمر على الاستثمار القيادي تتماشى مع جولة التمويل الأولي لـ Sanad Health، وتركيزكما المشترك على تكنولوجيا الصحة في مجلس التعاون الخليجي وتكاملات شركات التأمين واضح، والجداول الزمنية متوافقة. الاجتماع المباشر هو الخطوة المثالية التالية للتعمق في تفاصيل شراكات شركات التأمين وهيكل الاستثمار."
+  },
+  "status": "complete",
+  "language": "en",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}
