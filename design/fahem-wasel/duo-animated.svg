@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" aria-labelledby="duo-t duo-d">
+<title id="duo-t">Fahem and Wasel at work</title>
+<desc id="duo-d">Fahem listens and writes a profile card. The card slides to Wasel, who connects it to two matching founders.</desc>
+<style>
+  * { transform-box: fill-box; }
+  .f-face { transform-origin: 50% 90%; animation: nod 8s ease-in-out infinite; }
+  .w-face { transform-origin: 50% 90%; animation: lean 8s ease-in-out infinite; }
+  .f-eyes, .w-eyes { transform-origin: 50% 50%; }
+  .f-eyes { animation: blinkA 8s infinite; }
+  .w-eyes { animation: blinkB 8s infinite; }
+  .bubble { transform-origin: 0% 100%; animation: bubble 8s ease-out infinite; }
+  .dot { animation: dots 0.9s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: .15s; } .dot:nth-child(3) { animation-delay: .3s; }
+  .card { animation: card 8s cubic-bezier(.2,.8,.2,1) infinite; }
+  .write { stroke-dasharray: 120; animation: write 8s ease-out infinite; }
+  .write.l2 { animation-name: write2; } .write.l3 { animation-name: write3; }
+  .thread { stroke-dasharray: 4 7; stroke-dashoffset: 260; animation: thread 8s ease-out infinite; }
+  .thread.t2 { animation-name: thread2; }
+  .match { transform-origin: 50% 50%; animation: match 8s cubic-bezier(.2,.8,.2,1) infinite; }
+  .match.m2 { animation-name: match2; }
+  .bud { }
+  @keyframes nod { 0%,4%,22%,100% { transform: rotate(0); } 8% { transform: rotate(-3deg); } 13% { transform: rotate(2deg); } 18% { transform: rotate(-2deg); } }
+  @keyframes lean { 0%,50%,80%,100% { transform: rotate(0); } 56% { transform: rotate(-4deg); } 66% { transform: rotate(3deg); } }
+  @keyframes blinkA { 0%,33%,35%,82%,84%,100% { transform: scaleY(1); } 34%,83% { transform: scaleY(.1); } }
+  @keyframes blinkB { 0%,23%,25%,70%,72%,100% { transform: scaleY(1); } 24%,71% { transform: scaleY(.1); } }
+  @keyframes bubble { 0% { opacity: 0; transform: scale(.6); } 4%,20% { opacity: 1; transform: scale(1); } 25%,100% { opacity: 0; transform: scale(.9); } }
+  @keyframes dots { 0%,100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(-3px); opacity: 1; } }
+  @keyframes card { 0%,18% { opacity: 0; transform: translate(0,10px); } 23% { opacity: 1; transform: translate(0,0); } 40% { transform: translate(0,0); } 52%,90% { opacity: 1; transform: translate(78px,0); } 97%,100% { opacity: 0; transform: translate(78px,0); } }
+  @keyframes write { 0%,24% { stroke-dashoffset: 120; } 30%,100% { stroke-dashoffset: 0; } }
+  @keyframes write2 { 0%,28% { stroke-dashoffset: 120; } 34%,100% { stroke-dashoffset: 0; } }
+  @keyframes write3 { 0%,32% { stroke-dashoffset: 120; } 38%,100% { stroke-dashoffset: 0; } }
+  @keyframes thread { 0%,54% { stroke-dashoffset: 260; opacity: 1; } 66%,90% { stroke-dashoffset: 0; opacity: 1; } 97%,100% { opacity: 0; } }
+  @keyframes thread2 { 0%,58% { stroke-dashoffset: 260; opacity: 1; } 70%,90% { stroke-dashoffset: 0; opacity: 1; } 97%,100% { opacity: 0; } }
+  @keyframes match { 0%,64% { opacity: 0; transform: scale(.4); } 69% { opacity: 1; transform: scale(1.12); } 72%,90% { opacity: 1; transform: scale(1); } 97%,100% { opacity: 0; } }
+  @keyframes match2 { 0%,68% { opacity: 0; transform: scale(.4); } 73% { opacity: 1; transform: scale(1.12); } 76%,90% { opacity: 1; transform: scale(1); } 97%,100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation: none !important; }
+    .card { opacity: 1; transform: translate(78px,0); } .write, .thread { stroke-dashoffset: 0; } .match { opacity: 1; } .bubble { opacity: 0; }
+  }
+</style>
+<rect width="720" height="380" rx="28" fill="#FBF8F3"/>
+<g transform="translate(56 100) scale(2.4)"><defs><clipPath id="duoTileF"><rect width="64" height="64" rx="14"/></clipPath></defs><rect width="64" height="64" rx="14" fill="#E4EAFB"/><g clip-path="url(#duoTileF)"><g class="f-face"><path class="ghutra" d="M7 80 C 8.6 56 10.6 34 15.4 22 C 19.4 12.8 25.4 8 32 8 C 38.6 8 44.6 12.8 48.6 22 C 53.4 34 55.4 56 57 80 Z" fill="#FFFFFF" stroke="#2E4FC8" stroke-width="1.8" stroke-linejoin="round"/><path d="M18.2 30 C 17.6 42 19.6 51.6 25 56.6 C 28.6 60 35.4 60 39 56.6 C 44.4 51.6 46.4 42 45.8 30 C 45.8 24 39 19.6 32 19.6 C 25 19.6 18.2 24 18.2 30 Z" fill="#E4EAFB" stroke="#2E4FC8" stroke-width="1.8" stroke-linejoin="round"/><g class="headwear"><path d="M16.6 31.6 C 19.4 27 26.4 25 32 21.4 C 37.6 25 44.6 27 47.4 31.6 L 48 22 C 44.4 13.8 38.2 10.8 32 10.8 C 25.8 10.8 19.6 13.8 16 22 Z" fill="#FFFFFF"/><path d="M16.6 31.6 C 19.4 27 26.4 25 32 21.4 C 37.6 25 44.6 27 47.4 31.6" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.2 15.6 C 24.8 11.8 39.2 11.8 44.8 15.6" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.6 19.6 C 24 15.6 40 15.6 46.4 19.6" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g><path class="brows" d="M23.4 31.4 Q 26.2 30 29 30.8 M35 30.8 Q 37.8 30 40.6 31.4" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><g class="f-eyes"><path d="M24.2 36.6 Q 26.8 34 29.4 36.6 M34.6 36.6 Q 37.2 34 39.8 36.6" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g><path class="nose" d="M32.4 38.8 C 34 40.8 33.8 42.8 31.6 43.6" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="mouth" d="M27.6 50.2 Q 32 54 36.4 50.2" fill="none" stroke="#2E4FC8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g></g></g>
+<g transform="translate(510 100) scale(2.4)"><defs><clipPath id="duoTileW"><rect width="64" height="64" rx="14"/></clipPath></defs><rect width="64" height="64" rx="14" fill="#FCE6D6"/><g clip-path="url(#duoTileW)"><g class="w-face"><path class="ears" d="M18 33.4 C 14.4 32.8 14 40.8 18.2 41 M46 33.4 C 49.6 32.8 50 40.8 45.8 41" fill="none" stroke="#D2591C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.2 30 C 17.6 42 19.6 51.6 25 56.6 C 28.6 60 35.4 60 39 56.6 C 44.4 51.6 46.4 42 45.8 30" fill="#FCE6D6" stroke="#D2591C" stroke-width="1.8" stroke-linejoin="round"/><path class="brows" d="M35.6 33.4 Q 38.4 31.8 41 33 M23.4 33.8 Q 26.2 32.8 29 33.6" fill="none" stroke="#D2591C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><g class="w-eyes"><path d="M24.4 37.4 Q 27 39.4 29.6 37.4" fill="none" stroke="#D2591C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle class="pupil" cx="38.2" cy="37.6" r="1.6" fill="#D2591C"/></g><path d="M32.4 39.8 C 34.2 41.8 34.2 43.8 31.6 44.8" fill="none" stroke="#D2591C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="mouth" d="M27.2 49.4 C 28.6 54.2 35.4 54.2 36.8 49.4 Z" fill="#FFFFFF" stroke="#D2591C" stroke-width="1.8" stroke-linejoin="round"/><g class="headwear"><path d="M17.2 30.4 C 16.6 23 17.2 17.4 19.6 14.4 C 25.6 11.4 38.4 11.4 44.4 14.4 C 46.8 17.4 47.4 23 46.8 30.4 C 38.8 28.6 25.2 28.6 17.2 30.4 Z" fill="#FFFFFF" stroke="#D2591C" stroke-width="1.8" stroke-linejoin="round"/><path d="M19.6 14.4 C 25.6 16.6 38.4 16.6 44.4 14.4" fill="none" stroke="#D2591C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle class="stitch" cx="21.4" cy="20.8" r="0.85" fill="#D2591C"/><circle class="stitch" cx="25.6" cy="20.8" r="0.85" fill="#D2591C"/><circle class="stitch" cx="29.8" cy="20.8" r="0.85" fill="#D2591C"/><circle class="stitch" cx="34.2" cy="20.8" r="0.85" fill="#D2591C"/><circle class="stitch" cx="38.4" cy="20.8" r="0.85" fill="#D2591C"/><circle class="stitch" cx="42.6" cy="20.8" r="0.85" fill="#D2591C"/><circle cx="23.5" cy="24" r="1" fill="none" stroke="#D2591C" stroke-width="1.1"/><circle cx="28.6" cy="24" r="1" fill="none" stroke="#D2591C" stroke-width="1.1"/><circle cx="35.4" cy="24" r="1" fill="none" stroke="#D2591C" stroke-width="1.1"/><circle cx="40.5" cy="24" r="1" fill="none" stroke="#D2591C" stroke-width="1.1"/></g></g></g></g>
+
+<text x="133" y="300" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-size="22" fill="#1B1B1F">Fahem <tspan fill="#2E4FC8" font-family="Reem Kufi, sans-serif" font-size="18">فاهم</tspan></text>
+<text x="587" y="300" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-size="22" fill="#1B1B1F">Wasel <tspan fill="#D2591C" font-family="Reem Kufi, sans-serif" font-size="18">واصل</tspan></text>
+<g class="bubble">
+  <path d="M46 34 h86 a16 16 0 0 1 16 16 v14 a16 16 0 0 1 -16 16 h-58 l-14 14 v-14 h-14 a16 16 0 0 1 -16 -16 v-14 a16 16 0 0 1 16 -16 z" fill="#FFFFFF" stroke="#2E4FC8" stroke-width="3.2" stroke-linejoin="round"/>
+  <g fill="#2E4FC8"><circle class="dot" cx="70" cy="57" r="5"/><circle class="dot" cx="89" cy="57" r="5"/><circle class="dot" cx="108" cy="57" r="5"/></g>
+</g>
+
+<g class="card">
+  <g transform="translate(236 142) scale(0.9)">
+    <rect width="112" height="140" rx="12" fill="#FFFFFF" stroke="#1B1B1F" stroke-width="3.2"/>
+    <path d="M0 12 a12 12 0 0 1 12 -12 h88 a12 12 0 0 1 12 12 v14 h-112 z" fill="#2E4FC8"/>
+    <circle cx="22" cy="52" r="10" fill="#E4EAFB" stroke="#1B1B1F" stroke-width="2.4"/>
+    <path class="write" d="M40 48 h50" stroke="#1B1B1F" stroke-width="3.2" stroke-linecap="round"/>
+    <path class="write l2" d="M40 58 h34" stroke="#1B1B1F" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>
+    <path class="write l3" d="M14 82 h84 M14 96 h70 M14 110 h78" stroke="#1B1B1F" stroke-width="2.4" stroke-linecap="round" opacity=".45"/>
+    <path d="M14 124 h30" stroke="#2E4FC8" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+</g>
+
+<path class="thread" d="M416 176 C 444 150 446 106 452 82" fill="none" stroke="#D2591C" stroke-width="3.2" stroke-linecap="round"/>
+<path class="thread t2" d="M416 236 C 444 262 446 304 452 330" fill="none" stroke="#D2591C" stroke-width="3.2" stroke-linecap="round"/>
+<g class="match"><circle cx="452" cy="58" r="22" fill="#FFFFFF" stroke="#1B1B1F" stroke-width="3.2"/><path d="M441 58 l7 7 l13 -14" fill="none" stroke="#D2591C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="match m2"><circle cx="452" cy="352" r="22" fill="#FFFFFF" stroke="#1B1B1F" stroke-width="3.2"/><path d="M441 352 l7 7 l13 -14" fill="none" stroke="#D2591C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fahem & Wasel — Brand kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B1B1F; --paper:#FBF8F3; --white:#FFFFFF; --line:#E6E1D8; --muted:#6D6A66;
+  --blue:#2E4FC8; --mist:#E4EAFB; --orange:#D2591C; --orange-text:#A9420E; --apricot:#FCE6D6;
+  --serif:'Instrument Serif',Georgia,serif; --sans:'IBM Plex Sans','IBM Plex Sans Arabic',system-ui,sans-serif; --kufi:'Reem Kufi','IBM Plex Sans Arabic',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+main{max-width:1120px;margin:0 auto;padding:56px 24px 96px}
+h1,h2,h3,p{margin:0}
+section{margin-top:88px}
+section>h2{font:400 44px/1.05 var(--serif);letter-spacing:-.01em;margin:0 0 28px}
+section>h2 em{font-style:normal;color:var(--orange-text)}
+.lead{font-size:18px;color:#3d3b39;max-width:640px}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.lockup{display:flex;align-items:center;gap:18px}
+.duo-mark{display:flex;flex-shrink:0}.duo-mark img{width:64px;height:64px}.duo-mark img+img{margin-inline-start:-14px;transform:rotate(6deg);box-shadow:0 0 0 3px var(--paper);border-radius:14px}
+.wordmark{font:400 76px/.95 var(--serif);letter-spacing:-.02em}
+.wordmark .amp{color:var(--orange)}
+.arabic-mark{font:600 34px/1.3 var(--kufi);color:var(--blue);margin-top:12px}
+.arabic-mark span{color:var(--orange)}
+.tagline{font:400 26px/1.3 var(--serif);margin-top:26px}
+.tagline-ar{font:500 18px/1.6 'IBM Plex Sans Arabic',sans-serif;color:var(--muted);margin-top:6px}
+.origin{margin-top:14px;font-size:14px;color:#55524E}
+.scene{border-radius:28px;overflow:hidden;box-shadow:0 1px 0 var(--line),0 30px 60px -38px #1b1b1f55;background:var(--white)}
+.scene img{display:block;width:100%;height:auto}
+
+/* Agents */
+.agents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.agent{border-radius:26px;padding:28px;background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;gap:18px}
+.agent header{display:flex;align-items:center;gap:18px}
+.agent header img{width:112px;height:112px}
+.agent h3{font:400 40px/1 var(--serif)}
+.agent h3 span{font:600 26px var(--kufi);margin-inline-start:10px}
+.agent.fahem h3 span{color:var(--blue)} .agent.wasel h3 span{color:var(--orange-text)}
+.agent .meaning{font-size:15px;color:var(--muted);margin-top:4px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fact{border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.45}
+.fahem .fact{background:var(--mist)} .wasel .fact{background:var(--apricot)}
+.fact b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#55524E;margin-bottom:2px}
+.says{display:flex;flex-direction:column;gap:8px}
+.says p{font:400 21px/1.35 var(--serif);padding-inline-start:16px;border-inline-start:3px solid}
+.fahem .says p{border-color:var(--blue)} .wasel .says p{border-color:var(--orange)}
+.says small{font-size:13px;color:var(--muted)}
+
+/* Library */
+.library{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+.quote{border-radius:26px;padding:36px;background:var(--ink);color:var(--paper)}
+.quote p{font:400 32px/1.2 var(--serif)}
+.quote p b{font-weight:400}.quote p .f{color:#9DB0F2}.quote p .w{color:#F4A47A}
+.flow{border-radius:26px;padding:28px;background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.step{display:flex;align-items:center;gap:12px;font-size:15px}
+.step i{flex-shrink:0;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font:600 13px var(--sans);font-style:normal;color:var(--white)}
+.step.f i{background:var(--blue)} .step.w i{background:var(--orange-text)}
+.step small{color:var(--muted)}
+
+/* Colour */
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.swatch{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--white)}
+.chip{height:108px;display:flex;align-items:flex-end;padding:12px 14px;font:400 24px var(--serif)}
+.swatch div:last-child{padding:12px 14px;font-size:13.5px;line-height:1.5}
+.swatch div:last-child b{display:block;font-size:15px}
+.swatch code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted)}
+.note{margin-top:14px;font-size:14px;color:var(--muted)}
+
+/* Type */
+.type{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.spec{border-radius:20px;padding:24px;background:var(--white);border:1px solid var(--line)}
+.spec .sample{margin-bottom:8px}
+.spec small{color:var(--muted);font-size:13.5px}
+
+/* Illustration rules */
+.rules{display:grid;grid-template-columns:1.1fr 1fr;gap:24px}
+.rule-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rule-list li{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--white);border:1px solid var(--line);font-size:15px}
+.rule-list li b{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-size:12.5px}
+.sizes{border-radius:26px;padding:28px;background:var(--white);border:1px solid var(--line);display:flex;flex-direction:column;gap:20px}
+.sizes .row{display:flex;align-items:flex-end;gap:18px}
+.sizes figure{margin:0;text-align:center;font-size:12px;color:var(--muted)}
+.dont{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dont div{border-radius:14px;padding:12px 14px;font-size:14px}
+.dont .yes{background:#E5F1E8}.dont .no{background:#F7E3E0}
+
+/* Voice */
+.voice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.voice div{border-radius:20px;padding:22px;background:var(--white);border:1px solid var(--line)}
+.voice h3{font:400 26px var(--serif);margin-bottom:8px}
+.voice p{font-size:15px;color:#3d3b39}
+
+footer{margin-top:88px;padding-top:24px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .hero,.agents,.library,.type,.rules,.voice{grid-template-columns:1fr}
+  .swatches{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wordmark{font-size:56px} section>h2{font-size:36px}
+  .facts{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+
+  <div class="hero">
+    <div>
+      <div class="lockup">
+        <span class="duo-mark"><img src="fahem.svg" alt=""><img src="wasel.svg" alt=""></span>
+        <h1 class="wordmark">Fahem <span class="amp">&amp;</span> Wasel</h1>
+      </div>
+      <p class="arabic-mark" lang="ar" dir="rtl">فاهم <span>و</span> واصل</p>
+      <p class="tagline">Two AI agents that find you a cofounder.</p>
+      <p class="tagline-ar" lang="ar" dir="rtl">وكيلان ذكيان يجدان لك شريكاً مؤسساً.</p>
+      <p class="origin">Fahem is from Qatar · Wasel is from Oman</p>
+    </div>
+    <div class="scene"><img src="duo-animated.svg" alt="Fahem listens and writes a profile card; the card slides to Wasel, who connects it to two matching founders."></div>
+  </div>
+
+  <section>
+    <h2>One understands you. <em>One connects you.</em></h2>
+    <div class="agents">
+      <article class="agent fahem">
+        <header><img src="fahem.svg" alt="Fahem"><div><h3>Fahem <span lang="ar">فاهم</span></h3><p class="meaning">“The one who understands.” From Qatar: a white ghutra behind a friendly face, its edge rising to the sharp “cobra” point at the hairline, the black agal on the crown, happy eyes and a warm smile.</p></div></header>
+        <div class="facts">
+          <p class="fact"><b>Job</b>Interviews you and writes your profile</p>
+          <p class="fact"><b>Runs</b>Once, when you sign up</p>
+          <p class="fact"><b>Pace</b>Slow and careful</p>
+        </div>
+        <div class="says">
+          <p>“What are you building, in one sentence?”</p>
+          <p>“You said ‘a year without salary.’ I’ll keep your exact words.”</p>
+          <small>One question at a time. Repeats your words back. Never guesses.</small>
+        </div>
+      </article>
+      <article class="agent wasel">
+        <header><img src="wasel.svg" alt="Wasel"><div><h3>Wasel <span lang="ar">واصل</span></h3><p class="meaning">“The one who connects.” From Oman: the embroidered kumma cap with its rows of stitched dots and rings, ears in full view, a wink and an open smile.</p></div></header>
+        <div class="facts">
+          <p class="fact"><b>Job</b>Finds your matches and makes the intro</p>
+          <p class="fact"><b>Runs</b>Every time you search</p>
+          <p class="fact"><b>Pace</b>Fast and cheap</p>
+        </div>
+        <div class="says">
+          <p>“Three people fit. Lina first: you need a builder, and she’s built backends for six years.”</p>
+          <p>“She said yes. Here’s how to reach her.”</p>
+          <small>Short and decisive. Every match comes with reasons, in your own words.</small>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>A library, <em>not a feed.</em></h2>
+    <div class="library">
+      <div class="quote"><p><b class="f">Fahem</b> reads each book once and writes a good catalog card. <b class="w">Wasel</b> searches the cards, never the books.</p></div>
+      <div class="flow">
+        <p class="step f"><i>1</i><span><b>Interview</b> <small>· one question at a time, by voice or text</small></span></p>
+        <p class="step f"><i>2</i><span><b>Profile</b> <small>· every field keeps your exact words</small></span></p>
+        <p class="step w"><i>3</i><span><b>Filter</b> <small>· removes people who can't work with you</small></span></p>
+        <p class="step w"><i>4</i><span><b>Rank</b> <small>· do you each bring what the other needs?</small></span></p>
+        <p class="step w"><i>5</i><span><b>Explain</b> <small>· 2–3 reasons, backed by what you both said</small></span></p>
+        <p class="step w"><i>6</i><span><b>Intro</b> <small>· contact details only after both say yes</small></span></p>
+        <p class="note" style="margin-top:6px">Blue is always Fahem's work. Orange is always Wasel's. Never swap them.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ink and paper, <em>plus one colour each.</em></h2>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--ink);color:var(--paper)">Ink</div><div><b>Ink</b><code>#1B1B1F</code><br>All line art and text.</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--paper)">Paper</div><div><b>Paper</b><code>#FBF8F3</code><br>The page. Never pure white.</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--blue);color:var(--white)">Fahem</div><div><b>Fahem blue</b><code>#2E4FC8</code><br>His steps, his accents. 6:1 on paper.</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--orange);color:var(--white)">Wasel</div><div><b>Wasel orange</b><code>#D2591C</code><br>Fills and lines. For text use <code>#A9420E</code>.</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--mist)">Mist</div><div><b>Mist</b><code>#E4EAFB</code><br>Fahem's backgrounds and panels.</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--apricot)">Apricot</div><div><b>Apricot</b><code>#FCE6D6</code><br>Wasel's backgrounds and panels.</div></div>
+      <div class="swatch"><div class="chip" style="background:#F1EEE8">Tile</div><div><b>Tile</b><code>#F1EEE8</code><br>Behind the icons. White is the ghutra.</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--line)">Line</div><div><b>Line</b><code>#E6E1D8</code><br>Hairlines and borders.</div></div>
+    </div>
+    <p class="note">Orange text below 24px must use #A9420E: the brighter #D2591C is only 3.6:1 on paper.</p>
+  </section>
+
+  <section>
+    <h2>A storyteller's serif, <em>a clear bilingual sans.</em></h2>
+    <div class="type">
+      <div class="spec"><p class="sample" style="font:400 48px/1.05 var(--serif)">Find your cofounder.</p><small>Instrument Serif · headlines, names, the voice of the agents</small></div>
+      <div class="spec"><p class="sample" lang="ar" dir="rtl" style="font:600 42px/1.3 var(--kufi);color:var(--blue)">فاهم <span style="color:var(--orange)">و</span> واصل</p><small>Reem Kufi · the two names and short Arabic headlines only</small></div>
+      <div class="spec"><p class="sample" style="font:500 22px/1.4 var(--sans)">You need someone to build the product. Lina has built backends for six years.</p><small>IBM Plex Sans · all interface text</small></div>
+      <div class="spec"><p class="sample" lang="ar" dir="rtl" style="font:500 22px/1.6 'IBM Plex Sans Arabic',sans-serif">تحتاج إلى من يبني المنتج. لينا تبني الأنظمة منذ ست سنوات.</p><small>IBM Plex Sans Arabic · the same voice in Arabic, same rhythm</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A few strokes, <em>unmistakably Qatari.</em></h2>
+    <div class="rules">
+      <ol class="rule-list">
+        <li><b>1</b><span><strong>One light line:</strong> 1.8px at 64px, round caps, drawn by hand. Scale the whole icon, never the stroke alone.</span></li>
+        <li><b>2</b><span><strong>One colour each:</strong> Fahem only blue, Wasel only orange. The only fill is the white of the ghutra, on a soft tile (#F1EEE8, or Mist and Apricot in scenes).</span></li>
+        <li><b>3</b><span><strong>Headwear is the signature:</strong> Fahem is Qatari, with a white ghutra in a soft dome, the face opening rising to the sharp "cobra" point, and the agal's double cord on the crown. Wasel is Omani, with the embroidered kumma cap: a short round cap with a row of dots and a row of rings. Never a red check (Saudi) or an agal-less wrap (Emirati).</span></li>
+        <li><b>4</b><span><strong>Heads only:</strong> a face shape, headwear, eyes, brows, nose and mouth. No bodies, clothes, beards, props or accessories.</span></li>
+        <li><b>5</b><span><strong>Warm, never eerie:</strong> eyes always have solid pupils, brows carry the expression, and there are no jaw or skull outlines inside a framed face. Fahem's eyes smile; Wasel winks. Both are clean-shaven, so the headwear tells them apart. Two neighbours, one Gulf.</span></li>
+        <li><b>6</b><span><strong>Motion is small:</strong> blink, nod, lean, a card sliding, a thread drawing. 6–8 second loops, and still for reduced motion.</span></li>
+      </ol>
+      <div class="sizes">
+        <div class="row">
+          <figure><img src="fahem.svg" width="96" alt=""><figcaption>96 · profile</figcaption></figure>
+          <figure><img src="wasel.svg" width="64" alt=""><figcaption>64 · chat</figcaption></figure>
+          <figure><img src="fahem.svg" width="40" alt=""><figcaption>40 · list</figcaption></figure>
+          <figure><img src="wasel.svg" width="28" alt=""><figcaption>28 · inline</figcaption></figure>
+        </div>
+        <div class="dont">
+          <div class="yes">✓ Agents speak in the first person, as themselves.</div>
+          <div class="no">✕ Don't merge them into one mascot.</div>
+          <div class="yes">✓ Show Fahem when you're talking, Wasel when you're matching.</div>
+          <div class="no">✕ Don't recolour them, or give either both accents.</div>
+          <div class="yes">✓ Keep them on Paper, Mist or Apricot.</div>
+          <div class="no">✕ No earrings, earbuds or props. The ghutra does the work.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Plain words, <em>your own words.</em></h2>
+    <div class="voice">
+      <div><h3>Honest</h3><p>The match score comes from a formula, not the AI, and we say so. Sample people are always marked "Demo profile".</p></div>
+      <div><h3>Specific</h3><p>Every reason quotes something you or they actually said. No "great synergy". No made-up facts.</p></div>
+      <div><h3>Consent first</h3><p>Nobody sees contact details until both people say yes. Wasel always asks first.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Fahem &amp; Wasel · فاهم و واصل · brand kit v1</span>
+    <span>Icons: <code>fahem.svg</code>, <code>wasel.svg</code> · scene: <code>duo-animated.svg</code> · detailed illustrations: <code>*-portrait.svg</code> · regenerate with <code>generate.py</code></span>
+  </footer>
+</main>
+</body>
+</html>

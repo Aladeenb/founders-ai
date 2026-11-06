@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 72" role="img" aria-label="Fahem and Wasel mark">
+<path d="M10 12 h36 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-18 l-10 9 v-9 h-8 a10 10 0 0 1 -10 -10 v-14 a10 10 0 0 1 10 -10 z" fill="#2E4FC8"/>
+<path d="M50 26 h36 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-8 v9 l-10 -9 h-18 a10 10 0 0 1 -10 -10 v-14 a10 10 0 0 1 10 -10 z" fill="#D2591C" style="mix-blend-mode:multiply"/>
+<circle cx="22" cy="29" r="3" fill="#FFFFFF"/><circle cx="32" cy="29" r="3" fill="#FFFFFF"/>
+<path d="M64 43 h18" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+</svg>
