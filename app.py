@@ -1347,4 +1347,4 @@ demo.queue(default_concurrency_limit=4, max_size=32)
 threading.Thread(target=matching.warm, args=([pid for pid, _ in PERSONAS],), daemon=True).start()
 
 if __name__ == "__main__":
-    demo.launch(theme=ui.THEME, css=ui.CSS, js=ui.FORCE_LIGHT_JS)
+    demo.launch(theme=ui.THEME, css=ui.CSS, head=ui.brand_theme.HEAD, js=ui.FORCE_LIGHT_JS)
