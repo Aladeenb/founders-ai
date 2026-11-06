@@ -15,6 +15,7 @@ to filter matches: no prompt about other people ever contains them.
 from __future__ import annotations
 
 import json
+import re
 import logging
 import threading
 import uuid
@@ -71,7 +72,14 @@ _ROLE_NEEDS = {
         ("remote, hybrid or on-site", lambda d, t: _has(d, "work_style") or bool(t and t.work)),
     ],
 }
-DEALBREAKER_ITEM = "deal-breakers (optional): anything that rules someone out, such as a minimum valuation or salary"
+DEALBREAKER_ITEM = "deal-breakers (optional): anything that rules someone out"
+# Examples the agent may give when it asks about deal-breakers, by role (founders don't get asked about MRR).
+DEALBREAKER_EXAMPLES = {
+    "founder": "the lowest valuation you'd accept, the most you can pay a hire, or a work mode a hire must accept",
+    "investor": "the highest valuation you'd invest at, a minimum MRR, or a stage or region you won't touch",
+    "engineer": "your minimum salary, a minimum equity stake, or remote-only",
+    "operator": "your minimum salary, a minimum equity stake, or a work mode you need",
+}
 
 
 def _has(d: profiles.Draft, *keys: str) -> bool:
@@ -134,6 +142,9 @@ summarise in the same message.
    - Be honest about requirements: for numbers on valuation, salary or equity, or a work mode, say you'll filter on it \
 exactly. For anything else (MRR, profitability, team size...), say you can't verify it from profiles, so you'll check \
 each profile for it and tell them when it isn't stated. Never say you "filter" on something you can't check.
+   - Deal-breaker examples must fit the member's role: use only the examples given in the missing list item, or \
+none. Never ask a founder about MRR or board seats; those are what investors require of founders.
+   - If the member already gave deal-breakers, don't ask for more; move on.
    - When asking about deal-breakers, explain you'll use them to filter quietly and never show them to anyone. \
 Accept "none" without pushing.
    - If every item in the missing list is now known (or it is empty), summarise instead: 3-5 short lines (who they \
@@ -221,14 +232,22 @@ def _required(s: Session) -> list[str]:
     return [label for label, ok in _BASE + _ROLE_NEEDS[s.role] if not ok(s.draft, s.terms)]
 
 
+def _has_rules(s: Session) -> bool:
+    """The member has stated at least one deal-breaker (in words or as a number)."""
+    t = s.terms
+    numbers = bool(t and (t.valuation or t.salary or t.equity or t.work or t.other
+                          or any(h.salary or h.equity or h.work for h in t.hires)))
+    return bool(s.draft.private_limits) or numbers
+
+
 def missing(s: Session) -> list[str]:
     """Details still needed, most important first. Empty means: summarise and confirm."""
     if s.user_turns >= MAX_USER_TURNS:
         return []
     need = _required(s)
-    has_rules = bool(s.draft.private_limits or (s.terms and s.terms.other))
-    if not need and not s.dealbreakers_asked and not has_rules:
-        need = [DEALBREAKER_ITEM]  # only shown once everything else is known, and asked only once
+    if not need and not s.dealbreakers_asked and not _has_rules(s):
+        # only shown once everything else is known, and asked only once
+        need = [f"{DEALBREAKER_ITEM} (examples for a {s.role}: {DEALBREAKER_EXAMPLES[s.role]})"]
     return need
 
 
@@ -372,6 +391,7 @@ def send(session_id: str, text: str = "", file: str | Path | None = None) -> dic
 
     s.history.append({"role": "user", "content": text})
     s.user_turns += 1
+    had_rules = _has_rules(s)
     try:
         turn, _ = llm.chat_json(_messages(s, missing(s)), _Turn, max_tokens=1500, timeout=TURN_TIMEOUT)
     except llm.LLMError as exc:
@@ -397,6 +417,21 @@ def send(session_id: str, text: str = "", file: str | Path | None = None) -> dic
     s.summary_shown = turn.asks == "summary"
     if turn.asks in ("dealbreakers", "summary"):
         s.dealbreakers_asked = True  # asked once ("none" is fine); never ask again after a summary
+    asks_more = re.search(r"deal.?breaker|rule (?:someone|anyone|people) out|anything else|any other|other requirement",
+                          turn.reply, re.I) and "?" in turn.reply
+    if not had_rules and _has_rules(s) and not _required(s) and asks_more:
+        # They just gave their deal-breakers; asking "any others?" makes the next "yes" ambiguous (and the
+        # model's own asks label can't be trusted here). Ask once more with a direct instruction.
+        note = [{"role": "user", "content": "(Note from Handshake: the member has just given their deal-breakers. "
+                                            "Write the summary now and ask only whether it is correct.)"}]
+        try:
+            again, _ = llm.chat_json(_messages(s, missing(s)) + note, _Turn, max_tokens=1500, timeout=TURN_TIMEOUT)
+            if again.reply.strip():
+                turn = again
+                s.summary_shown = True
+                s.dealbreakers_asked = True
+        except llm.LLMError:
+            pass
     reply = turn.reply.strip() or ERROR_REPLY
     s.history.append({"role": "assistant", "content": reply})
     return _state(s, reply)
