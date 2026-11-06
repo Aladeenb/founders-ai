@@ -1,0 +1,90 @@
+{
+  "id": "n-3d3ff09189",
+  "profile_a_id": "t-ravi",
+  "profile_b_id": "f-ahmed",
+  "turns": [
+    {
+      "speaker_id": "t-ravi",
+      "message": "Hello, I'm representing Ravi Menon. Ravi is a backend engineer with payments and lending experience, based in Dubai. Ravi is looking for an early engineering role in Gulf fintech. The salary range for engineering in your public terms is a potential concern on our side. Could you clarify the equity and start date for the founding engineer role?",
+      "private_thought": "Their engineering salary cap is below Ravi's minimum; need to see if equity and location can bridge the gap.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-ahmed",
+      "message": "The equity for the founding backend role is negotiable within our public range. The start date is flexible. The salary range you noted is a concern on our side. Is Ravi's range firm?",
+      "private_thought": "Their salary ask is above our public range, but equity is within our private limit.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": true
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "Ravi's range is firm. The equity range you offer is workable for Ravi. Ravi's start date is February 2027. Could you confirm if remote from Dubai is acceptable? Also, what is the mission focus for the payments and credit stack?",
+      "private_thought": "Salary is a hard mismatch; need to confirm remote and mission fit.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-ahmed",
+      "message": "Remote from Dubai is acceptable within MENA. The mission is enabling supplier credit and payments for small shops in Egypt. The salary range is not workable on our side. Ravi's start date of February 2027 is also too far out.",
+      "private_thought": "Salary and start date are both hard mismatches.",
+      "stage": "exploring",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "The start date is firm. The salary range is not workable for Ravi. Given the mismatch on salary and start date, a meeting may not be productive. Thank you for your time.",
+      "private_thought": "Salary and start date are hard mismatches; no point continuing.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "not_fit",
+    "score": 25,
+    "reasons": [
+      "Both agents explicitly stated a firm mismatch on salary range.",
+      "Ravi's start date of February 2027 was stated as 'too far out' and non-negotiable.",
+      "While remote work from Dubai was acceptable and the mission focus was clarified, the core deal terms are incompatible."
+    ],
+    "agreed": [
+      "Remote work from Dubai within MENA is acceptable.",
+      "The equity range offered is workable for Ravi.",
+      "The mission of enabling supplier credit and payments for small shops in Egypt was clarified."
+    ],
+    "open_questions": [],
+    "meeting_questions": [],
+    "intro_message": "Thank you for your time on Handshake. After reviewing the conversation, it appears there is a fundamental mismatch on key terms at this stage. We encourage you both to continue your searches on the platform."
+  },
+  "memo_ar": {
+    "verdict": "not_fit",
+    "score": 25,
+    "reasons": [
+      "صرّح كلا الوكيلين بوضوح بعدم التوافق على نطاق الراتب.",
+      "تم وصف تاريخ بدء رافي في فبراير 2027 بأنه 'بعيد جداً' وغير قابل للتفاوض.",
+      "بينما كان العمل عن بُعد من دبي مقبولاً وتم توضيح تركيز المهمة، فإن شروط الصفقة الأساسية غير متوافقة."
+    ],
+    "agreed": [
+      "العمل عن بُعد من دبي ضمن منطقة الشرق الأوسط وشمال أفريقيا مقبول.",
+      "نطاق حصة الملكية المطروح مناسب لرافي.",
+      "تم توضيح مهمة تمكين الائتمان المالي للموردين والمدفوعات للمحلات الصغيرة في مصر."
+    ],
+    "open_questions": [],
+    "meeting_questions": [],
+    "intro_message": "شكراً لوقتكُم على Handshake. بعد مراجعة المحادثة، يبدو أن هناك عدم توافق أساسي على الشروط الرئيسية في هذه المرحلة. نشجع كلاكما على مواصلة البحث على المنصة."
+  },
+  "status": "complete",
+  "language": "en",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}

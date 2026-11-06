@@ -1,0 +1,131 @@
+{
+  "id": "n-6e4bedc06d",
+  "profile_a_id": "f-layla",
+  "profile_b_id": "i-nadia",
+  "turns": [
+    {
+      "speaker_id": "f-layla",
+      "message": "مرحبًا، أنا Layla Haddad، مؤسسة Rimal Ledger. نبحث عن مستثمر قائد في مرحلة seed في قطاع الفنتك في الخليج. هل يمكنكم تقديم شيك استثماري بقيمة $500k–$1M؟ وهل يمكنكم المساعدة في تقديمنا إلى شركاء من البنوك في الخليج؟",
+      "private_thought": "Opening with cheque size and bank partnership value-add, as those are Layla's key needs.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-nadia",
+      "message": "نعم، يمكننا تقديم شيك استثماري بقيمة $500k–$1M كقائد للجولة. نستطيع تقديم مساعدة كبيرة في شراكات البنوك، بناءً على خبرة Nadia في القطاع المصرفي. هل يمكنك مشاركة المزيد عن الجدول الزمني لإغلاق الجولة؟",
+      "private_thought": "Cheque size and bank partnerships match. Need to confirm valuation range and timeline.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-layla",
+      "message": "شكرًا. نهدف إلى إغلاق الجولة بحلول نهاية الربع الأول من عام 2027. هل يمكنكم مشاركة نطاق التقييم المسبق الذي تتعاملون معه عادةً في صفقاتكم؟",
+      "private_thought": "They fit cheque size and value-add. Need to see if their valuation range meets our $10M+ floor.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-nadia",
+      "message": "نطاق التقييم المسبق الذي ذكرتموه ($8M–$12M) مقبول على الجانب الخاص بنا. نبحث عادةً عن مقعد في مجلس الإدارة عندما نقود الجولة. هل هذا متاح؟",
+      "private_thought": "Their valuation range is fully within our limit of $14M.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-layla",
+      "message": "نعم، يمكننا منح مقعد في مجلس الإدارة للقائد. هل يمكنكم مشاركة حجم الشيك الدقيق الذي تخططون له، ضمن نطاق $500k–$1M؟",
+      "private_thought": "Board seat is fine. Need to confirm their exact cheque size to see if dilution stays under 15%.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-nadia",
+      "message": "نحن نخطط لشيك بقيمة $500k–$1M، لكن الحجم الدقيق سيعتمد على هيكل الجولة. هل يمكنكم مشاركة المزيد عن خطط التوسع في السعودية واستخدام الأموال؟",
+      "private_thought": "Cheque size and valuation are workable. Need to confirm Saudi expansion details.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-layla",
+      "message": "يبدو أن هناك توافقًا جيدًا في القطاع، المرحلة، الجغرافيا، والقيمة المضافة. نطاق التقييم المذكور ($8M–$12M) مقبول على الجانب الخاص بنا. نوصي بعقد اجتماع بين Layla و Nadia لمناقشة التفاصيل النهائية.",
+      "private_thought": "Valuation range overlaps with Layla's minimum, cheque size is in range, and they offer bank partnerships.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-nadia",
+      "message": "شكرًا. نخطط لشيك بقيمة $500k–$1M، لكن الحجم الدقيق سيعتمد على هيكل الجولة. هل يمكنكم مشاركة المزيد عن خطط التوسع في السعودية واستخدام الأموال؟",
+      "private_thought": "Need to confirm use of funds and Saudi expansion details to assess fit.",
+      "stage": "verdict",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "worth_meeting",
+    "score": 85,
+    "reasons": [
+      "Both parties confirmed alignment on sector (fintech/B2B), stage (seed), geography (GCC), and the investor's ability to provide bank partnership support.",
+      "The investor's stated cheque size range ($500k–$1M) matches the founder's fundraising needs, and the founder's pre-money valuation range ($8M–$12M) was explicitly accepted by the investor.",
+      "The founder agreed to provide a board seat to a lead investor, and both sides expressed a desire to move forward to discuss final details."
+    ],
+    "agreed": [
+      "Investor can lead with a cheque of $500k–$1M.",
+      "Investor can provide significant help with bank partnerships.",
+      "Founder's pre-money valuation range of $8M–$12M is acceptable.",
+      "A board seat for the lead investor is available."
+    ],
+    "open_questions": [
+      "The exact cheque size within the $500k–$1M range depends on the round structure.",
+      "The founder's detailed plans for Saudi expansion and specific use of funds were requested but not yet shared in the transcript."
+    ],
+    "meeting_questions": [
+      "Layla, can you detail the specific milestones for your Saudi expansion and how the funds will be allocated between the credit engine and market entry?",
+      "Nadia, based on the round structure, what specific factors would determine whether your cheque is at the $500k or $1M level?"
+    ],
+    "intro_message": "Layla and Nadia, great to connect you. Your conversation revealed strong alignment on the investment thesis, valuation, and the critical value-add of bank partnerships. A meeting is the perfect next step to finalize the cheque size and dive into the expansion plan details."
+  },
+  "memo_ar": {
+    "verdict": "worth_meeting",
+    "score": 85,
+    "reasons": [
+      "أكد الطرفان توافقاً على القطاع (التقنية المالية/الأعمال التجارية بين الشركات)، والمرحلة (التمويل الأولي)، والمنطقة الجغرافية (مجلس التعاون الخليجي)، وقدرة المستثمر على تقديم دعم في مجال الشراكات المصرفية.",
+      "يتطابق نطاق حجم الشيك المعلن من المستثمر (500 ألف دولار إلى 1 مليون دولار) مع احتياجات المؤسس لجمع التمويل، وقد قبل المستثمر صراحةً نطاق تقييم الشركة قبل التمويل الذي قدمه المؤسس (8 ملايين دولار إلى 12 مليون دولار).",
+      "وافق المؤسس على توفير مقعد في مجلس الإدارة للمستثمر الرئيسي، وأعرب الطرفان عن رغبتهما في المضي قدماً لمناقشة التفاصيل النهائية."
+    ],
+    "agreed": [
+      "يمكن للمستثمر أن يقود الجولة بشيك بقيمة 500 ألف دولار إلى 1 مليون دولار.",
+      "يمكن للمستثمر تقديم مساعدة كبيرة في مجال الشراكات المصرفية.",
+      "نطاق تقييم الشركة قبل التمويل الذي قدمه المؤسس (8 ملايين دولار إلى 12 مليون دولار) مقبول.",
+      "مقعد في مجلس الإدارة متاح للمستثمر الرئيسي."
+    ],
+    "open_questions": [
+      "يعتمد حجم الشيك الدقيق ضمن نطاق 500 ألف دولار إلى 1 مليون دولار على هيكلة الجولة التمويلية.",
+      "تم طلب الخطط التفصيلية للمؤسس للتوسع في السعودية والاستخدام المحدد للأموال، ولكن لم يتم مشاركتها بعد في المحضر."
+    ],
+    "meeting_questions": [
+      "ليلى، هل يمكنك تفصيل المعالم المحددة لتوسعك في السعودية وكيف سيتم تخصيص الأموال بين محرك الائتمان ودخول السوق؟",
+      "نادية، بناءً على هيكلة الجولة، ما هي العوامل المحددة التي ستحدد ما إذا كان شيكك بقيمة 500 ألف دولار أو 1 مليون دولار؟"
+    ],
+    "intro_message": "ليلى ونادية، سعداء بالتواصل بينكما. كشف حديثكما عن توافق قوي بشأن أطروحة الاستثمار، والتقييم، والقيمة المضافة الحاسمة للشراكات المصرفية. الاجتماع هو الخطوة المثالية التالية لإتمام حجم الشيك والغوص في تفاصيل خطة التوسع."
+  },
+  "status": "complete",
+  "language": "fusha",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}

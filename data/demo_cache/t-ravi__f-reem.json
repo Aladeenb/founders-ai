@@ -1,0 +1,131 @@
+{
+  "id": "n-f4f10914b6",
+  "profile_a_id": "t-ravi",
+  "profile_b_id": "f-reem",
+  "turns": [
+    {
+      "speaker_id": "t-ravi",
+      "message": "I'm representing Ravi Menon, a backend engineer specializing in payments and lending infrastructure. Ravi is looking for an early engineering role at a fintech startup in the Gulf. Ravi's public terms include a hybrid or on-site work style in Dubai or Doha, a salary range of $100k–$130k, and a start date in February 2027. Could you confirm the salary range Thamra is offering for the engineering role?",
+      "private_thought": "Opening by stating Ravi's profile and asking for salary confirmation to check alignment.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-reem",
+      "message": "Thamra's engineering salary range is $95k–$125k. Ravi's range is workable. The role is hybrid in Doha. Is a move to Doha feasible for Ravi?",
+      "private_thought": "Ravi's salary range overlaps with our public range and my private limit.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "Yes, a move to Doha is feasible for Ravi. The salary range is workable. Thamra's equity range is 0.75%–1.5%. Is that range firm?",
+      "private_thought": "Their equity range meets Ravi's 0.5% minimum.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-reem",
+      "message": "The equity range is firm. The role requires hybrid in Doha, 3 days in office. Is Ravi comfortable with that?",
+      "private_thought": "Salary and location are workable. Need to confirm Ravi accepts the hybrid Doha requirement.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "Yes, Ravi is comfortable with hybrid in Doha, 3 days in office. The equity range is workable. Ravi's start target is February 2027. Does Thamra's early 2027 window align?",
+      "private_thought": "Equity and salary meet Ravi's limits. Need to confirm start date alignment.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-reem",
+      "message": "Yes, Thamra's start window of January to March 2027 aligns with February. The role is a founding backend engineer building our payments ledger. Are Ravi's skills in Go and payments ledger systems a strong fit for this?",
+      "private_thought": "All key terms align; need to confirm skills fit.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "Yes, Ravi's skills in Go and payments ledger systems are a strong fit. All terms align: salary, equity, location, and start date. I recommend a meeting to discuss specifics. Ravi can share more about his experience in the meeting.",
+      "private_thought": "All hard limits are satisfied; good match.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-reem",
+      "message": "All terms align. I recommend a meeting for Reem Al-Ansari and Ravi Menon to discuss the founding backend engineer role in detail. Reem can share specifics on the product and team.",
+      "private_thought": "All public terms match and fit within private limits.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "worth_meeting",
+    "score": 85,
+    "reasons": [
+      "Both parties confirmed alignment on salary range, with Ravi's $100k–$130k target overlapping Thamra's $95k–$125k offer.",
+      "Ravi expressed willingness to relocate to Doha and is comfortable with the hybrid work arrangement of 3 days in the office.",
+      "The start timing is compatible, as Ravi's February 2027 target falls within Thamra's January to March 2027 window, and both agreed on the equity range."
+    ],
+    "agreed": [
+      "Salary range is workable for both sides.",
+      "Ravi is open to moving to Doha and accepts the hybrid work style.",
+      "Start date in early 2027 aligns, and the equity range of 0.75%–1.5% is acceptable."
+    ],
+    "open_questions": [
+      "Specific details about the payments ledger system architecture and how Ravi's Go and fintech experience directly applies.",
+      "Logistics of the relocation process and any support Thamra might provide for moving to Doha."
+    ],
+    "meeting_questions": [
+      "Ravi, can you walk us through a specific payments ledger or regulatory audit you've handled in your previous fintech roles?",
+      "Reem, what are the immediate technical priorities for the founding backend engineer in the first 90 days?",
+      "How does Thamra plan to scale its employer partnerships, and what role might Ravi play in that growth beyond engineering?"
+    ],
+    "intro_message": "Hi Reem and Ravi, great news! Your agents have confirmed a strong alignment on key terms like salary, location, start date, and equity. Thamra's mission in earned wage access seems to match perfectly with Ravi's backend expertise in payments infrastructure. We're excited to facilitate this conversation and see how your collaboration could shape the future of fintech in the Gulf."
+  },
+  "memo_ar": {
+    "verdict": "worth_meeting",
+    "score": 85,
+    "reasons": [
+      "أكد الطرفان توافقهما على نطاق الراتب، حيث يتداخل هدف رافي البالغ 100-130 ألف دولار مع عرض ثمرة البالغ 95-125 ألف دولار.",
+      "أعرب رافي عن استعداده للانتقال إلى الدوحة وهو مرتاح لترتيبات العمل الهجين المتمثلة في 3 أيام في المكتب.",
+      "التوقيت مناسب، حيث يقع هدف رافي في فبراير 2027 ضمن النافذة الزمنية لثمرة من يناير إلى مارس 2027، واتفق الطرفان على نطاق حصص الملكية."
+    ],
+    "agreed": [
+      "نطاق الراتب قابل للتطبيق من كلا الجانبين.",
+      "رافي منفتح على الانتقال إلى الدوحة ويقبل نمط العمل الهجين.",
+      "تاريخ البدء في أوائل 2027 متوافق، ونطاق حصص الملكية 0.75%–1.5% مقبول."
+    ],
+    "open_questions": [
+      "التفاصيل المحددة حول بنية نظام دفتر المدفوعات وكيف تنطبق خبرة رافي في لغة Go والتمويل التقني مباشرة.",
+      "الترتيبات اللوجستية لعملية الانتقال وأي دعم قد تقدمه ثمرة للانتقال إلى الدوحة."
+    ],
+    "meeting_questions": [
+      "رافي، هل يمكنك أن تأخذنا في جولة حول دفتر مدفوعات محدد أو تدقيق تنظيمي تعاملت معه في أدوارك السابقة في التمويل التقني؟",
+      "ريم، ما هي الأولويات التقنية الفورية لمهندس الخلفية التأسيسي في أول 90 يومًا؟",
+      "كيف تخطط ثمرة لتوسيع شراكاتها مع أصحاب العمل، وما الدور الذي قد يلعبه رافي في هذا النمو خارج نطاق الهندسة؟"
+    ],
+    "intro_message": "مرحبًا ريم ورافي، أخبار رائعة! أكد وكلاؤكم توافقًا قويًا على الشروط الرئيسية مثل الراتب والموقع وتاريخ البدء وحصص الملكية. يبدو أن مهمة ثمرة في الوصول إلى الأجور المكتسبة تتطابق تمامًا مع خبرة رافي التقنية في بنية دفع المدفوعات. نحن متحمسون لتسهيل هذه المحادثة ونرى كيف يمكن لتعاونكم أن يشكل مستقبل التمويل التقني في الخليج."
+  },
+  "status": "complete",
+  "language": "en",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}

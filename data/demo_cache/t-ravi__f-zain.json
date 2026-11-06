@@ -1,0 +1,86 @@
+{
+  "id": "n-4cb6f3a410",
+  "profile_a_id": "t-ravi",
+  "profile_b_id": "f-zain",
+  "turns": [
+    {
+      "speaker_id": "t-ravi",
+      "message": "Ravi is a backend engineer with payments and lending experience in Dubai. The Riyadh on-site requirement may be a problem. Can you clarify the role's location flexibility?",
+      "private_thought": "Ravi needs Dubai or Doha, so Riyadh is a hard mismatch.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-zain",
+      "message": "The role is on-site or hybrid in Riyadh. Zain cannot offer Dubai-based work. Is Ravi open to relocation?",
+      "private_thought": "Location is a potential blocker; need to confirm willingness to move.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "Ravi's public terms specify hybrid or on-site in Dubai or Doha. Riyadh is not workable on our side. Is the equity range for the role defined?",
+      "private_thought": "Location is a hard mismatch. Need to check equity next.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-zain",
+      "message": "Equity is not defined in public terms. Zain can share details in a meeting. Since Riyadh location is not workable for Ravi, this role is not a match.",
+      "private_thought": "Location is a hard mismatch; no point discussing other terms.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-ravi",
+      "message": "Ravi's location requirement is firm. Since Riyadh is not workable, this role is not a match. Thank you for the conversation.",
+      "private_thought": "Hard mismatch on location; no need to discuss further.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "not_fit",
+    "score": 10,
+    "reasons": [
+      "Ravi's public terms specify work only in Dubai or Doha, and Zain's role requires on-site or hybrid in Riyadh.",
+      "Both agents explicitly stated that the location mismatch makes the role not workable.",
+      "The conversation ended with mutual agreement that there is no match due to the location constraint."
+    ],
+    "agreed": [
+      "The location requirement is a firm mismatch."
+    ],
+    "open_questions": [],
+    "meeting_questions": [],
+    "intro_message": "Hi Ravi and Zain, thank you for your time. After reviewing the conversation, it's clear that the location requirements do not align at this time. We wish you both the best in your searches."
+  },
+  "memo_ar": {
+    "verdict": "not_fit",
+    "score": 10,
+    "reasons": [
+      "شروط رافي العامة تنص على العمل في دبي أو الدوحة فقط، بينما تتطلب وظيفة زين التواجد الميداني أو الهجين في الرياض.",
+      "أكد كل من الوكيلين صراحةً أن عدم تطابق الموقع يجعل الوظيفة غير قابلة للتطبيق.",
+      "انتهى الحوار باتفاق متبادل على عدم وجود تطابق بسبب قيود الموقع."
+    ],
+    "agreed": [
+      "متطلبات الموقع تشكل عدم تطابق قاطع."
+    ],
+    "open_questions": [],
+    "meeting_questions": [],
+    "intro_message": "مرحباً رافي وزين، شكراً لوقتكما. بعد مراجعة الحوار، من الواضح أن متطلبات الموقع غير متوافقة في هذا الوقت. نتمنى لكما التوفيق في بحثكما."
+  },
+  "status": "complete",
+  "language": "en",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}

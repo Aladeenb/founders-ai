@@ -1,0 +1,131 @@
+{
+  "id": "n-a6913b509e",
+  "profile_a_id": "f-layla",
+  "profile_b_id": "i-hamad",
+  "turns": [
+    {
+      "speaker_id": "f-layla",
+      "message": "Layla Haddad here, founder of Rimal Ledger. We provide invoice financing for Gulf SMEs and are raising a $1.5M seed round. Our key need is a lead investor who can help secure Gulf bank partnerships. Does this align with your focus and capabilities?",
+      "private_thought": "Opening by stating public facts and highlighting the crucial need for bank intros.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-hamad",
+      "message": "Hamad focuses on fintech in the GCC, so sector and geography align. Hamad's cheque size can accommodate $1.5M. However, Hamad's role in a round is not as a lead investor. Is there a lead investor already?",
+      "private_thought": "Sector and cheque are fine, but the lead requirement is a hard mismatch.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": true
+    },
+    {
+      "speaker_id": "f-layla",
+      "message": "We are seeking a lead investor for this round. Hamad's cheque size is workable. Could Hamad introduce Gulf bank partnerships? Our valuation is $8M–$12M pre-money, aiming to close by end of Q1 2027.",
+      "private_thought": "Cheque in range, but lack of lead role is a problem.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-hamad",
+      "message": "Hamad can introduce Gulf bank partnerships, yes. The valuation range is workable on our side. Closing by end of Q1 2027 is fine. Hamad's cheque is $1M–$2M, so $1.5M fits. Since Hamad does not lead rounds, is there another investor to lead?",
+      "private_thought": "Sector, geography, cheque and valuation all fit, but the need for a lead is a blocker.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-layla",
+      "message": "Rimal Ledger needs a lead investor for this round. Hamad's cheque size and valuation range are workable. Can Hamad commit to being the lead? If not, introductions to potential leads would be valuable.",
+      "private_thought": "Need clarity on lead role; valuation range acceptable but must ensure final pre-money is at least $10M.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-hamad",
+      "message": "Hamad cannot commit to being the lead investor. Hamad can introduce potential leads. Is the timeline and valuation still $8M–$12M pre-money, close by end Q1 2027?",
+      "private_thought": "Lead role is a hard mismatch; need to confirm other terms are still acceptable.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-layla",
+      "message": "Hamad's cheque size and valuation range are workable. Since Hamad cannot lead, introductions to potential leads would be valuable. Layla Haddad can share more on our traction and bank partnership needs in a meeting. Would Hamad be open to an intro call?",
+      "private_thought": "Cheque fits, valuation range okay if above $10M, but lack of lead is a hurdle; meeting could explore intro value.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "i-hamad",
+      "message": "Hamad recommends a meeting. Sector, geography, cheque size and valuation align. Hamad cannot lead but can help with bank intros and may introduce potential leads. Layla can share more on traction and partnership needs then.",
+      "private_thought": "Good fit except lead role; meeting can clarify if another lead is possible.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "maybe_later",
+    "score": 65,
+    "reasons": [
+      "The investor's cheque size ($1M–$2M) matches the founder's $1.5M seed raise.",
+      "Both parties confirmed alignment on sector (fintech), geography (GCC), and valuation range ($8M–$12M pre-money).",
+      "A key mismatch remains as the founder explicitly needs a lead investor, but the investor stated they cannot fulfill that role."
+    ],
+    "agreed": [
+      "Cheque size fits the $1.5M raise.",
+      "Valuation range of $8M–$12M pre-money is acceptable.",
+      "Timeline to close by end of Q1 2027 is workable."
+    ],
+    "open_questions": [
+      "Who will serve as the lead investor for the round?",
+      "Can the investor successfully introduce other potential lead investors?"
+    ],
+    "meeting_questions": [
+      "Layla, beyond introductions, what specific support do you need from a lead investor to secure bank partnerships?",
+      "Hamad, based on your network, which types of investors could you introduce as potential leads?",
+      "Layla, can you share more details on your current traction and the specific Gulf banks you are targeting for partnerships?"
+    ],
+    "intro_message": "Layla and Hamad, your conversation revealed strong alignment on the investment size, valuation, and market focus. While the lead investor role needs clarification, there's clear potential for collaboration on bank partnerships and introductions. A follow-up call could help explore these avenues further."
+  },
+  "memo_ar": {
+    "verdict": "maybe_later",
+    "score": 65,
+    "reasons": [
+      "حجم الشيك الاستثماري (من 1 إلى 2 مليون دولار) يتوافق مع هدف المؤسسة لجمع 1.5 مليون دولار كتمويل أولي.",
+      "أكد الطرفان توافقهما على القطاع (التقنية المالية)، والمنطقة الجغرافية (مجلس التعاون الخليجي)، ونطاق التقييم (من 8 إلى 12 مليون دولار قبل التمويل).",
+      "لا يزال هناك عدم تطابق رئيسي؛ حيث تحتاج المؤسسة صراحةً إلى مستثمر قائد، بينما صرح المستثمر بأنه لا يستطيع تولي هذا الدور."
+    ],
+    "agreed": [
+      "حجم الشيك يتناسب مع هدف جمع 1.5 مليون دولار.",
+      "نطاق التقييم من 8 إلى 12 مليون دولار قبل التمويل مقبول.",
+      "الجدول الزمني للإغلاق بنهاية الربع الأول من عام 2027 قابل للتنفيذ."
+    ],
+    "open_questions": [
+      "من سيتولى دور المستثمر القائد في هذه الجولة؟",
+      "هل يمكن للمستثمر تقديم مستثمرين محتملين آخرين ليكونوا قادة للجولة بنجاح؟"
+    ],
+    "meeting_questions": [
+      "ليلى، بخلاف التقديمات، ما هو الدعم المحدد الذي تحتاجينه من مستثمر قائد لتأمين شراكات مع البنوك؟",
+      "حمد، بناءً على شبكة علاقاتك، ما هي أنواع المستثمرين الذين يمكنك تقديمهم كمرشحين محتملين لدور القيادة؟",
+      "ليلى، هل يمكنك مشاركة المزيد من التفاصيل حول التقدم الحالي لشركتك والبنوك الخليجية المحددة التي تستهدفينها للشراكة؟"
+    ],
+    "intro_message": "ليلى وحمد، أظهر حواركما توافقاً قوياً على حجم الاستثمار والتقييم والتركيز السوقي. بينما يحتاج دور المستثمر القائد إلى توضيح، هناك إمكانية واضحة للتعاون في مجال الشراكات البنكية والتقديمات. يمكن لمكالمة متابعة المساعدة في استكشاف هذه السبل بشكل أكبر."
+  },
+  "status": "complete",
+  "language": "en",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}

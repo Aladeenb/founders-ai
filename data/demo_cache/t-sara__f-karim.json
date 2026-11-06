@@ -1,0 +1,73 @@
+{
+  "id": "n-e09f86c776",
+  "profile_a_id": "t-sara",
+  "profile_b_id": "f-karim",
+  "turns": [
+    {
+      "speaker_id": "t-sara",
+      "message": "Sara Nasser is a senior computer vision engineer with seven years in drones and edge AI. Sara is looking for a founding or senior role, remote. Sara sees Bayt Robotics is on-site in Riyadh. Is remote work possible for the senior vision role?",
+      "private_thought": "Remote is a hard limit; need to confirm if they can flex.",
+      "stage": "opening",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-karim",
+      "message": "Karim's role requires on-site in Riyadh, non-negotiable for daily hardware testing. Is Sara open to relocating?",
+      "private_thought": "Remote is a hard mismatch per Karim's limits.",
+      "stage": "exploring",
+      "wants_to_end": false,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "t-sara",
+      "message": "Sara will not relocate. Remote only is a requirement. On-site is not workable.",
+      "private_thought": "Hard mismatch on location; cannot proceed.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    },
+    {
+      "speaker_id": "f-karim",
+      "message": "On-site is required. That's a hard mismatch. Karim's role is in Riyadh.",
+      "private_thought": "Remote is a deal-breaker; no point discussing further.",
+      "stage": "verdict",
+      "wants_to_end": true,
+      "leak_check_passed": true,
+      "leak_caught": false
+    }
+  ],
+  "memo": {
+    "verdict": "not_fit",
+    "score": 10,
+    "reasons": [
+      "Sara explicitly stated remote work is a requirement and will not relocate.",
+      "Karim stated the role requires on-site work in Riyadh and is non-negotiable.",
+      "Both agents concluded there is a hard mismatch on work location."
+    ],
+    "agreed": [],
+    "open_questions": [],
+    "meeting_questions": [],
+    "intro_message": "Sara and Karim, thank you for your time. After reviewing the screening, it's clear there is a fundamental mismatch on the work location requirement, so we will not be scheduling a meeting at this time. We wish you both the best in your search."
+  },
+  "memo_ar": {
+    "verdict": "not_fit",
+    "score": 10,
+    "reasons": [
+      "صرحت سارة بوضوح أن العمل عن بُعد هو شرط أساسي ولن تقوم بالانتقال.",
+      "أوضح كريم أن الوظيفة تتطلب العمل الحضوري في الرياض ولا مجال للتفاوض في ذلك.",
+      "استنتج كلا الطرفين وجود عدم توافق تام بشأن مكان العمل."
+    ],
+    "agreed": [],
+    "open_questions": [],
+    "meeting_questions": [],
+    "intro_message": "سارة وكريم، شكراً لوقتكم. بعد مراجعة نتائج التقييم، يتضح وجود عدم توافق أساسي بشأن شرط مكان العمل، لذلك لن نقوم بجدولة اجتماع في هذا الوقت. نتمنى لكما التوفيق في بحثكما."
+  },
+  "status": "complete",
+  "language": "en",
+  "decision_a": "pending",
+  "decision_b": "pending"
+}
