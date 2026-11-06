@@ -6,7 +6,7 @@ colorTo: blue
 sdk: gradio
 sdk_version: 6.31.0
 python_version: "3.11"
-app_file: scripts/chat_demo.py
+app_file: app.py
 hf_oauth: true
 hf_oauth_expiration_minutes: 480
 pinned: true
