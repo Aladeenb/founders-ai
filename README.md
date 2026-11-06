@@ -37,3 +37,7 @@ Check which models return valid JSON quickly: `.venv/bin/python scripts/probe_mo
 | `MODEL_FALLBACK` | Variable | `Qwen/Qwen3-Next-80B-A3B-Instruct` |
 | `EMBEDDING_MODEL` | Variable | `intfloat/multilingual-e5-large` |
 | `DATA_DIR` | Variable | `./runtime_data` (use `/data` on the Space) |
+
+## Fahem & Wasel: design handoff
+
+Rigad's design, mascot icons and motion studies are collected in [the team handoff](docs/fahem-wasel-handoff.md). Start with the [design lab](design/fahem-wasel/index.html), then explore the [motion lab](fahem-wasel/motion-lab.html) and [sample frontend](fahem-wasel/index.html). Serve the repository locally as described in the handoff; GitHub displays HTML source rather than running the labs.
