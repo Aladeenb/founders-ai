@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" role="img" aria-label="Handshake, مصافحة">
+  <defs><clipPath id="c"><circle cx="20" cy="20" r="18"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <path fill="#C9A66B" d="M0 0H20L24.2 4.4 15.8 8.9 24.2 13.3 15.8 17.8 24.2 22.2 15.8 26.7 24.2 31.1 15.8 35.6 20 40H0Z"/>
+    <path fill="#8A1538" d="M40 0H20L24.2 4.4 15.8 8.9 24.2 13.3 15.8 17.8 24.2 22.2 15.8 26.7 24.2 31.1 15.8 35.6 20 40H40Z"/>
+    <path fill="none" stroke="#FAF8F4" stroke-width="1.8" stroke-linejoin="round" d="M20 0L24.2 4.4 15.8 8.9 24.2 13.3 15.8 17.8 24.2 22.2 15.8 26.7 24.2 31.1 15.8 35.6 20 40"/>
+  </g>
+  <text x="52" y="27" font-family="Helvetica Neue, -apple-system, Segoe UI, sans-serif" font-size="21" font-weight="600" letter-spacing="-0.5" fill="#221D1A">Handshake</text>
+  <path d="M173 12V28" stroke="#E4DDD1" stroke-width="1"/>
+  <text x="182" y="27" font-family="IBM Plex Sans Arabic, Geeza Pro, sans-serif" font-size="17" fill="#8A1538">مصافحة</text>
+</svg>

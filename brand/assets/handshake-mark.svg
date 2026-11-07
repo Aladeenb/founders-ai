@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Handshake">
+  <!-- Two halves meet along the serrated edge of the Qatari flag. -->
+  <defs><clipPath id="c"><circle cx="16" cy="16" r="15"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <path fill="#C9A66B" d="M0 0H16L19.5 4 12.5 8 19.5 12 12.5 16 19.5 20 12.5 24 19.5 28 16 32H0Z"/>
+    <path fill="#8A1538" d="M32 0H16L19.5 4 12.5 8 19.5 12 12.5 16 19.5 20 12.5 24 19.5 28 16 32H32Z"/>
+    <path fill="none" stroke="#FAF8F4" stroke-width="1.6" stroke-linejoin="round" d="M16 0L19.5 4 12.5 8 19.5 12 12.5 16 19.5 20 12.5 24 19.5 28 16 32"/>
+  </g>
+</svg>

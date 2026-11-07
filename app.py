@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import os
 import queue
+import re
 import threading
 import time
 from datetime import datetime
@@ -18,7 +19,7 @@ from zoneinfo import ZoneInfo
 import gradio as gr
 from dotenv import load_dotenv
 
-from core import matching, negotiation, profiles, storage
+from core import llm, matching, negotiation, profiles, storage
 from core.schemas import AgentTurn, Negotiation, Profile
 import ui
 
@@ -30,11 +31,13 @@ logging.basicConfig(level=logging.INFO)
 LOGIN_ENABLED = bool(os.getenv("SPACE_ID")) or (bool(os.getenv("HF_TOKEN")) and os.getenv("LOCAL_LOGIN") != "0")
 
 TZ = ZoneInfo("Asia/Qatar")
+PLACE = "Doha · Qai × Hugging Face"
 PERSONAS = [("f-layla", "Raising a $1.5M seed and needs a lead who opens doors with Gulf banks."),
             ("i-omar", "Backs seed healthtech in the GCC. Has a private valuation ceiling."),
             ("t-sara", "Senior computer vision engineer. Remote only, and won't bend on it.")]
 OTHER_SIDE_DELAY = 4.0  # seconds before a sample member answers your intro request
 esc = ui.esc
+icon = ui.icon
 
 
 def go(tab_id: str):
@@ -52,90 +55,96 @@ def noop() -> dict:
 
 ROLE_LABEL = {"founder": "Founder", "investor": "Investor", "engineer": "Engineer", "operator": "Operator"}
 
-ROLE_ICON = {"founder": "🚀", "investor": "💼", "engineer": "🛠️", "operator": "⚙️"}
 
 def persona_choices() -> list[tuple[str, str]]:
-    """Every seed profile, grouped by role, for the 'More demo personas' picker."""
+    """Every seed profile, grouped by role, for the member search."""
     order = {"founder": 0, "investor": 1, "engineer": 2, "operator": 3}
     seeds = sorted(storage.seed_profiles(), key=lambda p: (order[p.role], p.display_name))
-    return [(f"{ROLE_LABEL[p.role]} · {p.display_name} — {p.headline}", p.id) for p in seeds]
+    return [(f"{p.display_name} · {ROLE_LABEL[p.role]} · {p.headline}", p.id) for p in seeds]
 
-def person_row(p: Profile, size: str = "", sub: str | None = None) -> str:
-    sub = esc(sub if sub is not None else f"{ROLE_ICON[p.role]} {ROLE_LABEL[p.role]} · {p.location}")
-    return (f"<div class='who-row'>{ui.avatar(p.display_name, size)}<div class='meta'><h3>{esc(p.display_name)}</h3>"
-            f"<div class='muted' style='font-size:.84rem'>{sub}</div></div></div>")
+
+def person_row(p: Profile, size: str = "", sub: str | None = None, me: bool = False) -> str:
+    sub = esc(sub if sub is not None else f"{ROLE_LABEL[p.role]} · {p.location}")
+    return (f"<div class='who'>{ui.avatar(p.display_name, size, me)}<div class='meta'>"
+            f"<span class='nm'>{esc(p.display_name)}</span><span class='sub'>{sub}</span></div></div>")
+
+
+FIT_TAG = {"strong": ("Strong match", "good"), "possible": ("Worth a look", ""), "weak": ("Not a fit", "")}
+
 
 def match_card(m) -> str:
     p = m.profile
-    tier = ui.chip("★ Strong match", "green") if m.fit == "strong" else ui.chip("Worth a look", "accent")
-    return (f"<div class='card lift match'><div class='top'>{person_row(p)}{ui.ring(m.score)}</div>"
-            f"<div style='margin-top:10px'>{tier}</div>"
-            f"<p>{esc(p.headline)}</p><div class='why'><b>Why it fits</b>{esc(m.reason)}</div></div>")
+    label, kind = FIT_TAG.get(m.fit, FIT_TAG["possible"])
+    return (f"<div class='match'><div class='top'>{person_row(p)}{ui.score(m.score)}</div>"
+            f"<p class='head-line'>{esc(p.headline)}</p>"
+            f"<div class='tags'>{ui.tag(label, kind)}</div>"
+            f"<div class='why'><span class='label'>Why it fits</span>{esc(m.reason)}</div></div>")
 
-FIT_CHIP = {"strong": ("✓ Strong match", "green"), "possible": ("Worth a look", "accent"), "weak": ("✗ Not a fit", "")}
 
 def search_html(st: dict) -> str:
     """The agent's search as a live checklist: what it wants, who it scanned, what it filtered, who it checked."""
-    steps = []  # (state, title, detail_html, count_html)
+    steps = []  # (state, title, detail_html, count_html, extra_html)
     active = st["active"]
 
     def state(name, done_when):
         return "done" if done_when else ("now" if active == name else "todo")
 
     if "wants" in st:
-        chips = "".join(ui.chip(esc(t)) for t in st["tags"])
-        steps.append((state("read", True), "Reading what you're looking for",
-                      f"{ui.chip('Looking for ' + esc(st['seeking']), 'accent')}{chips}", ""))
+        tags = "".join(ui.tag(esc(t)) for t in st["tags"])
+        steps.append((state("read", True), "Read what you're looking for",
+                      ui.tag("Looking for " + esc(st["seeking"]), "maroon") + tags, "", ""))
     if "total" in st:
-        steps.append((state("scan", True), "Scanning the ecosystem", "Every public profile on Handshake",
-                      f"<span class='n'>{st['total']} people</span>"))
+        steps.append((state("scan", True), "Scanned the ecosystem", "Every public profile on Handshake",
+                      f"<span class='n'>{st['total']} people</span>", ""))
     for f in st["filters"]:
         minus = f"<span class='minus'>−{f['dropped']}</span>" if f["dropped"] else ""
-        steps.append(("done", f["label"], "", f"<span class='n'>{minus}{f['kept']} left</span>"))
+        steps.append(("done", esc(f["label"]), "", f"<span class='n'>{minus}{f['kept']} left</span>", ""))
     if "considered" in st:
-        steps.append(("done", f"Ranked {st['considered']} people by how well they fit",
-                      "Comparing what you want with what each person offers", ""))
+        steps.append(("done", f"Ranked {st['considered']} people by fit",
+                      "Comparing what you want with what each person offers", "", ""))
     if st.get("shortlist"):
         rows = []
-        for p, score in st["shortlist"]:
+        for p, sc in st["shortlist"]:
             fit = st["fits"].get(p.id)
             if fit:
-                label, kind = FIT_CHIP[fit[0]]
-                vd = f"<div>{ui.chip(label, kind)}</div><div class='why'>{esc(fit[1])}</div>"
+                label, kind = FIT_TAG[fit[0]]
+                vd = f"{ui.tag(label, kind)}<span class='why'>{esc(fit[1])}</span>"
             else:
-                vd = ui.spinner_line("Looking closely…") if active == "fit" else ""
+                vd = ui.spinner_line("Looking closely") if active == "fit" else ""
             rows.append(f"<div class='cand {fit[0] if fit else ''}'>{ui.avatar(p.display_name, 'sm')}"
                         f"<div style='min-width:0'><div class='nm'>{esc(p.display_name)}</div>"
                         f"<div class='hl'>{esc(p.headline)}</div></div>"
-                        f"<div class='bar'><i style='width:{max(6, score)}%'></i></div><div class='vd'>{vd}</div></div>")
+                        f"<div class='bar'><i style='width:{max(6, sc)}%'></i></div><div class='vd'>{vd}</div></div>")
         done_fit = len(st["fits"]) == len(st["shortlist"])
-        steps.append((state("fit", done_fit), f"Looking closely at the top {len(st['shortlist'])}",
-                      "Does the core need line up? Negotiable terms are left to the agents.",
-                      "") + (f"<div class='cands'>{''.join(rows)}</div>",))
+        steps.append((state("fit", done_fit), f"Looked closely at the top {len(st['shortlist'])}",
+                      "Does the core need line up? Negotiable terms are left to the agents.", "",
+                      f"<div class='cands'>{''.join(rows)}</div>"))
     body = ""
-    for item in steps:
-        cls, title, detail, count = item[:4]
-        extra = item[4] if len(item) > 4 else ""
-        mark = "✓" if cls == "done" else ""
-        body += (f"<div class='sstep {cls}'><div class='ic'>{mark}</div><div><div class='t'>{title}</div>"
+    for cls, title, detail, count, extra in steps:
+        mark = icon("check") if cls == "done" else ""
+        body += (f"<div class='sstep {cls}'><span class='ic-wrap'>{mark}</span><div><div class='t'>{title}</div>"
                  f"{'<div class=d>' + detail + '</div>' if detail else ''}{extra}</div>{count}</div>")
     if st["done"]:
         n = st["found"]
-        funnel = (f"<span class='funnel'>🔎 Scanned <b>{st.get('total', 0)}</b><span class='arr'>→</span>"
-                  f"<b>{st['filters'][0]['kept'] if st['filters'] else 0}</b> {esc(st.get('seeking', ''))}"
-                  f"<span class='arr'>→</span><b>{len(st.get('shortlist') or [])}</b> checked closely"
-                  f"<span class='arr'>→</span><b>{n}</b> worth a conversation</span>")
-        return (f"<details class='search'><summary>{funnel}<span class='more'>How my agent searched ▾</span>"
-                f"</summary>{body}</details>")
-    return (f"<div class='search'><div class='head'><div class='spinner'></div>Your agent is searching the "
+        funnel = (f"<span class='funnel'>{icon('search')}<span><b>{st.get('total', 0)}</b> scanned</span>"
+                  f"<span class='arr'>→</span><span><b>{st['filters'][0]['kept'] if st['filters'] else 0}</b> "
+                  f"{esc(st.get('seeking', ''))}</span><span class='arr'>→</span>"
+                  f"<span><b>{len(st.get('shortlist') or [])}</b> checked closely</span><span class='arr'>→</span>"
+                  f"<span><b>{n}</b> worth a conversation</span></span>")
+        return (f"<details class='search'><summary>{funnel}<span class='more'>How my agent searched"
+                f"{icon('chevron', 'sm')}</span></summary>{body}</details>")
+    return (f"<div class='search'><div class='head'><span class='spin'></span>Your agent is searching the "
             f"ecosystem</div>{body}</div>")
+
 
 LIVE_CAP = 5  # live negotiations per session
 
 STAGE_LABELS = [("opening", "Opening"), ("exploring", "Exploring fit"), ("negotiating", "Negotiating"), ("verdict", "Verdict")]
 
+
 def first(name: str) -> str:
     return esc(name.split()[0])
+
 
 def progress_html(stage: str | None, finished: bool = False) -> str:
     idx = [k for k, _ in STAGE_LABELS].index(stage) if stage else -1
@@ -143,80 +152,89 @@ def progress_html(stage: str | None, finished: bool = False) -> str:
     for i, (_, label) in enumerate(STAGE_LABELS):
         done = i < idx or (finished and i <= idx)
         cls = "done" if done else "now" if i == idx else ""
-        mark = "✓" if done else str(i + 1)
         if i:
-            parts.append(f"<div class='line {'done' if i <= idx else ''}'></div>")
-        parts.append(f"<div class='st {cls}'><div class='dot'>{mark}</div><span class='lbl'>{label}</span></div>")
-    return f"<div class='stepper'>{''.join(parts)}</div>"
+            parts.append(f"<span class='line {'done' if i <= idx else ''}'></span>")
+        parts.append(f"<span class='st {cls}'><i></i><span>{label}</span></span>")
+    return f"<div class='stepper' aria-label='Conversation progress'>{''.join(parts)}</div>"
+
 
 def transcript_html(turns: list[AgentTurn], viewer: Profile, other: Profile,
-                    partial: str | None = None, typing: str | None = None, theirs: bool = False) -> str:
+                    partial: str | None = None, typing: str | None = None, theirs: bool = False,
+                    live: bool = False) -> str:
     rows = []
     for idx, t in enumerate(turns):
         mine = t.speaker_id == viewer.id
         who_p = viewer if mine else other
         text = partial if (partial is not None and idx == len(turns) - 1) else t.message
-        who = (f"{first(viewer.display_name)}'s agent" if theirs else f"Your agent · {first(viewer.display_name)}") \
+        who = (f"{first(viewer.display_name)}'s agent" if theirs else "Your agent") \
             if mine else f"{first(other.display_name)}'s agent"
         shield = ""
         if t.leak_check_passed and (partial is None or idx < len(turns) - 1):
-            shield = (f"<div class='shield'>{ui.SHIELD} Protected · rewritten to keep your limit private</div>"
-                      if mine and t.leak_caught else f"<div class='shield'>{ui.SHIELD} Protected</div>")
-        rows.append(f"<div class='msg {'me' if mine else 'them'}'>{ui.avatar(who_p.display_name, 'sm')}"
-                    f"<div class='bubble'><div class='who'>{who}</div><div dir='auto'>{esc(text)}</div>{shield}</div></div>")
+            shield = (f"<div class='shield'>{ui.SHIELD}Protected · reworded to keep your limit private</div>"
+                      if mine and t.leak_caught else f"<div class='shield'>{ui.SHIELD}Protected</div>")
+        rows.append(f"<div class='msg {'me' if mine else 'them'}'>{ui.avatar(who_p.display_name, 'sm', mine)}"
+                    f"<div class='bubble'><div class='who-l'>{who}</div><div dir='auto'>{esc(text)}</div>{shield}</div></div>")
     if typing == "them":
         rows.append(f"<div class='msg them'>{ui.avatar(other.display_name, 'sm')}<div class='bubble'>"
-                    f"<div class='who'>{first(other.display_name)}'s agent</div>"
-                    "<span class='typing'><i></i><i></i><i></i></span></div></div>")
+                    f"<div class='who-l'>{first(other.display_name)}'s agent</div>{ui.typing()}</div></div>")
     if not rows:
-        rows.append("<div class='muted' style='text-align:center;padding:40px 0'>"
-                    + ui.spinner_line("Your agent is preparing its opening…") + "</div>")
-    return f"<div class='chat'>{''.join(rows)}</div>"
+        rows.append("<div class='waiting'>" + ui.spinner_line("Your agent is preparing its opening") + "</div>")
+    return f"<div class='chat{' live' if live else ''}'>{''.join(rows)}</div>"
+
 
 NEG_LANG_CHOICES = [("English", "en"), ("العربية", "fusha")]
 
+
 def room_header(viewer: Profile, other: Profile, lang: str = "en", theirs: bool = False) -> str:
-    topics = "".join(ui.chip(esc(t.strip())) for t in negotiation.topics_for(viewer, other).split(","))
-    lang_chip = "" if lang == "en" else ui.chip(f"🗣 {negotiation.LANGUAGES[lang][0]}", "accent")
-    return (f"<div class='card'><div class='room-head'><div class='versus'>{ui.avatar(viewer.display_name)}"
-            f"<div><div class='eyebrow'>{'Their agent' if theirs else 'Your agent'}</div><b>{esc(viewer.display_name)}</b></div><div class='link'></div>"
-            f"{ui.avatar(other.display_name)}<div><div class='eyebrow'>Meeting</div><b>{esc(other.display_name)}</b></div>"
-            f"</div>{lang_chip}</div><div class='topics'>{topics}</div></div>")
+    topics = "".join(ui.tag(esc(t.strip())) for t in negotiation.topics_for(viewer, other).split(","))
+    lang_tag = "" if lang == "en" else ui.tag(f"{icon('globe', 'sm')}{negotiation.LANGUAGES[lang][0]}", "maroon")
+    side = f"{first(viewer.display_name)}'s agent" if theirs else "Your agent"
+    return (f"<div class='room'><div class='who'><div class='pair'>{ui.avatar(viewer.display_name, '', not theirs)}"
+            f"{ui.avatar(other.display_name)}</div><div class='meta'><div class='names'>{esc(viewer.display_name)}"
+            f"<span>and</span>{esc(other.display_name)}</div><div class='sub'>{side} met {first(other.display_name)}'s "
+            f"agent</div></div></div>{lang_tag}<div class='tags' style='flex-basis:100%'>{topics}</div></div>")
+
 
 VERDICT_ORDER = {"worth_meeting": 0, "maybe_later": 1, "not_fit": 2}
 
 MINUTES_PER_FIRST_CALL = 30
 
+
 def batch_header(viewer: Profile, others: list[Profile], lang: str) -> str:
     faces = "".join(ui.avatar(o.display_name) for o in others)
-    lang_chip = "" if lang == "en" else ui.chip(f"🗣 {negotiation.LANGUAGES[lang][0]}", "accent")
-    return (f"<div class='card'><div class='room-head'><div class='versus'>{ui.avatar(viewer.display_name)}"
-            f"<div><div class='eyebrow'>Your agent</div><b>{esc(viewer.display_name)}</b></div><div class='link'></div>"
-            f"<div class='faces'>{faces}</div><div><div class='eyebrow'>Meeting at once</div>"
-            f"<b>{len(others)} people</b></div></div>{lang_chip}</div></div>")
+    lang_tag = "" if lang == "en" else ui.tag(f"{icon('globe', 'sm')}{negotiation.LANGUAGES[lang][0]}", "maroon")
+    return (f"<div class='room'><div class='who'><div class='pair'>{ui.avatar(viewer.display_name, '', True)}{faces}</div>"
+            f"<div class='meta'><div class='names'>Your agent<span>is meeting</span>{len(others)} people</div>"
+            f"<div class='sub'>All at once. Nothing is shared until you approve an intro.</div></div></div>{lang_tag}</div>")
+
+
+VERDICT_LABEL = {"worth_meeting": "Worth a meeting", "maybe_later": "Maybe later", "not_fit": "Not a fit"}
+VERDICT_KIND = {"worth_meeting": "good", "maybe_later": "warn", "not_fit": ""}
+
 
 def _row_status(row: dict) -> str:
     state = row["state"]
     if state == "waiting":
-        return ui.chip("Waiting to start")
+        return "<span class='muted'>Waiting to start</span>"
     if state == "talking":
         stage = dict(STAGE_LABELS).get(row["stage"] or "opening", "Opening")
         return ui.spinner_line(f"{stage} · message {row['turns']}")
     if state == "memo":
-        return ui.spinner_line("Writing the deal memo…")
+        return ui.spinner_line("Writing the verdict")
     if state == "failed":
-        return ui.chip("Couldn't finish", "amber")
+        return ui.tag("Couldn't finish", "warn")
     memo_ = row["neg"].memo
-    kind = {"worth_meeting": "green", "maybe_later": "amber", "not_fit": ""}[memo_.verdict]
-    return f"<div class='verdict-mini'>{ui.chip(VERDICT_LABEL[memo_.verdict], kind)}{ui.ring(memo_.score)}</div>"
+    return (f"<div class='verdict-mini'>{ui.tag(VERDICT_LABEL[memo_.verdict], VERDICT_KIND[memo_.verdict])}"
+            f"<b>{memo_.score}</b></div>")
 
-VERDICT_LABEL = {"worth_meeting": "Worth a meeting", "maybe_later": "Maybe later", "not_fit": "Not a fit"}
 
 STATE_LABEL = {"waiting_you": "Waiting for you", "waiting_them": "Waiting for them", "connected": "Connected",
                "declined": "Closed", "running": "In progress"}
 
+
 def _li(items: list[str], empty: str) -> str:
-    return "".join(f"<li>{esc(x)}</li>" for x in items) or f"<li class='placeholder'>{esc(empty)}</li>"
+    return "".join(f"<li>{esc(ui.strip_emoji(x))}</li>" for x in items) or f"<li class='placeholder'>{esc(empty)}</li>"
+
 
 def _load(neg_id: str | None, viewer_id: str | None):
     """Return (negotiation, viewer, other) or None if anything is missing."""
@@ -228,50 +246,51 @@ def _load(neg_id: str | None, viewer_id: str | None):
     other_id = neg.profile_b_id if viewer_id == neg.profile_a_id else neg.profile_a_id
     return neg, storage.get_profile(viewer_id), storage.get_profile(other_id)
 
+
 MEMO_TEXT = {
-    "en": {"dir": "ltr", "title": "Deal memo", "judge": "Written by a neutral judge that never saw anyone's private limits", "score": "fit score", "why": "Why", "agreed": "What was agreed",
-           "open": "Still open", "ask": "Ask in the meeting", "intro": "Draft intro",
-           "none_why": "No reasons given", "none_agreed": "Nothing agreed yet", "none_open": "Nothing open",
-           "none_ask": "No meeting suggested", "unsent": "Nothing is sent until both of you approve.",
-           "verdict": VERDICT_LABEL,
-           "state": {"waiting_them": "You approved. Waiting for the other person.", "connected": "🤝 You're connected.",
+    "en": {"dir": "ltr", "title": "Verdict", "judge": "Written by a neutral judge that never saw anyone's private limits.",
+           "score": "fit", "why": "Why", "agreed": "What was agreed", "open": "Still open", "ask": "Ask in the meeting",
+           "intro": "Draft intro", "none_why": "No reasons given", "none_agreed": "Nothing agreed yet",
+           "none_open": "Nothing open", "none_ask": "No meeting suggested",
+           "unsent": "Nothing is sent until both of you approve.", "verdict": VERDICT_LABEL,
+           "state": {"waiting_them": "You approved. Waiting for the other person.", "connected": "You're connected.",
                      "declined": "This thread is closed."}},
-    "ar": {"dir": "rtl", "title": "مذكرة الصفقة", "judge": "كتبها حَكَم محايد لم يطّلع على الحدود الخاصة لأي طرف", "score": "درجة التوافق", "why": "الأسباب", "agreed": "ما تم الاتفاق عليه",
+    "ar": {"dir": "rtl", "title": "الحكم", "judge": "كتبها حَكَم محايد لم يطّلع على الحدود الخاصة لأي طرف.",
+           "score": "التوافق", "why": "الأسباب", "agreed": "ما تم الاتفاق عليه",
            "open": "نقاط ما زالت مفتوحة", "ask": "أسئلة للاجتماع", "intro": "مسودة رسالة التعارف",
            "none_why": "لا توجد أسباب", "none_agreed": "لم يتم الاتفاق على شيء بعد", "none_open": "لا توجد نقاط مفتوحة",
            "none_ask": "لا يُقترح اجتماع", "unsent": "لن يُرسل أي شيء حتى يوافق الطرفان.",
            "verdict": {"worth_meeting": "يستحق اجتماعًا", "maybe_later": "ربما لاحقًا", "not_fit": "غير مناسب"},
-           "state": {"waiting_them": "وافقت. بانتظار موافقة الطرف الآخر.", "connected": "🤝 تم التواصل.",
+           "state": {"waiting_them": "وافقت. بانتظار موافقة الطرف الآخر.", "connected": "تم التواصل.",
                      "declined": "تم إغلاق هذه المحادثة."}},
 }
 
 LANG_CHOICES = [("English", "en"), ("العربية", "ar")]
+VERDICT_AR = {"worth_meeting": "لقاء", "maybe_later": "لاحقاً", "not_fit": "لا"}
+
 
 def memo_html(neg: Negotiation, viewer: Profile, other: Profile, lang: str = "en") -> str:
     m = neg.memo_ar if lang == "ar" and neg.memo_ar else neg.memo
     if m is None:
-        return ui.empty("📝", "The memo isn't ready", "Finish a negotiation in the Agent Room first.")
+        return ui.empty("doc", "The verdict isn't ready", "It appears once the agents finish talking.")
     t = MEMO_TEXT["ar" if m is neg.memo_ar else "en"]
     note = t["state"].get(negotiation.thread_state(neg, viewer.id), "")
-    verdict_icon = {"worth_meeting": "✅", "maybe_later": "⏳", "not_fit": "🙅"}[m.verdict]
-    pair = (f"<div class='who-row' style='gap:8px'>{ui.avatar(viewer.display_name, 'sm')}"
-            f"{ui.avatar(other.display_name, 'sm')}<span class='muted' style='font-size:.85rem'>"
-            f"{esc(viewer.display_name)} × {esc(other.display_name)}</span></div>")
+    sections = (("bulb", t["why"], m.reasons, t["none_why"]), ("agree", t["agreed"], m.agreed, t["none_agreed"]),
+                ("help", t["open"], m.open_questions, t["none_open"]),
+                ("calendar", t["ask"], m.meeting_questions, t["none_ask"]))
+    grid = "".join(f"<section><h4>{icon(ic)}{title}</h4><ul>{_li(items, none)}</ul></section>"
+                   for ic, title, items, none in sections)
     return (
-        f"<div dir='{t['dir']}'>"
-        f"<div class='memo-hero {m.verdict}'><div>{pair}<h2>{verdict_icon} {t['verdict'][m.verdict]}</h2>"
-        f"<div class='muted'>{t['judge']}{' · ' + note if note else ''}</div></div>"
-        f"<div style='text-align:center'>{ui.ring(m.score, 'xl')}<div class='eyebrow' style='margin-top:6px'>"
-        f"{t['score']}</div></div></div>"
-        "<div class='memo-grid'>"
-        f"<div class='card'><h4>💡 {t['why']}</h4><ul>{_li(m.reasons, t['none_why'])}</ul></div>"
-        f"<div class='card'><h4>🤝 {t['agreed']}</h4><ul>{_li(m.agreed, t['none_agreed'])}</ul></div>"
-        f"<div class='card'><h4>❓ {t['open']}</h4><ul>{_li(m.open_questions, t['none_open'])}</ul></div>"
-        f"<div class='card'><h4>🗓 {t['ask']}</h4><ul>{_li(m.meeting_questions, t['none_ask'])}</ul></div>"
-        "</div>"
-        f"<div class='letter'><div class='eyebrow'>✉️ {t['intro']}</div><p class='intro'>{esc(m.intro_message)}</p>"
-        f"<div class='note'>{t['unsent']}</div></div></div>"
+        f"<div class='verdict {m.verdict}' dir='{t['dir']}'>"
+        f"<div class='verdict-head'><span class='art' lang='ar' aria-hidden='true'>{VERDICT_AR[m.verdict]}</span>"
+        f"<div><span class='label'>{esc(viewer.display_name)} · "
+        f"{esc(other.display_name)}</span><h2>{ui.dot()}{t['verdict'][m.verdict]}</h2>"
+        f"<p class='note'>{t['judge']}{' ' + note if note else ''}</p></div>{ui.score(m.score, t['score'], 'xl')}</div>"
+        f"<div class='verdict-grid'>{grid}</div>"
+        f"<div class='letter'><span class='label'>{icon('mail', 'sm')}{t['intro']}</span>"
+        f"<p class='intro' dir='auto'>{esc(m.intro_message)}</p><p class='note'>{t['unsent']}</p></div></div>"
     )
+
 
 def _memo_in(neg: Negotiation, lang: str) -> tuple[Negotiation, str]:
     """Make sure the requested language exists. Returns (negotiation, status note)."""
@@ -279,8 +298,9 @@ def _memo_in(neg: Negotiation, lang: str) -> tuple[Negotiation, str]:
         return neg, ""
     neg = negotiation.arabic_memo(neg)
     if neg.memo_ar is None:
-        return neg, "😕 The Arabic version isn't available right now, so here's the English memo. Try again in a moment."
+        return neg, "The Arabic version isn't available right now, so here's the English one. Try again in a moment."
     return neg, ""
+
 
 def _threads(viewer_id: str | None, my_negs: list[str]):
     out = []
@@ -295,6 +315,7 @@ def _threads(viewer_id: str | None, my_negs: list[str]):
             out.append(loaded)
     return out
 
+
 ROLE_CHOICES = [("Founder", "founder"), ("Investor", "investor"), ("Engineer", "engineer"), ("Operator or joiner", "operator")]
 
 SEEK_CHOICES = [("Investors", "investor"), ("Engineers", "engineer"), ("Operators", "operator")]
@@ -303,22 +324,26 @@ STAGE_CHOICES = [("Pre-seed", "pre-seed"), ("Seed", "seed"), ("Series A", "serie
 
 N_QUESTIONS = 3
 
+
 def user_id(profile: gr.OAuthProfile | None) -> str | None:
     if profile is None:
         return None
     return "u-" + re.sub(r"[^a-z0-9-]", "", profile.username.lower())
 
+
 def signin_note(profile: gr.OAuthProfile | None) -> str:
     if profile is not None:
-        return f"✅ Signed in as **{esc(profile.username)}**. Your agent will be saved."
+        return f"Signed in as **{esc(profile.username)}**. Your agent will be saved."
     if LOGIN_ENABLED:
-        return ("ℹ️ You're not signed in. You can try everything, but your agent won't be saved and other people "
-                "won't find you. Sign in on the **Welcome** tab to save it.")
-    return "ℹ️ Sign-in is available on the Space. Here your agent lasts for this session only."
+        return ("You're not signed in. You can try everything, but your agent won't be saved and other people "
+                "won't find you. Sign in on **Home** to save it.")
+    return "Sign-in is available on the Space. Here your agent lasts for this session only."
+
 
 def founder_fields(role: str):
     show = role == "founder"
     return gr.CheckboxGroup(visible=show), gr.Dropdown(visible=show)
+
 
 def _card_values(d: profiles.Draft | None, role: str, name: str = ""):
     """Values for the editable cards, in CARD order."""
@@ -331,10 +356,12 @@ def _card_values(d: profiles.Draft | None, role: str, name: str = ""):
             profiles.terms_to_text(d.public_terms),
             "\n".join(d.private_limits), ", ".join(d.secret_terms))
 
+
 def _question_boxes(questions: list[str]):
     boxes = [gr.Textbox(label=questions[i], value="", visible=True) if i < len(questions)
              else gr.Textbox(value="", visible=False) for i in range(N_QUESTIONS)]
     return [gr.Group(visible=bool(questions)), *boxes]
+
 
 def build_agent(role, about, questions, a1, a2, a3, profile: gr.OAuthProfile | None):
     """Extract a draft from the description (plus any follow-up answers).
@@ -352,14 +379,15 @@ def build_agent(role, about, questions, a1, a2, a3, profile: gr.OAuthProfile | N
     except llm.LLMError:
         draft = None
     if draft is None:
-        status = ("😕 The AI couldn't read that right now. You can fill in the cards below yourself, "
-                  "or try again in a moment.")
+        status = ui.status("The AI couldn't read that right now. Fill in the cards below yourself, "
+                           "or try again in a moment.", "warn")
         return (status, [], *_question_boxes([]), gr.Group(visible=True), *_card_values(None, role, name))
     asked = [] if answers else draft.follow_up_questions
-    status = ("✨ Here's your agent. A few quick questions would make it sharper. Answer what you like, "
-              "then update. Or just review the cards and activate." if asked else
-              "✨ Here's your agent. Check both cards, edit anything, then activate it.")
+    status = ui.status("Here's your agent. A few quick questions would make it sharper. Answer what you like, "
+                       "then update, or review the cards and activate." if asked else
+                       "Here's your agent. Check both cards, edit anything, then activate it.", "ok")
     return (status, asked, *_question_boxes(asked), gr.Group(visible=True), *_card_values(draft, role, name))
+
 
 def activate_agent(role, name, headline, bio, looking_for, seeking, tags, location, stage, terms, limits, secrets,
                    profile: gr.OAuthProfile | None):
@@ -373,11 +401,12 @@ def activate_agent(role, name, headline, bio, looking_for, seeking, tags, locati
         raise gr.Error(str(exc))
     if profile is not None:
         storage.save_profile(p)
-        note = "✅ Saved. Other people's agents can now find yours."
+        note = ui.status("Saved. Other people's agents can now find yours.", "ok")
     else:
         storage.register_session_profile(p)
-        note = "✅ Your agent is active for this session."
+        note = ui.status("Your agent is active for this session.", "ok")
     return p.id, note, ", ".join(p.secret_terms)
+
 
 def load_saved(profile: gr.OAuthProfile | None):
     """On page load: greet signed-in users and refill their saved agent."""
@@ -406,44 +435,56 @@ def ago(ts: float) -> str:
     return datetime.fromtimestamp(ts, TZ).strftime("%d %b")
 
 
-def greeting() -> str:
+def greeting() -> tuple[str, str]:
+    """(English, Arabic) greeting for the time of day in Doha."""
     h = datetime.now(TZ).hour
-    return "Good morning" if h < 12 else "Good afternoon" if h < 18 else "Good evening"
+    if h < 12:
+        return "Good morning", "صباح الخير"
+    return ("Good afternoon" if h < 18 else "Good evening"), "مساء الخير"
+
+
+def today() -> str:
+    return datetime.now(TZ).strftime("%A, %-d %B") + " · Doha"
 
 
 def greet(profile: gr.OAuthProfile | None) -> str:
     if profile is None:
         return ""
-    return ui.status(f"👋 Signed in as {esc(profile.name or profile.username)}", "ok")
+    return ui.status(f"Signed in as {esc(profile.name or profile.username)}", "ok")
 
 
 def other_of(neg: Negotiation, viewer_id: str) -> Profile | None:
     return storage.get_profile(neg.profile_b_id if viewer_id == neg.profile_a_id else neg.profile_a_id)
 
 
-def btn(label: str, act: str, ident: str = "", kind: str = "") -> str:
-    return f"<button class='hbtn {kind}' data-act='{act}' data-id='{esc(ident)}'>{label}</button>"
+def btn(label: str, act: str, ident: str = "", kind: str = "", ic: str = "") -> str:
+    trail = icon(ic, "arrow" if ic == "arrow" else "") if ic else ""
+    return f"<button class='hbtn {kind}' data-act='{act}' data-id='{esc(ident)}'>{label}{trail}</button>"
+
+
+def limits_list(p: Profile) -> str:
+    items = "".join(f"<li>{icon('lock')}<span>{esc(x)}</span></li>" for x in p.private_limits)
+    return f"<ul class='limits'>{items or '<li class=none>No private limits set</li>'}</ul>"
 
 
 def panel_html(viewer: Profile, turns: list[AgentTurn], thinking: bool = False, theirs: bool = False) -> str:
     """The vault: what this person's agent protects. theirs=True renders the other person's view."""
-    limits = "".join(f"<div class='limit'>🔒 <span>{esc(x)}</span></div>" for x in viewer.private_limits) \
-        or "<div class='limit muted'>No private limits set</div>"
     mine = [t for t in turns if t.speaker_id == viewer.id]
     caught = sum(t.leak_caught for t in mine)
     who = f"{first(viewer.display_name)}'s" if theirs else "your"
-    meter = (ui.chip(f"{ui.SHIELD} {len(mine)} of {who} messages checked", "green")
-             + (ui.chip(f"✍️ {caught} rewritten", "accent") if caught else "")) if mine else ""
+    meter = ""
+    if mine:
+        meter = (f"<div class='meter'><span class='ok'>{ui.SHIELD}{len(mine)} of {who} messages checked</span>"
+                 + (f"<span>{icon('pen', 'sm')}{caught} reworded</span>" if caught else "") + "</div>")
     notes = [t.private_thought for t in mine if t.private_thought][-3:]
-    notes_html = (f"<div class='eyebrow' style='margin-top:16px'>{who.capitalize()} agent's private notes</div>"
-                  "<ul class='notes'>" + "".join(f"<li dir='auto'>{esc(n)}</li>" for n in reversed(notes))
-                  + "</ul>") if notes else ""
-    think = f"<div class='thinking'>{ui.spinner_line('Your agent is thinking…')}</div>" if thinking else ""
-    title = f"What {first(viewer.display_name)}'s agent is protecting" if theirs else "What your agent is protecting"
+    notes_html = (f"<span class='label'>{who.capitalize()} agent's private notes</span><ul class='notes'>"
+                  + "".join(f"<li dir='auto'>{esc(n)}</li>" for n in reversed(notes)) + "</ul>") if notes else ""
+    think = f"<div class='thinking'>{ui.spinner_line('Thinking')}</div>" if thinking else ""
+    title = f"What {first(viewer.display_name)}'s agent protects" if theirs else "What your agent protects"
     note = (f"Only {first(viewer.display_name)} sees this." if theirs
             else "Only you see this. The other agent never does.")
-    return (f"<div class='vault'><h4>🔐 {title}</h4><div class='note' style='margin-top:4px'>{note}</div>"
-            f"{limits}<div class='meter'>{meter}</div>{think}{notes_html}</div>")
+    return (f"<div class='vault'><h4>{icon('lock')}{title}</h4><p class='note'>{note}</p>"
+            f"{limits_list(viewer)}{meter}{think}{notes_html}</div>")
 
 
 # =====================================================================
@@ -451,67 +492,74 @@ def panel_html(viewer: Profile, turns: list[AgentTurn], thinking: bool = False, 
 # =====================================================================
 
 STEPS = [
-    ("✍️", "Brief your agent", "Tell it who you are, what you want, and the limits it must protect."),
-    ("🔎", "It meets everyone", "It searches the ecosystem and negotiates with other people's agents."),
-    ("✅", "You approve the few", "Only the conversations worth having reach you. Both sides opt in."),
+    ("Brief your agent", "Tell it who you are, what you want, and the limits it must protect."),
+    ("It meets everyone", "It searches the ecosystem and negotiates with other people's agents."),
+    ("You approve the few", "Only conversations worth having reach you. Both sides opt in."),
 ]
 
 
 def landing_html() -> str:
-    s = storage.stats()
-    steps = "".join(f"<div class='step'><div class='ico'>{ico}</div><h4>{t}</h4><p>{b}</p></div>" for ico, t, b in STEPS)
-    stats = "".join(f"<div class='stat'><strong>{v}</strong><span>{k}</span></div>"
-                    for k, v in (("members", s["people"]), ("agent negotiations", s["negotiations"]),
-                                 ("intros made", s["intros"])))
-    return ("<div class='hero'>" + ui.chip("✨ AI agents for the startup ecosystem", "accent")
-            + "<h1>Your agent meets everyone.<br><span class='grad'>You meet the right few.</span></h1>"
-            "<p class='lede'>Founders, investors and engineers each get an AI agent that knows their goals and their "
-            "private limits. Agents talk first, so people only meet when it's worth it.</p>"
-            f"<div class='steps'>{steps}</div><div class='stats'>{stats}</div></div>")
+    return ("<section class='hero'>" + ui.KHATAM
+            + "<div class='callig' lang='ar' dir='rtl' aria-hidden='true'><span class='gold-text'>مصافحة</span></div>"
+            "<p class='kicker rise'>" + ui.dot("live") + "Built in Doha · Qai × Hugging Face</p>"
+            "<h1 class='rise d1'>Your agent meets <em>everyone.</em><br>You meet the <em class='gold-text'>right few.</em></h1>"
+            "<p class='lede rise d2'>AI agents talk first. You only meet who's worth it.</p></section>")
+
+
+FLOW = [("pen", "١", "Brief your agent", "Your goals, and the limits it keeps private."),
+        ("chat", "٢", "It meets everyone", "Agents have the first conversation for you."),
+        ("link", "٣", "You meet the few", "An intro opens only when both say yes.")]
+
+
+def flow_html() -> str:
+    steps = "".join(f"<div class='fstep'><span class='fbadge' lang='ar'>{n}</span><span class='ftile'>{icon(ic)}</span>"
+                    f"<b>{t}</b><span class='fd'>{d}</span></div>" for ic, n, t, d in FLOW)
+    return f"<div class='flow rise d3'>{steps}</div>"
 
 
 def persona_gallery() -> str:
     cards = []
     for pid, blurb in PERSONAS:
         p = storage.get_profile(pid)
-        cards.append(f"<div class='card lift persona pick' data-act='persona' data-id='{pid}'>{person_row(p, 'lg')}"
-                     f"<p>{esc(p.headline)}</p><p class='blurb'>{esc(blurb)}</p>"
-                     f"<span class='pick-cta'>Continue as {first(p.display_name)} →</span></div>")
-    return f"<div class='gallery'>{''.join(cards)}</div>"
+        cards.append(f"<div class='person' role='button' tabindex='0' data-act='persona' data-id='{pid}'>"
+                     f"{person_row(p)}<span class='go'>{icon('arrow')}</span></div>")
+    return (f"<div class='section-label'><h2>Or try it <em>as</em></h2></div>"
+            f"<div class='people'>{''.join(cards)}</div>")
 
 
 def account_html(viewer: Profile | None) -> str:
     if viewer is None:
         return ""
-    return (f"<div class='account'>{ui.avatar(viewer.display_name, 'sm')}<span class='nm'>{esc(viewer.display_name)}</span>"
-            f"<span class='switch' data-act='switch' data-id=''>Switch account</span></div>")
+    return (f"<div class='account'>{ui.avatar(viewer.display_name, 'sm', True)}<span class='nm'>{esc(viewer.display_name)}"
+            f"</span><button class='switch' data-act='switch' data-id=''>Switch</button></div>")
 
 
 def brand_html(viewer_id: str | None, presenter: bool) -> str:
-    return ui.brand_bar(presenter=presenter, account=account_html(storage.get_profile(viewer_id) if viewer_id else None))
+    return ui.brand_bar(presenter=presenter, place=PLACE,
+                        account=account_html(storage.get_profile(viewer_id) if viewer_id else None))
 
 
-def _activity(viewer: Profile, threads, search: dict | None) -> list[tuple[float, str, str]]:
+def _activity(viewer: Profile, threads, search: dict | None) -> list[tuple[float, str, str, str]]:
+    """(time, icon, tone, html) newest first."""
     events = []
     if search and search.get("viewer") == viewer.id:
-        events.append((search["ts"], "🔎", f"Searched <b>{search['total']}</b> people and found "
-                                          f"<b>{search['found']}</b> worth a conversation"))
+        events.append((search["ts"], "search", "", f"Searched <b>{search['total']}</b> people and found "
+                                                    f"<b>{search['found']}</b> worth a conversation"))
     for neg, _, other in threads:
-        fo = esc(first(other.display_name))
+        fo = first(other.display_name)
         if neg.memo:
-            events.append((neg.created_at, "💬", f"Talked with {fo}'s agent · {VERDICT_LABEL[neg.memo.verdict]} "
-                                                 f"· {neg.memo.score}"))
+            events.append((neg.created_at, "chat", "", f"Talked with {fo}'s agent · {VERDICT_LABEL[neg.memo.verdict]}"))
         for pid, ts in neg.decided_at.items():
             mine = pid == viewer.id
             decision = neg.decision_a if pid == neg.profile_a_id else neg.decision_b
             if mine and decision == "approved":
-                events.append((ts, "✅", f"You asked to meet {fo}"))
+                events.append((ts, "send", "", f"You asked to meet {fo}"))
             elif mine and decision == "declined":
-                events.append((ts, "↩️", f"You passed on {fo}"))
+                events.append((ts, "undo", "", f"You passed on {fo}"))
             elif not mine and decision == "approved":
-                events.append((ts, "🎉", f"{fo} said yes. You're connected"))
+                events.append((ts, "link", "good", f"{fo} said yes. You're connected"))
             elif not mine and decision == "declined":
-                events.append((ts, "↩️", f"{fo} passed"))
+                events.append((ts, "undo", "", f"{fo} passed"))
     return sorted(events, reverse=True)[:8]
 
 
@@ -523,58 +571,65 @@ def dashboard_html(viewer_id: str | None, my_negs: list[str], search: dict | Non
     states = [(negotiation.thread_state(n, viewer.id), n) for n, _, _ in threads]
     waiting = [n for st, n in states if st == "waiting_you" and n.memo and n.memo.verdict != "not_fit"]
     connected = [n for st, n in states if st == "connected"]
-    limits = "".join(f"<li>🔒 {esc(x)}</li>" for x in viewer.private_limits) or "<li>No private limits set</li>"
-    agent = (f"<div class='card agent-card'><div class='who-row'>{ui.avatar(viewer.display_name, 'lg')}"
-             f"<div class='meta'><div class='live-dot'>Your agent is active</div><h3>{esc(viewer.display_name)}</h3>"
-             f"<div class='muted' style='font-size:.85rem'>{esc(viewer.headline)}</div></div></div>"
-             f"<p style='margin-top:12px'><span class='muted'>Looking for</span> {esc(viewer.looking_for)}</p>"
-             f"<details class='vault-mini' open><summary>🔐 Protecting {len(viewer.private_limits)} private "
-             f"limit{'s' if len(viewer.private_limits) != 1 else ''} ▾</summary><ul>{limits}</ul></details>"
-             "<div class='note' style='margin-top:6px'>Only you can see these. Your agent never says them.</div></div>")
-    kpis = "".join(f"<div class='kpi'><strong>{v}</strong><span>{k}</span></div>" for k, v in (
-        ("people scanned", search["total"] if search and search.get("viewer") == viewer.id else "–"),
-        ("conversations", len(threads)), ("intros for you", len(waiting)), ("connected", len(connected))))
+    searched = bool(search and search.get("viewer") == viewer.id)
+
+    def nxt(title, sub, action, calm=False, label="Up next"):
+        return (f"<div class='next rise{' calm' if calm else ''}'>{ui.KHATAM}<div><span class='label'>{label}</span>"
+                f"<h2 class='t'>{title}</h2><p>{sub}</p></div>{action}</div>")
+
     if waiting:
         n = len(waiting)
-        nxt = (f"<div class='next'><div><div class='eyebrow'>Up next</div><h3>{n} intro{'s' if n != 1 else ''} "
-               f"need{'s' if n == 1 else ''} your decision</h3><div class='muted'>Your agent already did the first "
-               f"conversation.</div></div>{btn('Review intros →', 'goto', 'intros', 'primary')}</div>")
-    elif not (search and search.get("viewer") == viewer.id) and not threads:
-        nxt = (f"<div class='next'><div><div class='eyebrow'>Up next</div><h3>Let your agent find people worth "
-               f"meeting</h3><div class='muted'>It scans every member and checks each one closely.</div></div>"
-               f"{btn('Find matches →', 'find', '', 'primary')}</div>")
+        up = nxt(f"{n} intro{'s' if n != 1 else ''} need{'s' if n == 1 else ''} your decision",
+                 "Your agent already had the first conversation.",
+                 btn(f"Review intro{'s' if n != 1 else ''}", "goto", "intros", "primary", "arrow"))
+    elif not searched and not threads:
+        up = nxt("Let your agent find people worth meeting", "It scans every member and checks each one closely.",
+                 btn("Find matches", "find", "", "primary", "arrow"))
     elif not threads:
-        nxt = (f"<div class='next'><div><div class='eyebrow'>Up next</div><h3>Your agent found "
-               f"{search['found']} {'person' if search['found'] == 1 else 'people'}</h3><div class='muted'>Send it to "
-               f"talk to them. Nothing is shared until you approve.</div></div>{btn('See matches →', 'goto', 'matches', 'primary')}</div>")
+        f = search["found"]
+        up = nxt(f"Your agent found {f} {'person' if f == 1 else 'people'}",
+                 "Send it to talk to them. Nothing is shared until you approve.",
+                 btn("See matches", "goto", "matches", "primary", "arrow"))
     else:
-        nxt = (f"<div class='next'><div><div class='eyebrow'>All caught up</div><h3>Nothing needs you right now</h3>"
-               f"<div class='muted'>Your agent will keep looking.</div></div>{btn('Search again', 'find', '', '')}</div>")
+        up = nxt("Nothing needs you right now", "Your agent will keep looking.", btn("Search again", "find"),
+                 calm=True, label="All caught up")
+    figs = (("people scanned", "بحث", search["total"] if searched else "–"), ("conversations", "حوارات", len(threads)),
+            ("intros for you", "تعارف", len(waiting)), ("connected", "تواصل", len(connected)))
+    stats = "".join(f"<div class='stat{' hot' if k == 'intros for you' and v else ''}'><b data-count='{v}'>{v}</b>"
+                    f"<span>{k}</span></div>" for k, a, v in figs)
+    agent = (f"<div class='card agent'><span class='status-line'>{ui.dot('live')}Your agent is active</span>"
+             f"{person_row(viewer, 'lg', viewer.headline, True)}"
+             f"<p class='looking'><span class='muted'>Looking for</span> {esc(viewer.looking_for)}</p>"
+             f"{limits_list(viewer)}<p class='note' style='margin-top:12px'>Only you can see these limits. "
+             f"Your agent never says them.</p></div>")
     acts = _activity(viewer, threads, search)
-    feed = "".join(f"<div class='ev'><span class='ic'>{ic}</span><span class='tx'>{tx}</span>"
-                   f"<span class='tm'>{ago(ts)}</span></div>" for ts, ic, tx in acts) \
-        or "<div class='note'>Your agent's work will show up here.</div>"
-    return (f"<div class='dash-head'><div class='section-title'>{greeting()}, {esc(first(viewer.display_name))}</div>"
-            f"<p class='section-sub'>Here's what your agent has been doing.</p></div>"
-            f"<div class='dash-grid'><div>{agent}</div><div class='dash-right'>{nxt}<div class='kpis'>{kpis}</div>"
-            f"<div class='card'><div class='eyebrow'>Activity</div><div class='feed'>{feed}</div></div></div></div>")
+    feed = "".join(f"<li class='ev'><span class='i {tone}'>{icon(ic, 'sm')}</span><span>{tx}</span>"
+                   f"<span class='tm'>{ago(ts)}</span></li>" for ts, ic, tone, tx in acts) \
+        or f"<li class='empty-feed'><span class='ico'>{icon('clock')}</span>Your agent's work will show up here.</li>"
+    en, ar = greeting()
+    return (f"<div class='page-head'>{ui.art('أهلاً')}<span class='greet-ar rise' lang='ar' dir='rtl'>"
+            f"<span class='gold-text'>{ar}</span></span>"
+            f"<h1 class='rise d1'>{en}, <em>{first(viewer.display_name)}</em></h1><p class='rise d2'>{today()}</p></div>"
+            f"{up}<div class='stats rise d1'>{stats}</div>"
+            f"<div class='dash rise d3'>{agent}<div class='card'><span class='label'>Activity</span>"
+            f"<ul class='feed' style='display:flex;flex-direction:column;flex:1'>{feed}</ul></div></div>")
 
 
 def agent_summary_html(viewer_id: str | None) -> str:
     viewer = storage.get_profile(viewer_id) if viewer_id else None
     if viewer is None:
         return ""
-    terms = "".join(f"<div class='term'><span>{esc(k.replace('_', ' '))}</span><b>{esc(v)}</b></div>"
-                    for k, v in viewer.public_terms.items()) or "<div class='note'>No public terms</div>"
-    limits = "".join(f"<div class='limit'>🔒 <span>{esc(x)}</span></div>" for x in viewer.private_limits) \
-        or "<div class='limit muted'>No private limits set</div>"
-    tags = "".join(ui.chip(esc(t)) for t in viewer.tags)
-    return (f"<div class='agent-grid'><div class='card'><div class='eyebrow'>🌐 Public profile · other agents see this"
-            f"</div><div style='margin-top:10px'>{person_row(viewer, 'lg')}</div><p>{esc(viewer.public_bio)}</p>"
-            f"<p><span class='muted'>Looking for</span> {esc(viewer.looking_for)}</p><div class='topics'>{tags}</div>"
-            f"<div class='terms'>{terms}</div></div>"
-            f"<div class='vault'><h4>🔐 Private limits</h4><div class='note' style='margin-top:4px'>Only you see these. "
-            f"Your agent protects them in every conversation.</div>{limits}</div></div>")
+    terms = "".join(f"<div class='term'><span>{esc(k.replace('_', ' '))}</span>{esc(v)}</div>"
+                    for k, v in viewer.public_terms.items())
+    tags = "".join(ui.tag(esc(t)) for t in viewer.tags)
+    return (f"<div class='page-head'>{ui.art('وكيلي')}<h1 class='rise'>My <em>agent</em></h1><p class='rise d1'>"
+            f"What other agents can read, and what yours keeps to itself.</p></div><div class='agent-grid'><div class='card'><span class='label'>{icon('globe', 'sm')} "
+            f"Public profile · other agents see this</span>{person_row(viewer, 'lg', None, True)}"
+            f"<p class='bio'>{esc(viewer.public_bio)}</p><p class='bio'><span class='muted'>Looking for</span> "
+            f"{esc(viewer.looking_for)}</p><div class='tags' style='margin-top:14px'>{tags}</div>"
+            f"{'<div class=terms>' + terms + '</div>' if terms else ''}</div>"
+            f"<div class='vault'><h4>{icon('lock')}Private limits</h4><p class='note'>Only you see these. Your agent "
+            f"protects them in every conversation.</p>{limits_list(viewer)}</div></div>")
 
 
 # =====================================================================
@@ -585,41 +640,40 @@ def convo_list_html(viewer_id: str | None, my_negs: list[str], selected: str | N
                     live: list[Profile] | None = None) -> str:
     viewer = storage.get_profile(viewer_id) if viewer_id else None
     if viewer is None:
-        return ui.empty("💬", "No conversations yet", "Your agent's conversations will appear here.")
+        return ui.empty("chat", "No conversations yet", "Your agent's conversations will appear here.")
     rows = []
     for o in live or []:
         rows.append(f"<div class='crow live'>{ui.avatar(o.display_name, 'sm')}<div class='meta'><b>{esc(o.display_name)}</b>"
-                    f"<div class='h'>{esc(o.headline)}</div></div><span class='live-pill'>● Live</span></div>")
+                    f"<div class='h'>{esc(o.headline)}</div></div><span class='live-pill'>{ui.dot('live')}Live</span></div>")
     threads = sorted(_threads(viewer.id, my_negs), key=lambda t: -t[0].created_at)
     for neg, _, other in threads:
         verdict = neg.memo.verdict if neg.memo else "maybe_later"
-        kind = {"worth_meeting": "green", "maybe_later": "amber", "not_fit": ""}[verdict]
-        rows.append(f"<div class='crow {'sel' if neg.id == selected else ''}' data-act='open' data-id='{neg.id}'>"
-                    f"{ui.avatar(other.display_name, 'sm')}<div class='meta'><b>{esc(other.display_name)}</b>"
-                    f"<div class='h'>{ui.chip(VERDICT_LABEL[verdict], kind)} <span>{ago(neg.created_at)}</span></div>"
-                    f"</div><span class='score'>{neg.memo.score if neg.memo else ''}</span></div>")
+        rows.append(f"<div class='crow {'sel' if neg.id == selected else ''}' role='button' tabindex='0' "
+                    f"data-act='open' data-id='{neg.id}'>{ui.avatar(other.display_name, 'sm')}<div class='meta'>"
+                    f"<b>{esc(other.display_name)}</b><div class='h'>{VERDICT_LABEL[verdict]} · {ago(neg.created_at)}"
+                    f"</div></div><span class='score-s'>{neg.memo.score if neg.memo else ''}</span></div>")
     if not rows:
-        return ui.empty("💬", "No conversations yet", "Send your agent from <b>Matches</b>.")
-    return f"<div class='clist'><div class='eyebrow' style='margin:2px 4px 8px'>Your agent's conversations</div>{''.join(rows)}</div>"
+        return ui.empty("chat", "No conversations yet", "Send your agent from Matches.")
+    return f"<div class='clist'><span class='label'>Your agent's conversations</span>{''.join(rows)}</div>"
 
 
 def decision_status_html(neg: Negotiation, viewer: Profile, other: Profile) -> str:
     state = negotiation.thread_state(neg, viewer.id)
-    fo = esc(first(other.display_name))
+    fo = first(other.display_name)
     my_note = neg.notes.get(viewer.id)
     their_note = neg.notes.get(other.id)
-    notes = ((f"<div class='msgnote'><b>Your note</b> {esc(my_note)}</div>" if my_note else "")
-             + (f"<div class='msgnote'><b>{fo}'s note</b> {esc(their_note)}</div>" if their_note else ""))
+    notes = ((f"<div class='msgnote'><span class='label'>Your note</span>{esc(my_note)}</div>" if my_note else "")
+             + (f"<div class='msgnote'><span class='label'>{fo}'s note</span>{esc(their_note)}</div>" if their_note else ""))
     if state == "connected":
-        return (f"<div class='decision done'>🎉 <div><b>You and {fo} are connected.</b><div class='muted'>The intro "
-                f"is unlocked for both of you.</div>{notes}</div></div>")
+        return (f"<div class='decision done'>{icon('link')}<div><b>You and {fo} are connected.</b><div>The intro is "
+                f"unlocked for both of you.</div>{notes}</div></div>")
     if state == "waiting_them":
-        return (f"<div class='decision wait'><span class='typing'><i></i><i></i><i></i></span><div><b>Waiting for {fo}"
-                f"</b><div class='muted'>You asked to meet. The intro unlocks when {fo} says yes too.</div>{notes}</div></div>")
+        return (f"<div class='decision wait'>{ui.typing()}<div><b>Waiting for {fo}</b><div>You asked to meet. The intro "
+                f"unlocks when {fo} says yes too.</div>{notes}</div></div>")
     if state == "declined":
-        return "<div class='decision'>This conversation is closed. Nothing else is shared.</div>"
+        return f"<div class='decision'>{icon('x')}<div>This conversation is closed. Nothing else is shared.</div></div>"
     if neg.memo and neg.memo.verdict == "not_fit":
-        return (f"<div class='decision'>Your agent recommends passing on {fo}. You can still ask to meet.</div>")
+        return f"<div class='decision'>{icon('alert')}<div>Your agent recommends passing on {fo}. You can still ask to meet.</div></div>"
     return ""
 
 
@@ -637,9 +691,10 @@ def conversation_view(neg_id: str | None, viewer_id: str | None, side: str = "me
     state = negotiation.thread_state(neg, me.id)
     can_decide = not theirs and state in ("waiting_you", "later")
     no = neg.memo is not None and neg.memo.verdict == "not_fit"
-    banner = (f"<div class='their-banner'><span>👀 You're seeing <b>{esc(other.display_name)}</b>'s side of this "
-              f"conversation. In a real account {esc(first(other.display_name))}'s private limits are visible only to "
-              f"{esc(first(other.display_name))}.</span>{btn('Back to my side', 'myside', neg.id)}</div>") if theirs else ""
+    fo = first(other.display_name)
+    banner = (f"<div class='their-banner'>{icon('eye')}<span>You're seeing <b>{esc(other.display_name)}</b>'s side. "
+              f"In a real account {fo}'s private limits are visible only to {fo}.</span>"
+              f"{btn('Back to my side', 'myside', neg.id)}</div>") if theirs else ""
     return {
         C.conv_empty: gr.HTML(visible=False), C.conv_detail: gr.Column(visible=True),
         C.batch_view: gr.Column(visible=False), C.their_banner: banner,
@@ -650,7 +705,7 @@ def conversation_view(neg_id: str | None, viewer_id: str | None, side: str = "me
         C.memo_box: memo_html(neg, v, o, lang) if neg.memo else "",
         C.memo_lang: gr.Radio(value=lang),
         C.decide_row: gr.Row(visible=can_decide),
-        C.note: gr.Textbox(visible=can_decide, value="", placeholder=f"Add a note for {first(other.display_name)} (optional)"),
+        C.note: gr.Textbox(visible=can_decide, value="", placeholder=f"Add a note for {fo} (optional)"),
         C.decision_html: "" if theirs else decision_status_html(neg, me, other),
         C.current_neg: neg.id, C.side: "them" if theirs else "me",
         # Highlight what the agent recommends: on a "not a fit" verdict, passing is the main action.
@@ -666,68 +721,75 @@ def conversation_view(neg_id: str | None, viewer_id: str | None, side: str = "me
 def intros_html(viewer_id: str | None, my_negs: list[str]) -> str:
     viewer = storage.get_profile(viewer_id) if viewer_id else None
     if viewer is None:
-        return ui.empty("✉️", "No intros yet", "Intros your agent recommends will appear here.")
+        return ui.empty("mail", "No intros yet", "Intros your agent recommends will appear here.")
     groups = {"decide": [], "waiting_them": [], "connected": [], "later": [], "agent_passed": [], "declined": []}
     for neg, _, other in sorted(_threads(viewer.id, my_negs), key=lambda t: -t[0].created_at):
         state = negotiation.thread_state(neg, viewer.id)
         m = neg.memo
         if m is None:
             continue
-        fo = esc(first(other.display_name))
-        why = esc(m.reasons[0]) if m.reasons else ""
+        fo = first(other.display_name)
+        why = esc(ui.strip_emoji(m.reasons[0])) if m.reasons else ""
+        chev = f"<span class='go'>{icon('arrow', 'sm')}</span>"
         if state in ("waiting_you", "later") and m.verdict == "not_fit":
-            groups["agent_passed"].append(f"<div class='mini' data-act='open' data-id='{neg.id}'>{ui.avatar(other.display_name, 'sm')}"
-                                          f"<div class='meta'><b>{esc(other.display_name)}</b><div class='h'>{why}</div></div></div>")
+            groups["agent_passed"].append(
+                f"<div class='mini' role='button' tabindex='0' data-act='open' data-id='{neg.id}'>"
+                f"{ui.avatar(other.display_name, 'sm')}<div class='meta'><b>{esc(other.display_name)}</b>"
+                f"<div class='h'>{why}</div></div>{chev}</div>")
         elif state == "waiting_you":
-            kind = "green" if m.verdict == "worth_meeting" else "amber"
             groups["decide"].append(
-                f"<div class='card intro-card'><div class='top'>{person_row(other)}{ui.ring(m.score)}</div>"
-                f"<div style='margin-top:8px'>{ui.chip(VERDICT_LABEL[m.verdict], kind)} "
-                f"<span class='note'>Your agent talked with {fo}'s agent · {ago(neg.created_at)}</span></div>"
-                f"<p class='why-line'>{why}</p><div class='actions'>"
+                f"<div class='card intro-card'><div class='top'>{person_row(other)}{ui.score(m.score)}</div>"
+                f"<p class='why-line'>{why}</p><div class='meta-line'>"
+                f"{ui.tag(VERDICT_LABEL[m.verdict], VERDICT_KIND[m.verdict])}"
+                f"<span>Your agent talked with {fo}'s agent · {ago(neg.created_at)}</span></div><div class='actions'>"
                 + btn("Ask to meet", "approve", neg.id, "primary") + btn("Not now", "later", neg.id)
-                + btn("Pass", "pass", neg.id, "ghost") + btn("Read the conversation →", "open", neg.id, "link")
+                + btn("Pass", "pass", neg.id, "ghost")
+                + "<span style='flex:1'></span>" + btn("Read the conversation", "open", neg.id, "link", "arrow")
                 + "</div></div>")
         elif state == "later":
-            groups["later"].append(f"<div class='mini' data-act='open' data-id='{neg.id}'>{ui.avatar(other.display_name, 'sm')}"
-                                   f"<div class='meta'><b>{esc(other.display_name)}</b><div class='h'>"
-                                   f"{VERDICT_LABEL[m.verdict]} · {m.score}</div></div><span class='go'>Review →</span></div>")
+            groups["later"].append(
+                f"<div class='mini' role='button' tabindex='0' data-act='open' data-id='{neg.id}'>"
+                f"{ui.avatar(other.display_name, 'sm')}<div class='meta'><b>{esc(other.display_name)}</b>"
+                f"<div class='h'>{VERDICT_LABEL[m.verdict]} · fit {m.score}</div></div>{chev}</div>")
         elif state == "waiting_them":
             groups["waiting_them"].append(
                 f"<div class='card intro-card'><div class='top'>{person_row(other)}"
-                f"<span class='wait-pill'><span class='typing'><i></i><i></i><i></i></span> Waiting for {fo}</span></div>"
-                f"<p class='note' style='margin-top:10px'>You asked to meet {ago(neg.decided_at.get(viewer.id, neg.created_at))}. "
-                f"The intro unlocks when {fo} says yes.</p></div>")
+                f"<span class='wait-pill'>{ui.typing()}Waiting for {fo}</span></div>"
+                f"<p class='note' style='margin-top:12px'>You asked to meet "
+                f"{ago(neg.decided_at.get(viewer.id, neg.created_at))}. The intro unlocks when {fo} says yes.</p></div>")
         elif state == "connected":
-            ar = f"<p class='intro' dir='rtl'>{esc(neg.memo_ar.intro_message)}</p>" if neg.memo_ar else ""
+            ar = f"<p class='intro' dir='rtl' lang='ar'>{esc(neg.memo_ar.intro_message)}</p>" if neg.memo_ar else ""
             note = neg.notes.get(other.id)
             groups["connected"].append(
-                f"<div class='card intro-card celebrate'><div class='top'>{person_row(other)}"
-                f"<span class='pill connected'>🎉 Connected</span></div><p class='intro'>{esc(m.intro_message)}</p>{ar}"
-                + (f"<div class='msgnote'><b>{fo}'s note</b> {esc(note)}</div>" if note else "")
-                + "<div class='actions'>" + btn("Read the conversation →", "open", neg.id, "link")
-                + (btn(f"See {fo}'s side", "theirside", neg.id, "") if other.is_demo else "") + "</div></div>")
+                f"<div class='card intro-card connected'><div class='top'>{person_row(other)}"
+                f"{ui.tag(icon('link', 'sm') + 'Connected', 'good')}</div><p class='intro' dir='auto'>"
+                f"{esc(m.intro_message)}</p>{ar}"
+                + (f"<div class='msgnote'><span class='label'>{fo}'s note</span>{esc(note)}</div>" if note else "")
+                + "<div class='actions'>" + btn("Read the conversation", "open", neg.id, "link", "arrow")
+                + (btn(f"See {fo}'s side", "theirside", neg.id, "", "eye") if other.is_demo else "") + "</div></div>")
         elif state == "declined":
-            groups["declined"].append(f"<div class='mini'>{ui.avatar(other.display_name, 'sm')}<div class='meta'>"
+            groups["declined"].append(f"<div class='mini static'>{ui.avatar(other.display_name, 'sm')}<div class='meta'>"
                                       f"<b>{esc(other.display_name)}</b><div class='h'>Closed</div></div></div>")
 
-    def section(title, items, sub=""):
-        return (f"<div class='group'><h4>{title}<span class='count'>{len(items)}</span></h4>"
-                f"{'<p class=note>' + sub + '</p>' if sub else ''}{''.join(items)}</div>") if items else ""
+    def section(title, items, rows=False):
+        if not items:
+            return ""
+        inner = f"<div class='rows'>{''.join(items)}</div>" if rows else "".join(items)
+        return f"<div class='group rise'><h4>{title}<span class='count'>{len(items)}</span></h4>{inner}</div>"
 
     body = (section("Needs your decision", groups["decide"])
             + section("Waiting for them", groups["waiting_them"])
             + section("Connected", groups["connected"])
-            + section("Saved for later", groups["later"]))
+            + section("Saved for later", groups["later"], rows=True))
     if groups["agent_passed"]:
         n = len(groups["agent_passed"])
         body += (f"<details class='group fold'><summary><h4>Your agent passed on {n} for you<span class='count'>{n}"
-                 f"</span></h4></summary><p class='note'>A fast no saves you a meeting. Tap one to see why.</p>"
-                 f"{''.join(groups['agent_passed'])}</details>")
+                 f"</span>{icon('chevron', 'sm')}</h4></summary><p class='note'>A fast no saves you a meeting. "
+                 f"Open one to see why.</p><div class='rows'>{''.join(groups['agent_passed'])}</div></details>")
     if groups["declined"]:
         body += (f"<details class='group fold'><summary><h4>Closed<span class='count'>{len(groups['declined'])}</span>"
-                 f"</h4></summary>{''.join(groups['declined'])}</details>")
-    return body or ui.empty("✉️", "No intros yet", "When your agent finds someone worth meeting, the intro lands here.")
+                 f"{icon('chevron', 'sm')}</h4></summary><div class='rows'>{''.join(groups['declined'])}</div></details>")
+    return body or ui.empty("mail", "No intros yet", "When your agent finds someone worth meeting, the intro lands here.")
 
 
 # =====================================================================
@@ -808,7 +870,7 @@ def run_search(viewer_id: str | None, presenter: bool = False):
     n = len(matches)
     out = {C.search_box: search_html(st), C.match_ids: [m.profile.id for m in matches],
            C.no_match: gr.HTML(visible=not matches),
-           C.send_all_btn: gr.Button(visible=n > 1, value=f"🚀 Send my agent to all {n}"),
+           C.send_all_btn: gr.Button(visible=n > 1, value=f"Send my agent to all {n}"),
            C.search: {"viewer": viewer.id, "total": st.get("total", 0), "found": n, "ts": time.time()}}
     for i, (col, card) in enumerate(zip(C.match_cols, C.match_cards)):
         out[col] = gr.Column(visible=i < n)
@@ -834,14 +896,14 @@ def send_one(viewer_id, match_ids, i, live_used, lang, presenter, my_negs):
     header = room_header(viewer, other, lang)
     turns: list[AgentTurn] = []
     stage = None
-    talking = ui.status("💬 Agents are talking. Nothing is shared until you both approve an intro.")
+    talking = ui.status("Agents are talking. Nothing is shared until you both approve an intro.", "busy")
 
     def frame(partial=None, typing=None, thinking=False, status_html=""):
         return {C.conv_head: header, C.conv_progress: progress_html(stage),
-                C.conv_chat: transcript_html(turns, viewer, other, partial=partial, typing=typing),
+                C.conv_chat: transcript_html(turns, viewer, other, partial=partial, typing=typing, live=True),
                 C.conv_panel: panel_html(viewer, turns, thinking=thinking), C.conv_status: status_html}
 
-    first_status = (ui.status("⏳ Your agent is reading the other profile and preparing its opening…")
+    first_status = (ui.status("Your agent is reading the other profile and preparing its opening.", "busy")
                     if live or replaying else ui.status("You've used this session's live conversations, so this is "
                                                         "a saved one.", "warn"))
     yield {C.tabs: go("convos"), C.conv_empty: gr.HTML(visible=False), C.conv_detail: gr.Column(visible=True),
@@ -856,7 +918,7 @@ def send_one(viewer_id, match_ids, i, live_used, lang, presenter, my_negs):
                 yield frame(typing=None if mine else "them", thinking=mine, status_html=talking)
             elif kind == "fallback":
                 turns, stage = [], None
-                yield frame(status_html=ui.status("⚡ The live AI is slow right now, so here's a saved conversation.", "warn"))
+                yield frame(status_html=ui.status("The live AI is slow right now, so here's a saved conversation.", "warn"))
             elif kind == "turn":
                 turns.append(payload)
                 stage = payload.stage
@@ -866,26 +928,26 @@ def send_one(viewer_id, match_ids, i, live_used, lang, presenter, my_negs):
                     time.sleep(0.06)
                 yield frame(status_html=talking)
             elif kind == "memo":
-                yield frame(status_html=ui.status("📝 Done talking. A neutral judge is writing the verdict…"))
+                yield frame(status_html=ui.status("Done talking. A neutral judge is writing the verdict.", "busy"))
             elif kind == "done":
                 result = payload
     except Exception:
         logging.exception("Negotiation crashed")
     if result is None or result.status != "complete":
-        yield {**frame(status_html=ui.status("😕 The agents couldn't finish this conversation. Please try again in "
+        yield {**frame(status_html=ui.status("The agents couldn't finish this conversation. Please try again in "
                                              "a moment.", "warn")),
                C.convo_list: convo_list_html(viewer_id, my_negs)}
         return
     my_negs = remember_many([result.id], my_negs)
     memo_lang = "ar" if lang != "en" else "en"
     stage = "verdict"
-    yield {**frame(status_html=ui.status("✅ Done. Your private limits never left your agent.", "ok")),
+    yield {**frame(status_html=ui.status("Done. Your private limits never left your agent.", "ok")),
            C.conv_progress: progress_html("verdict", finished=True), C.memo_section: gr.Column(visible=True),
-           C.memo_box: f"<div class='card' style='padding:30px'>{ui.spinner_line('Opening the verdict…')}</div>",
+           C.memo_box: f"<div class='card'>{ui.spinner_line('Opening the verdict')}</div>",
            C.my_negs: my_negs, C.current_neg: result.id}
     view = conversation_view(result.id, viewer_id, "me", memo_lang)
     view.pop(C.conv_chat, None)  # keep the streamed chat on screen as is
-    view[C.conv_status] = ui.status("✅ Done. Your private limits never left your agent.", "ok")
+    view[C.conv_status] = ui.status("Done. Your private limits never left your agent.", "ok")
     view[C.convo_list] = convo_list_html(viewer_id, my_negs, selected=result.id)
     yield view
 
@@ -905,25 +967,25 @@ def batch_html(viewer: Profile, rows: list[dict], done: bool) -> str:
         parts = [f"{n} {VERDICT_LABEL[v].lower()}" for v, n in counts.items() if n]
         saved = len(finished) * MINUTES_PER_FIRST_CALL
         worth = counts["worth_meeting"] + counts["maybe_later"]
-        cta = btn(f"Review {worth} intro{'s' if worth != 1 else ''} →", "goto", "intros", "primary") if worth else ""
-        summary = (f"<div class='card batch-summary'><div class='eyebrow'>Your agent's report</div>"
+        cta = btn(f"Review {worth} intro{'s' if worth != 1 else ''}", "goto", "intros", "primary", "arrow") if worth else ""
+        took = f"{saved // 60}h {saved % 60:02d}m" if saved >= 60 else f"{saved} minutes"
+        summary = (f"<div class='card batch-summary'><span class='label'>Your agent's report</span>"
                    f"<h3>Your agent met {len(finished)} {'person' if len(finished) == 1 else 'people'}: "
                    f"{' · '.join(parts)}.</h3><div class='meter'>"
-                   + ui.chip(f"⏱ Saved you about {saved // 60}h {saved % 60:02d}m of first calls" if saved >= 60
-                             else f"⏱ Saved you about {saved} minutes of first calls", "accent")
-                   + ui.chip(f"{ui.SHIELD} Your private limits stayed private", "green")
-                   + f"</div><div class='actions' style='margin-top:12px'>{cta}</div></div>")
+                   + ui.tag(f"{icon('clock', 'sm')}Saved you about {took} of first calls")
+                   + ui.tag(f"{ui.SHIELD}Your private limits stayed private", "good")
+                   + f"</div>{'<div class=actions>' + cta + '</div>' if cta else ''}</div>")
     else:
         active = sum(r["state"] in ("talking", "memo") for r in rows)
-        summary = ui.status(f"💬 Your agent is in {active} conversation{'s' if active != 1 else ''} at once. "
-                            "Nothing is shared until you approve an intro.") if active else ""
+        summary = ui.status(f"Your agent is in {active} conversation{'s' if active != 1 else ''} at once. "
+                            "Nothing is shared until you approve an intro.", "busy") if active else ""
     cards = []
     for r in rows:
         clickable = r["state"] == "done"
-        attrs = f" data-act='open' data-id='{r['neg'].id}'" if clickable else ""
-        cards.append(f"<div class='card batch-row {'lift' if clickable else ''}'{attrs}>{person_row(r['other'])}"
-                     f"<div class='batch-state'>{_row_status(r)}{'<span class=go>Open →</span>' if clickable else ''}"
-                     f"</div></div>")
+        attrs = f" role='button' tabindex='0' data-act='open' data-id='{r['neg'].id}'" if clickable else ""
+        arrow = f"<span class='go'>{icon('arrow', 'sm')}</span>" if clickable else ""
+        cards.append(f"<div class='batch-row {'lift' if clickable else ''}'{attrs}>{person_row(r['other'])}"
+                     f"<div class='batch-state'>{_row_status(r)}{arrow}</div></div>")
     return f"{summary}<div class='batch-list'>{''.join(cards)}</div>"
 
 
@@ -1043,7 +1105,7 @@ def other_side_reply(pending, viewer_id, my_negs, search, presenter, current, si
     negotiation.decide(neg, other.id, "approved" if yes else "declined",
                        note="Looking forward to it. Does next week work?" if yes else "")
     fo = first(other.display_name)
-    gr.Info(f"🎉 {fo} said yes. You're connected." if yes else f"{fo} passed this time.")
+    gr.Info(f"{fo} said yes. You're connected." if yes else f"{fo} passed this time.")
     out = refresh(viewer_id, my_negs, search, presenter, selected=current)
     out[C.pending_reply] = None
     if current == neg.id and side == "me":
@@ -1072,7 +1134,7 @@ def on_list_click(evt: gr.EventData, viewer_id, my_negs, search, presenter, lang
 # Layout
 # =====================================================================
 
-with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
+with gr.Blocks(title="Handshake · مصافحة") as demo:
     C.viewer_id = gr.State(None)
     C.match_ids = gr.State([])
     C.live_used = gr.State(0)
@@ -1083,7 +1145,7 @@ with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
     C.side = gr.State("me")
     C.pending_reply = gr.State(None)
 
-    C.brand = gr.HTML(ui.brand_bar(), js_on_load=ui.DELEGATE_JS)
+    C.brand = gr.HTML(ui.brand_bar(place=PLACE), js_on_load=ui.DELEGATE_JS)
     with gr.Tabs(selected="home") as tabs:
         C.tabs = tabs
         # ---------------- Home ----------------
@@ -1091,81 +1153,77 @@ with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
             with gr.Column() as landing:
                 C.landing = landing
                 C.landing_html = gr.HTML(landing_html())
-                with gr.Row(elem_classes="cta-row"):
-                    create_btn = gr.Button("Create your agent  →", variant="primary", size="lg", scale=2)
+                with gr.Row(elem_classes="row-auto"):
+                    create_btn = gr.Button("Create your agent", variant="primary", size="lg", scale=0, elem_classes="cta")
                     if LOGIN_ENABLED:
-                        gr.LoginButton(value="Sign in with Hugging Face", size="lg", scale=1)
-                explore_btn = gr.Button("Or explore with a sample account", variant="secondary", size="sm",
-                                        elem_classes="linkish")
+                        gr.LoginButton(value="Sign in with Hugging Face", size="lg", scale=0, variant="secondary")
                 C.signed_in = gr.HTML()
-                with gr.Column(visible=False) as picker:
+                gr.HTML(flow_html())
+                with gr.Column(visible=True) as picker:
                     C.picker = picker
-                    gr.HTML("<div class='section-title' style='margin-top:6px'>Explore with a sample account</div>"
-                            "<p class='section-sub'>Every sample member has a real agent with public goals and "
-                            "private limits.</p>")
                     C.gallery = gr.HTML(persona_gallery(), js_on_load=ui.DELEGATE_JS)
-                    with gr.Row(equal_height=False):
-                        more_pick = gr.Dropdown(persona_choices(), label=f"Or search all {len(storage.seed_profiles())} "
-                                                "members", value=None, filterable=True, scale=3)
-                        more_btn = gr.Button("Continue", variant="primary", interactive=False, scale=1)
+                    with gr.Row(equal_height=True, elem_classes="head-row", visible=False):
+                        more_pick = gr.Dropdown(persona_choices(), label=f"Search all {len(storage.seed_profiles())} members", value=None, filterable=True, scale=4)
+                        more_btn = gr.Button("Continue", variant="secondary", interactive=False, scale=0, min_width=120)
             with gr.Column(visible=False) as dash:
                 C.dash = dash
                 C.dash_html = gr.HTML(js_on_load=ui.DELEGATE_JS)
 
         # ---------------- Matches ----------------
         with gr.Tab("Matches", id="matches"):
-            C.matches_empty = gr.HTML(ui.empty("🧭", "Set up your agent first", "Create your agent or explore with a "
-                                               "sample account on <b>Home</b>."))
+            C.matches_empty = gr.HTML(ui.empty("users", "Set up your agent first", "Create your agent or try a sample "
+                                               "member on Home."))
             with gr.Column(visible=False) as matches_body:
                 C.matches_body = matches_body
-                with gr.Row(equal_height=False):
-                    with gr.Column(scale=3, min_width=260):
-                        gr.HTML("<div class='section-title' style='margin-top:4px'>Matches for you</div>"
-                                "<p class='section-sub'>Your agent searches everyone, then checks each person "
-                                "closely.</p>")
-                    with gr.Column(scale=2, min_width=200):
-                        C.neg_lang = gr.Radio(NEG_LANG_CHOICES, value="en", label="Your agent talks in",
-                                              elem_classes="seg")
+                with gr.Row(equal_height=False, elem_classes="head-row"):
+                    gr.HTML(f"<div class='page-head' style='margin-bottom:0'>{ui.art('توافق')}<h1 class='rise'>Your <em>matches</em>"
+                            "</h1><p class='rise d1'>Your agent searches everyone, then checks each person closely.</p></div>")
+                    C.neg_lang = gr.Radio(NEG_LANG_CHOICES, value="en", label="Your agent speaks",
+                                          elem_classes="seg", scale=0, min_width=200)
                 C.search_box = gr.HTML()
-                C.send_all_btn = gr.Button("🚀 Send my agent to all", variant="primary", size="lg", visible=False)
+                with gr.Row(elem_classes="row-auto"):
+                    C.send_all_btn = gr.Button("Send my agent to all", variant="primary", size="lg", visible=False, scale=0,
+                                              elem_classes="cta")
                 C.match_cols, C.match_cards, send_btns = [], [], []
                 with gr.Row(equal_height=True):
                     for i in range(3):
                         with gr.Column(visible=False, min_width=240, elem_classes="col-card") as col:
                             C.match_cards.append(gr.HTML())
-                            send_btns.append(gr.Button("Send my agent  →", variant="primary"))
+                            send_btns.append(gr.Button("Send my agent", variant="secondary"))
                         C.match_cols.append(col)
-                C.no_match = gr.HTML(ui.empty("🔭", "No obvious match yet", "Nobody fits closely enough right now. "
+                C.no_match = gr.HTML(ui.empty("search", "No obvious match yet", "Nobody fits closely enough right now. "
                                               "Try broadening what you're looking for."), visible=False)
                 search_again = gr.Button("Search again", variant="secondary", size="sm", elem_classes="linkish")
 
         # ---------------- Conversations ----------------
         with gr.Tab("Conversations", id="convos"):
             with gr.Row(equal_height=False, elem_classes="convos"):
-                with gr.Column(scale=2, min_width=250):
+                with gr.Column(scale=2, min_width=240):
                     C.convo_list = gr.HTML(convo_list_html(None, []), js_on_load=ui.DELEGATE_JS)
                 with gr.Column(scale=5, min_width=320):
-                    C.conv_empty = gr.HTML(ui.empty("💬", "Pick a conversation", "Or send your agent from "
-                                                    "<b>Matches</b> to watch a new one live."))
+                    C.conv_empty = gr.HTML(ui.empty("chat", "Pick a conversation", "Or send your agent from "
+                                                    "Matches to watch a new one live."))
                     with gr.Column(visible=False) as conv_detail:
                         C.conv_detail = conv_detail
                         C.their_banner = gr.HTML(js_on_load=ui.DELEGATE_JS)
                         C.conv_head = gr.HTML()
                         with gr.Column(visible=False) as memo_section:
                             C.memo_section = memo_section
-                            with gr.Row(equal_height=False, elem_classes="memo-top"):
-                                gr.HTML("<div class='section-title' style='font-size:1.2rem'>The verdict</div>")
+                            with gr.Row(equal_height=False, elem_classes="head-row"):
+                                gr.HTML("<span class='label' style='margin:0'>The verdict · الحكم</span>")
                                 C.memo_lang = gr.Radio(LANG_CHOICES, value="en", show_label=False, container=False,
-                                                       elem_classes="seg")
+                                                       elem_classes="seg", scale=0, min_width=160)
                             C.memo_box = gr.HTML()
                             C.decision_html = gr.HTML()
                             C.note = gr.Textbox(show_label=False, lines=1, max_lines=3, visible=False,
                                                 placeholder="Add a note (optional)")
-                            with gr.Row(visible=False) as decide_row:
+                            with gr.Row(visible=False, elem_classes="row-auto") as decide_row:
                                 C.decide_row = decide_row
-                                approve_btn = C.approve_btn = gr.Button("Ask to meet", variant="primary", size="lg", scale=2)
-                                later_btn = gr.Button("Not now", variant="secondary", size="lg", scale=1)
-                                pass_btn = C.pass_btn = gr.Button("Pass", variant="secondary", size="lg", scale=1)
+                                approve_btn = C.approve_btn = gr.Button("Ask to meet", variant="primary", scale=0)
+                                later_btn = gr.Button("Not now", variant="secondary", scale=0)
+                                pass_btn = C.pass_btn = gr.Button("Pass", variant="secondary", scale=0)
+                        gr.HTML("<div class='section-label' style='margin-top:36px'><h2>The <em>conversation</em></h2>"
+                                "<p>Every message your agent sent was checked against your private limits.</p></div>")
                         with gr.Row(equal_height=False):
                             with gr.Column(scale=3, min_width=300):
                                 C.conv_progress = gr.HTML()
@@ -1180,38 +1238,40 @@ with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
 
         # ---------------- Intros ----------------
         with gr.Tab("Intros", id="intros"):
-            gr.HTML("<div class='section-title'>Intros</div><p class='section-sub'>An intro unlocks only when both "
-                    "people say yes.</p>")
+            gr.HTML(f"<div class='page-head'>{ui.art('تعارف')}<h1 class='rise'>Your <em>intros</em></h1><p class='rise d1'>"
+                    "An intro unlocks only when both people say yes.</p></div>")
             C.intros_box = gr.HTML(intros_html(None, []), js_on_load=ui.DELEGATE_JS)
 
         # ---------------- My agent ----------------
         with gr.Tab("My agent", id="agent"):
             C.agent_summary = gr.HTML()
-            with gr.Accordion("Create your own agent", open=True) as agent_form:
+            with gr.Accordion("Create your own agent", open=True, elem_classes="hs-section") as agent_form:
                 C.agent_form = agent_form
-                gr.HTML("<p class='section-sub'>Describe who you are and what you want, in English or Arabic. "
+                gr.HTML("<p class='form-intro'>Describe who you are and what you want, in English or Arabic. "
                         "Mention anything your agent must protect, like a minimum salary or a maximum valuation.</p>")
-                signin_md = gr.Markdown(signin_note(None))
+                signin_md = gr.Markdown(signin_note(None), elem_classes="note")
                 with gr.Column(elem_classes="form-card"):
-                    role_in = gr.Radio(ROLE_CHOICES, label="I am a…")
+                    role_in = gr.Radio(ROLE_CHOICES, label="I am a", elem_classes="pills")
                     about_in = gr.Textbox(
                         label="About you", lines=6, max_length=profiles.MAX_TEXT,
                         placeholder=("e.g. I'm Huda, a backend engineer in Doha with 6 years in payments. I want to "
                                      "join an early fintech as a founding engineer. Hybrid is fine. Privately, I won't "
                                      "go below $90k.\n\nأو اكتب بالعربية: أنا مؤسسة شركة ناشئة في الدوحة…"))
-                    build_btn = gr.Button("✨ Build my agent", variant="primary")
-                build_status = gr.Markdown()
+                    with gr.Row(elem_classes="row-auto"):
+                        build_btn = gr.Button("Build my agent", variant="primary", scale=0)
+                build_status = gr.HTML()
                 questions_state = gr.State([])
                 with gr.Group(visible=False) as q_group:
                     with gr.Column(elem_classes="form-card"):
-                        gr.HTML("<div class='eyebrow'>A few quick questions</div>")
+                        gr.HTML("<div class='form-head'><h3>A few quick questions</h3><p>Answer what you like.</p></div>")
                         q_boxes = [gr.Textbox(visible=False, lines=1) for _ in range(N_QUESTIONS)]
-                        refine_btn = gr.Button("Update my agent with these answers", variant="secondary")
+                        with gr.Row(elem_classes="row-auto"):
+                            refine_btn = gr.Button("Update my agent", variant="secondary", scale=0)
                 with gr.Group(visible=False) as cards_group:
                     with gr.Row(equal_height=False):
                         with gr.Column(min_width=280, elem_classes="form-card"):
-                            gr.HTML("<h3 style='margin:0'>🌐 Public profile</h3><div class='note'>What other agents can "
-                                    "read.</div>")
+                            gr.HTML(f"<div class='form-head'><h3>{icon('globe')}Public profile</h3><p>What other "
+                                    "agents can read.</p></div>")
                             f_name = gr.Textbox(label="Name")
                             f_headline = gr.Textbox(label="Headline")
                             f_bio = gr.Textbox(label="Bio", lines=3)
@@ -1222,14 +1282,15 @@ with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
                             f_stage = gr.Dropdown(STAGE_CHOICES, label="Company stage", visible=False)
                             f_terms = gr.Textbox(label="Public terms", lines=4, info="One per line, like  salary: $80k–$100k")
                         with gr.Column(min_width=260, elem_classes="form-card private"):
-                            gr.HTML("<h3 style='margin:0'>🔐 Private limits</h3><div class='note'>What your agent "
-                                    "protects. Only you see this.</div>")
+                            gr.HTML(f"<div class='form-head'><h3>{icon('lock')}Private limits</h3><p>What your agent "
+                                    "protects. Only you see this.</p></div>")
                             f_limits = gr.Textbox(label="Limits and deal-breakers", lines=5, info="One per line")
                             f_secrets = gr.Textbox(
                                 label="Protected terms", info="Exact numbers and phrases the leak check blocks. "
                                 "Numbers in your limits are added automatically.")
-                    activate_btn = gr.Button("Activate my agent  →", variant="primary", size="lg")
-                    activate_status = gr.Markdown()
+                    with gr.Row(elem_classes="row-auto"):
+                        activate_btn = gr.Button("Activate my agent", variant="primary", size="lg", scale=0)
+                    activate_status = gr.HTML()
 
     # =================================================================
     # Wiring
@@ -1252,7 +1313,6 @@ with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
     C.brand.click(on_brand, inputs=[C.my_negs, C.presenter], outputs=everything, show_progress="hidden")
     create_btn.click(lambda: {C.tabs: go("agent"), C.agent_form: gr.Accordion(open=True)}, outputs=everything,
                      show_progress="hidden")
-    explore_btn.click(lambda: {C.picker: gr.Column(visible=True)}, outputs=everything, show_progress="hidden")
 
     def on_gallery(evt: gr.EventData, my_negs, presenter):
         if evt._data.get("act") == "persona":
@@ -1317,9 +1377,9 @@ with gr.Blocks(title="Handshake · your agent meets the ecosystem") as demo:
                    f_limits, f_secrets]
     role_in.change(founder_fields, inputs=role_in, outputs=[f_seeking, f_stage])
     build_outputs = [build_status, questions_state, q_group, *q_boxes, cards_group, *card_fields]
-    build_btn.click(lambda: "⏳ Your agent is reading about you…", outputs=build_status).then(
+    build_btn.click(lambda: ui.status("Your agent is reading about you.", "busy"), outputs=build_status).then(
         build_agent, inputs=[role_in, about_in, gr.State([]), *q_boxes], outputs=build_outputs)
-    refine_btn.click(lambda: "⏳ Updating your agent with your answers…", outputs=build_status).then(
+    refine_btn.click(lambda: ui.status("Updating your agent with your answers.", "busy"), outputs=build_status).then(
         build_agent, inputs=[role_in, about_in, questions_state, *q_boxes], outputs=build_outputs)
     activate_btn.click(activate_agent, inputs=[role_in, *card_fields], outputs=[C.viewer_id, activate_status, f_secrets]
                        ).success(lambda v, m, pr: {**refresh(v, m, None, pr), C.agent_form: gr.Accordion(open=False)},
@@ -1347,4 +1407,4 @@ demo.queue(default_concurrency_limit=4, max_size=32)
 threading.Thread(target=matching.warm, args=([pid for pid, _ in PERSONAS],), daemon=True).start()
 
 if __name__ == "__main__":
-    demo.launch(theme=ui.THEME, css=ui.CSS, head=ui.brand_theme.HEAD, js=ui.FORCE_LIGHT_JS)
+    demo.launch(theme=ui.THEME, css=ui.CSS, head=ui.HEAD, js=ui.FORCE_LIGHT_JS, favicon_path=ui.FAVICON)
