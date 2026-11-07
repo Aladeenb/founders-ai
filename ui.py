@@ -116,7 +116,7 @@ FORCE_LIGHT_JS = r"""
   light();
   new MutationObserver(light).observe(document.body, {attributes: true, attributeFilter: ['class']});
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const AR = {home: 'الرئيسية', matches: 'التوافق', convos: 'الحوارات', intros: 'التعارف', agent: 'وكيلي'};
+  const AR = {home: 'الرئيسية', matches: 'التوافق', convos: 'الحوارات', intros: 'التعارف', profile: 'ملفي'};
   const dock = () => document.querySelectorAll('.tab-container[role=tablist]').forEach((tl) => {
     let ind = tl.querySelector('.hs-ind');
     if (!ind) { ind = document.createElement('span'); ind.className = 'hs-ind'; tl.prepend(ind); tl.classList.add('has-ind'); }
@@ -322,6 +322,21 @@ body .gradio-container .hs-section > .label-wrap span:first-child { font-family:
   font-weight: 400 !important; color: var(--pearl) !important; }
 body .gradio-container .hs-section > .label-wrap .icon { color: var(--maroon) !important; font-size: 11px !important; }
 body .gradio-container .hs-section { overflow: visible !important; }
+/* closed (a saved profile): the header reads as a button to open the editor */
+body .gradio-container .hs-section > .label-wrap { cursor: pointer; transition: color .3s var(--ease); }
+body .gradio-container .hs-section > .label-wrap .icon { width: 30px; height: 30px; border-radius: 50%; display: inline-flex !important;
+  align-items: center; justify-content: center; background: rgba(138,21,56,.07); transition: background .3s var(--ease); }
+body .gradio-container .hs-section > .label-wrap:hover .icon { background: rgba(138,21,56,.14); }
+body .gradio-container .hs-section > .label-wrap:not(.open) { border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px 20px !important; background: rgba(255,255,255,.7); }
+body .gradio-container .hs-section > .label-wrap:not(.open) span:first-child { font-size: 22px !important; }
+body .gradio-container .hs-section > .label-wrap:not(.open):hover { border-color: rgba(138,21,56,.3); }
+/* the sign-in note is a soft banner, not body text */
+body .gradio-container .signin-note { padding: 12px 16px !important; border-radius: 14px; background: rgba(168,109,18,.07);
+  border: 1px solid rgba(168,109,18,.18); margin-bottom: 18px; }
+body .gradio-container .signin-note, body .gradio-container .signin-note * { font-size: 13px !important; color: var(--pearl-2) !important;
+  line-height: 1.55 !important; }
+body .gradio-container .signin-note strong { color: var(--pearl) !important; }
 
 /* gradio columns styled as glass */
 body .gradio-container .form-card, body .gradio-container .col-card { position: relative; isolation: isolate;
@@ -836,7 +851,7 @@ details.fold > summary h4 .ic { transition: transform .4s var(--spring); }
 details.fold[open] > summary h4 .ic { transform: rotate(180deg); }
 details.fold .note { margin: 0 0 12px; }
 
-/* my agent */
+/* my profile */
 .agent-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; margin-bottom: 56px; align-items: start; }
 .agent-grid .bio { font-size: 14px; line-height: 1.65; color: var(--pearl-2); margin: 18px 0 0; }
 .terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 18px; }
@@ -846,6 +861,23 @@ details.fold .note { margin: 0 0 12px; }
 .form-head h3 .ic { color: var(--gold); width: 20px; height: 20px; }
 .form-head p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
 .form-intro { font-size: 15px; color: var(--pearl-2); line-height: 1.65; margin: 0 0 18px; max-width: 640px; }
+.form-head .step { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(138,21,56,.08); color: var(--maroon); font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.limits li .chk { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
+  font-weight: 600; letter-spacing: .04em; color: var(--green); white-space: nowrap; }
+.limits li .chk .ic { color: var(--green); margin: 0; }
+.described { display: flex; gap: 14px; align-items: flex-start; }
+.described .step { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+  border-radius: 50%; background: rgba(138,21,56,.08); color: var(--maroon); font-size: 12px; font-weight: 600; }
+.described b { display: block; font-size: 14px; color: var(--pearl); margin-bottom: 2px; }
+.described span:not(.step) { font-size: 13px; color: var(--muted); line-height: 1.5; }
+body .gradio-container .described-row { align-items: center !important; padding: 16px 20px !important; border: 1px solid var(--line);
+  border-radius: 18px; background: rgba(255,255,255,.7); margin-bottom: 4px; }
+.checks { margin-top: 16px; padding-top: 14px; border-top: 1px dashed rgba(138,21,56,.2); }
+.checks ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.checks li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--pearl); }
+.checks li .ic { color: var(--green, #23824c); flex: none; margin-top: 2px; }
+.checks.none { font-size: 13px; color: var(--muted); line-height: 1.55; margin: 10px 0 0; border: 0; padding: 0; }
 
 @media (max-width: 900px) {
   .hero { min-height: 0; padding-top: 8px; }

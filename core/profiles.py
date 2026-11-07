@@ -10,7 +10,8 @@ import uuid
 from pydantic import BaseModel, Field, field_validator
 
 from core import llm
-from core.schemas import Profile, Role
+from core.schemas import Profile, Role, Terms
+from core.terms import _MONTH, RawTerms, _mentions, fix_units, mark_private, to_terms
 
 log = logging.getLogger(__name__)
 
@@ -39,6 +40,12 @@ class Draft(BaseModel):
         return {str(k): str(val) for k, val in (v or {}).items()} if isinstance(v, dict) else {}
 
 
+class FormDraft(Draft):
+    """What the profile form extracts: the Draft plus what the matcher indexes beyond it."""
+    offers: str = ""
+    terms: RawTerms | None = None
+
+
 SYSTEM = """You help people on Handshake, a startup matchmaking platform, set up the AI agent that will \
 negotiate for them. Turn their self-description into a structured profile.
 
@@ -61,13 +68,37 @@ timeline; for investors: stages (comma list from {stages}), cheque_size, sectors
 role, salary, equity, work_style, start.
 - private_limits: short sentences. secret_terms: the exact numbers or phrases inside private_limits that must never \
 be said (e.g. "$10M", "15%"). Use Western digits. If they gave no private limits, return [] for both.
-- follow_up_questions: at most 3 short questions about MISSING details that matter for negotiation for this role \
-(for example cheque size, valuation, salary floor, remote or on-site, stage). Ask nothing already answered. \
-Return [] if nothing important is missing.
+- follow_up_questions: at most 3 short questions TO this person about their OWN situation as a {role}, about \
+MISSING details that matter for negotiation. Ask in the second person ("What's your…?"). Fitting topics: \
+{question_topics}. Never ask a question meant for the other side (an engineer is not hiring; an investor is not \
+raising). Ask nothing already answered. Return [] if nothing important is missing.
+- offers: one sentence on what they give others (capital, pilots, introductions, skills), ONLY if they stated it. \
+Do not infer it. "" if not stated.
+- terms: the numbers behind their terms and deal-breakers, as written (amounts in full units: 9M -> 9000000; equity \
+in percentage points: 1% -> 1; currency as they wrote it, never assumed to be USD; period "month" for monthly pay). \
+{terms_rule} work: ONLY a stated requirement ("remote only"), never a preference. other: short phrases for any \
+other requirement, e.g. "must be profitable". Use null or [] for anything not stated.
 - Write text fields in the same language the person used.
 
 Reply with JSON only, with exactly these keys: display_name, headline, public_bio, looking_for, seeking, tags, \
-location, stage, public_terms, private_limits, secret_terms, follow_up_questions."""
+location, stage, public_terms, private_limits, secret_terms, follow_up_questions, offers, terms. terms has the keys \
+valuation, hires, salary, equity, work, other; a range is {{"low", "high", "currency", "period"}}."""
+
+QUESTION_TOPICS = {
+    "founder": "how much you're raising, your valuation floor, roles you're hiring and what you can pay, timeline",
+    "investor": "cheque size, stages, sectors, geography, your valuation ceiling",
+    "engineer": "your salary floor, equity you'd want, remote or on-site, when you can start",
+    "operator": "the role you want, your salary floor, equity you'd want, remote or on-site, when you can start",
+}
+
+TERMS_RULE = {
+    "founder": "valuation.low = the lowest valuation they accept; hires = one entry per role they hire "
+               "({\"kind\": \"engineer\" or \"operator\", \"title\", \"salary\": {\"high\": most they can pay}, "
+               "\"equity\", \"work\"}).",
+    "investor": "valuation.high = the highest valuation they invest at.",
+    "engineer": "salary.low = their minimum; equity.low = the least equity they accept.",
+    "operator": "salary.low = their minimum; equity.low = the least equity they accept.",
+}
 
 _AMOUNT = re.compile(
     r"[$€£]?\s?\d[\d,]*(?:\.\d+)?\s?(?:k|m|mn|bn|b|million|thousand|%|percent)?(?![a-z])", re.I)
@@ -123,7 +154,115 @@ def _clean(draft: Draft, role: str) -> Draft:
     return draft
 
 
-def extract(role: str, text: str, name: str = "", answers: dict[str, str] | None = None) -> Draft:
+def structured_terms(raw: RawTerms | None, said: str, private_limits: list[str], location: str = "") -> Terms | None:
+    """The numbers the matcher checks in code: units fixed from the member's words, converted to USD per year.
+
+    Every bound is marked private: the member's own numbers are never quoted to anyone else.
+    """
+    if raw is None:
+        return None
+    said = "\n".join([said, *private_limits])
+    for r in (raw.salary, *(h.salary for h in raw.hires)):
+        # Models sometimes call a salary monthly unprompted, which multiplies it by 12. Only the member's own
+        # words decide: keep "month" only if they wrote it next to that number.
+        if r is not None and r.period == "month" and not any(
+                any(m in w for m in _MONTH) for v in (r.low, r.high) if v is not None for w in _mentions(v, said)):
+            r.period = None
+    t = to_terms(fix_units(mark_private(raw, private_limits), said, location))
+    for r in [t.valuation, t.salary, t.equity] + [r for h in t.hires for r in (h.salary, h.equity)]:
+        if r is not None:
+            r.low_private = r.high_private = True
+    empty = not (t.valuation or t.salary or t.equity or t.hires or t.work or t.other)
+    return None if empty else t
+
+
+def _money(v: float, cur: str) -> str:
+    sym = {"USD": "$", "EUR": "€"}.get(cur, cur + " ")
+    return f"{sym}{v / 1e6:g}M" if v >= 1e6 else f"{sym}{v / 1e3:,.0f}k"
+
+
+def _checks(t: Terms | None) -> list[tuple[str, list[float], str]]:
+    """(plain-language line, the numbers it holds, kind) for everything the matcher checks exactly."""
+    if t is None:
+        return []
+    out = []
+    if t.valuation and t.valuation.low is not None:
+        out.append((f"Valuation of at least {_money(t.valuation.low, t.valuation.currency)}", [t.valuation.low], "num"))
+    if t.valuation and t.valuation.high is not None:
+        out.append((f"Valuation of at most {_money(t.valuation.high, t.valuation.currency)}", [t.valuation.high], "num"))
+    if t.salary and t.salary.low is not None:
+        out.append((f"Salary of at least {_money(t.salary.low, t.salary.currency)} a year", [t.salary.low], "num"))
+    if t.equity and t.equity.low is not None:
+        out.append((f"Equity of at least {t.equity.low:g}%", [t.equity.low], "num"))
+    for h in t.hires:
+        what = h.title or f"the {h.kind} role"
+        if h.salary and h.salary.high is not None:
+            out.append((f"Pay up to {_money(h.salary.high, h.salary.currency)} a year for {what}", [h.salary.high], "num"))
+        if h.equity and h.equity.high is not None:
+            out.append((f"Equity up to {h.equity.high:g}% for {what}", [h.equity.high], "num"))
+        if h.work:
+            out.append((f"{what[0].upper() + what[1:]}: {' or '.join(h.work)}", [], "work"))
+    if t.work:
+        out.append(("Work: " + " or ".join(t.work) + " only", [], "work"))
+    return out + [(o, [], "other") for o in t.other]
+
+
+def checked_lines(t: Terms | None) -> list[str]:
+    """Plain-language list of what the matcher checks exactly, for the member's own eyes."""
+    return [line for line, _, _ in _checks(t)]
+
+
+_WORK_WORDS = ("remote", "on-site", "onsite", "on site", "office", "hybrid", "عن بعد", "مكتب")
+
+
+def limits_with_checks(private_limits: list[str], t: Terms | None) -> list[tuple[str, bool]]:
+    """The member's limits in their own words, each flagged if the matcher checks it exactly, then any exact
+    check no limit already says (e.g. "remote only" written in the bio). Nothing is listed twice."""
+    from core.terms import _amount
+
+    checks, used, out = _checks(t), set(), []
+    for limit in private_limits:
+        nums = [v for v in (_amount(a) for a in amounts_in(limit)) if v is not None]
+        low = limit.lower()
+        hit = None
+        for i, (_, values, kind) in enumerate(checks):
+            if kind == "num" and any(abs(v - n) <= 0.01 * max(1.0, n) for v in values for n in nums):
+                hit = i
+            elif kind == "work" and any(w in low for w in _WORK_WORDS):
+                hit = i
+            elif kind == "other" and checks[i][0].lower() in low:
+                hit = i
+            if hit is not None:
+                break
+        if hit is not None:
+            used.add(hit)
+        out.append((limit, hit is not None))
+    return out + [(line, True) for i, (line, _, _) in enumerate(checks) if i not in used]
+
+
+_TERMS_ONLY = """Read a member's terms and private deal-breakers on Handshake, a startup matchmaking platform. \
+The member is a {role}. Extract the numbers behind them.
+
+{rules}
+
+Reply with JSON only: {{"valuation": null, "hires": [], "salary": null, "equity": null, "work": [], "other": []}}. \
+A range is {{"low", "high", "currency", "period"}}. Use null or [] for anything not stated."""
+
+
+def extract_terms(role: str, public_terms: str, private_limits: list[str], location: str = "") -> Terms | None:
+    """Re-read the numbers from the edited cards. Raises llm.LLMError if the model is unavailable."""
+    said = "\n".join([public_terms or "", *private_limits]).strip()
+    if not said:
+        return None
+    rules = SYSTEM.split("- terms:", 1)[1].split("\n- Write text", 1)[0].format(terms_rule=TERMS_RULE[role])
+    messages = [{"role": "system", "content": _TERMS_ONLY.format(role=role, rules="terms:" + rules)},
+                {"role": "user", "content": json.dumps({"public_terms": public_terms, "private_limits": private_limits,
+                                                        "location": location}, ensure_ascii=False)}]
+    raw, _ = llm.chat_json(messages, RawTerms, max_tokens=500)
+    return structured_terms(raw, said, private_limits, location)
+
+
+def extract(role: str, text: str, name: str = "", answers: dict[str, str] | None = None) -> FormDraft:
     """Raises llm.LLMError if the model is unavailable."""
     text = (text or "")[:MAX_TEXT]
     user = {"role": role, "name": name or None, "self_description": text}
@@ -131,10 +270,11 @@ def extract(role: str, text: str, name: str = "", answers: dict[str, str] | None
         user["answers_to_follow_up_questions"] = {q: a[:500] for q, a in answers.items() if a.strip()}
         user["note"] = "Use the answers. Only ask new follow-up questions if something important is still missing."
     messages = [
-        {"role": "system", "content": SYSTEM.format(role=role, roles=list(ROLES), stages=list(STAGES))},
+        {"role": "system", "content": SYSTEM.format(role=role, roles=list(ROLES), stages=list(STAGES),
+                                                    terms_rule=TERMS_RULE[role], question_topics=QUESTION_TOPICS[role])},
         {"role": "user", "content": json.dumps(user, ensure_ascii=False)},
     ]
-    draft, _ = llm.chat_json(messages, Draft, max_tokens=900)
+    draft, _ = llm.chat_json(messages, FormDraft, max_tokens=1200)
     if name and not draft.display_name:
         draft.display_name = name
     return _clean(draft, role)
@@ -162,7 +302,8 @@ def lines(text: str) -> list[str]:
 
 def build_profile(*, profile_id: str | None, role: str, display_name: str, headline: str, public_bio: str,
                   looking_for: str, seeking: list[str], tags: str, location: str, stage: str | None,
-                  public_terms: str, private_limits: str, secret_terms: str,
+                  public_terms: str, private_limits: str, secret_terms: str, offers: str = "",
+                  terms: Terms | None = None,
                   hub_username: str | None = None, hub_evidence: list[str] | None = None) -> Profile:
     """Build and validate a Profile from the editable cards. Raises ValueError with a friendly message."""
     missing = [label for label, v in (("your name", display_name), ("a headline", headline),
@@ -185,4 +326,5 @@ def build_profile(*, profile_id: str | None, role: str, display_name: str, headl
         public_terms=text_to_terms(public_terms), private_limits=limits,
         secret_terms=derive_secret_terms(limits, extra),
         hub_username=hub_username, hub_evidence=hub_evidence or [], is_demo=False,
+        offers=(offers or "").strip()[:400], terms=terms,
     )
