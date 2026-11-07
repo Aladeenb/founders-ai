@@ -12,6 +12,37 @@ Stage = Literal["opening", "exploring", "negotiating", "verdict"]
 Decision = Literal["pending", "approved", "declined"]
 
 
+class Range(BaseModel):
+    """What one person will accept for a number. A bound marked private came from a private limit."""
+    low: float | None = None
+    high: float | None = None
+    currency: str = "USD"            # GCC currencies are converted to USD; others (EUR) are kept as is
+    low_private: bool = False
+    high_private: bool = False
+
+
+WorkMode = Literal["remote", "hybrid", "onsite"]
+
+
+class Hire(BaseModel):
+    """One role a founder is hiring for, with what they can offer."""
+    kind: Literal["engineer", "operator"]
+    title: str = ""
+    salary: Range | None = None      # annual
+    equity: Range | None = None      # percent
+    work: list[WorkMode] = Field(default_factory=list)
+
+
+class Terms(BaseModel):
+    """Structured terms used for deal-breaker checks in code. Never shown to other members."""
+    valuation: Range | None = None   # founders: lowest acceptable; investors: highest acceptable
+    hires: list[Hire] = Field(default_factory=list)       # founders only
+    salary: Range | None = None      # engineers and operators: what they'll accept, annual
+    equity: Range | None = None      # engineers and operators: percent they need
+    work: list[WorkMode] = Field(default_factory=list)    # engineers and operators: acceptable modes
+    other: list[str] = Field(default_factory=list)        # deal-breakers code can't check, e.g. "needs visa"
+
+
 class Profile(BaseModel):
     id: str
     display_name: str
@@ -30,10 +61,12 @@ class Profile(BaseModel):
     hub_username: str | None = None
     hub_evidence: list[str] = Field(default_factory=list)
     is_demo: bool = False
+    offers: str = ""                  # what this person gives others (pilots, intros, skills)
+    terms: Terms | None = None        # structured terms for deal-breaker checks; private
 
     def public_view(self) -> dict:
         """What other agents (and the judge) are allowed to read."""
-        return self.model_dump(exclude={"private_limits", "secret_terms", "is_demo", "seeking"})
+        return self.model_dump(exclude={"private_limits", "secret_terms", "is_demo", "seeking", "terms"})
 
 
 class AgentTurn(BaseModel):
@@ -78,3 +111,4 @@ class Match(BaseModel):
     score: int  # 0-100 for display
     reason: str
     fit: Literal["strong", "possible"] = "strong"
+    summary: list[str] = Field(default_factory=list)   # why they fit / what's uncertain / next step

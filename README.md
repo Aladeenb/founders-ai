@@ -34,8 +34,11 @@ Check which models return valid JSON quickly: `.venv/bin/python scripts/probe_mo
 |---|---|---|
 | `HF_TOKEN` | Secret | none (needs Inference Providers permission) |
 | `MODEL_ID` | Variable | `deepseek-ai/DeepSeek-V3.2` |
-| `MODEL_FALLBACK` | Variable | `Qwen/Qwen3-Next-80B-A3B-Instruct` |
+| `MODEL_FALLBACK` | Variable | `Qwen/Qwen3-235B-A22B-Instruct-2507` |
 | `EMBEDDING_MODEL` | Variable | `intfloat/multilingual-e5-large` |
+| `VISION_MODEL` | Variable | `google/gemma-4-31B-it` |
+| `VISION_FALLBACK` | Variable | `Qwen/Qwen3-VL-235B-A22B-Instruct` |
+| `RERANK_MODEL` | Variable | `BAAI/bge-reranker-v2-m3` |
 | `DATA_DIR` | Variable | `./runtime_data` (use `/data` on the Space) |
 
 ## Fahem & Wasel: design handoff

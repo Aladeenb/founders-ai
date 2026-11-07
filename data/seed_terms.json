@@ -1,0 +1,1551 @@
+{
+ "f-layla": {
+  "terms": {
+   "valuation": {
+    "low": 10000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Will not give up more than 15% in this round",
+    "Strongly prefers a lead who can introduce Gulf banks"
+   ]
+  },
+  "offers": "Invoice financing platform for Gulf SMEs with $3.2M financed, 140 SMEs live, growing 18% month on month."
+ },
+ "f-yusuf": {
+  "terms": {
+   "valuation": {
+    "low": 9000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Wants the round closed within 10 weeks"
+   ]
+  },
+  "offers": "Co-founder of Sanad Health, a platform for scheduling and insurance claims in GCC clinics with 62 paying UAE clients and $41k MRR."
+ },
+ "f-karim": {
+  "terms": {
+   "valuation": null,
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 95000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": null,
+      "high": 0.6,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "onsite"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "On-site work is non-negotiable"
+   ]
+  },
+  "offers": "Hardware and vision team of 9 working together in our Riyadh lab."
+ },
+ "f-mariam": {
+  "terms": {
+   "valuation": {
+    "low": 3200000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 85000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": []
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Same-day delivery service for Qatari online stores, with integration for Instagram and Shopify sellers."
+ },
+ "f-daniel": {
+  "terms": {
+   "valuation": {
+    "low": 24000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "needs at least $3M from equity, not debt"
+   ]
+  },
+  "offers": "Financing and operating solar mini-grids in West Africa."
+ },
+ "f-hana": {
+  "terms": {
+   "valuation": null,
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 130000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": null,
+      "high": 1.0,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Enterprise translation between Arabic and Asian languages, fine-tuned models, and 11 enterprise customers."
+ },
+ "f-ahmed": {
+  "terms": {
+   "valuation": {
+    "low": 5000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": 45000.0,
+      "high": 60000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": {
+      "low": 1.0,
+      "high": 1.5,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "onsite",
+      "remote"
+     ]
+    },
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": 70000.0,
+      "high": 100000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": {
+      "low": 1.0,
+      "high": 1.5,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "onsite",
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Souq Sync is a phone app that helps kiosks and grocery shops track stock, reorder from distributors and pay later with supplier credit. 8,500 shops, growing through distributor partnerships."
+ },
+ "f-priya": {
+  "terms": {
+   "valuation": {
+    "low": 3500000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "wants no investor with a board seat at this stage"
+   ]
+  },
+  "offers": "Verdant Farms grows leafy greens in containerised vertical farms using 90% less water."
+ },
+ "f-tariq": {
+  "terms": {
+   "valuation": null,
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 80000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": null,
+      "high": 2.0,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "hybrid",
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Nafas Air builds solar-powered air quality sensors and a dashboard for schools and municipalities."
+ },
+ "f-elena": {
+  "terms": {
+   "valuation": {
+    "low": 6000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 95000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": [
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Co-founder of Tessera Learn, an Arabic learning app with 60k monthly users and a 4.8 app store rating."
+ },
+ "f-faisal": {
+  "terms": {
+   "valuation": {
+    "low": 35000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": 150000.0,
+      "high": 210000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": 1.0,
+      "high": 1.5,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "onsite"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Fleet software for electric delivery vans, running 1,100 vehicles across Qatar and the UAE."
+ },
+ "f-noor": {
+  "terms": {
+   "valuation": {
+    "low": 5000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": 60000.0,
+      "high": 95000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": 0.5,
+      "high": 1.0,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Contract review for Arabic legal documents, paying law firm customers in Jordan and Saudi Arabia."
+ },
+ "i-nadia": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 14000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "needs a board seat when leading"
+   ]
+  },
+  "offers": "Bank partnerships, regulatory introductions"
+ },
+ "i-omar": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 11000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Needs at least $30k monthly recurring revenue"
+   ]
+  },
+  "offers": "Insurer introductions"
+ },
+ "i-james": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Small angel cheques into fintech and edtech across Europe and the Middle East."
+ },
+ "i-fatima": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 28000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Invests $1M–$3M in seed and Series A climate and agritech companies across MENA and Africa."
+ },
+ "i-chen": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 40000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money (investments of $2M–$5M) for Series A logistics and mobility software companies with strong revenue growth across Asia and the Gulf."
+ },
+ "i-rania": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 6000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money from a syndicate of 80 angels."
+ },
+ "i-khalid": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Requires a Qatar entity within 12 months"
+   ]
+  },
+  "offers": "Invests in deep tech, robotics and AI companies building in Qatar and the wider Gulf."
+ },
+ "i-sofia": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 27000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money"
+ },
+ "i-ali": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Needs a commercial pilot agreement alongside any investment"
+   ]
+  },
+  "offers": "Pilots with our parent group"
+ },
+ "i-maya": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 8000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money (invests small cheques in AI-first companies)."
+ },
+ "i-hamad": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Will not lead a round"
+   ]
+  },
+  "offers": "Invests directly in Gulf startups in health, finance and real estate technology."
+ },
+ "i-amina": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 5000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "first cheques into fintech and agritech founders across Africa and the Middle East."
+ },
+ "t-sara": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 140000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "remote"
+   ],
+   "other": [
+    "start: January 2027"
+   ]
+  },
+  "offers": "Senior computer vision engineering skills in drones and edge AI, with team leadership experience."
+ },
+ "t-ravi": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 105000.0,
+    "high": 130000.0,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": null,
+    "currency": "%",
+    "low_private": true,
+    "high_private": false
+   },
+   "work": [
+    "hybrid",
+    "onsite"
+   ],
+   "other": [
+    "start: February 2027"
+   ]
+  },
+  "offers": "Backend engineering skills in Go, Postgres, Kafka, and experience with payments, lending infrastructure, regulators, and audits."
+ },
+ "t-lina": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 90000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": null,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [
+    "remote"
+   ],
+   "other": [
+    "Will not work more than 2 hours outside Beirut time zone overlap"
+   ]
+  },
+  "offers": "Fine-tuned and deployed Arabic language models for search and customer support. Published work on dialect identification. Python, PyTorch, vLLM."
+ },
+ "t-marcus": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 80000.0,
+    "high": null,
+    "currency": "EUR",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "remote"
+   ],
+   "other": [
+    "No more than one trip a quarter"
+   ]
+  },
+  "offers": "Shipped three consumer apps from zero to 100k users. React, React Native, Python, Postgres."
+ },
+ "t-yara": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 65000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 1.0,
+    "high": null,
+    "currency": "%",
+    "low_private": true,
+    "high_private": false
+   },
+   "work": [
+    "hybrid"
+   ],
+   "other": []
+  },
+  "offers": "Embedded and IoT engineering skills (C, Rust, Zephyr RTOS, LoRaWAN) for low-power sensor firmware, with experience from a Doha municipality project."
+ },
+ "t-diego": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 72000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "remote",
+    "onsite"
+   ],
+   "other": [
+    "needs visa sponsorship in the UAE"
+   ]
+  },
+  "offers": "Mobile engineering skills (Flutter, Kotlin, SQLite sync) for offline-first apps, particularly for markets with patchy connectivity."
+ },
+ "t-aisha": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 82000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "onsite",
+    "hybrid"
+   ],
+   "other": []
+  },
+  "offers": "Data engineering skills (Python, Spark, dbt, BigQuery) for logistics and mobility startups."
+ },
+ "t-zaid": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 48000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 1.5,
+    "high": null,
+    "currency": "%",
+    "low_private": true,
+    "high_private": false
+   },
+   "work": [],
+   "other": [
+    "start: January 2027"
+   ]
+  },
+  "offers": "Performance marketing, field sales, referral loops, and growth expertise for consumer and SMB apps in Egypt and Jordan."
+ },
+ "t-grace": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 180000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 1.0,
+    "high": null,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [
+    "onsite"
+   ],
+   "other": [
+    "Needs school fees support for two children"
+   ]
+  },
+  "offers": "COO operational scaling experience in mobility/logistics."
+ },
+ "t-salma": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 72000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [],
+   "other": [
+    "start within 1 month"
+   ]
+  },
+  "offers": "Operations expertise in last-mile delivery fleets, dispatch software, and driver onboarding."
+ },
+ "t-ben": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 85000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": 1.0,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [],
+   "other": []
+  },
+  "offers": "B2B SaaS sales leadership and revenue generation skills, particularly in Africa and the Gulf."
+ },
+ "t-mona": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 100000.0,
+    "high": 120000.0,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": null,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [
+    "hybrid"
+   ],
+   "other": []
+  },
+  "offers": "Product lead for a claims platform used by 300 clinics. Knows UAE insurer integrations and clinic operations."
+ },
+ "f-reem": {
+  "terms": {
+   "valuation": null,
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": 95000.0,
+      "high": 135000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": 0.75,
+      "high": 1.5,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "hybrid"
+     ]
+    },
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": 80000.0,
+      "high": 100000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": {
+      "low": 0.75,
+      "high": 1.5,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "hybrid"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Will not hire fully remote for the engineering lead",
+    "Start: Early 2027 (January to March)"
+   ]
+  },
+  "offers": "Earned wage access platform for Gulf frontline workers, with employer-funded zero-fee withdrawals."
+ },
+ "f-zain": {
+  "terms": {
+   "valuation": {
+    "low": 15000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 150000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": [
+      "onsite",
+      "hybrid"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money, pilots, introductions, skills"
+ },
+ "f-lucas": {
+  "terms": {
+   "valuation": {
+    "low": 10500000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 110000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": null,
+     "work": []
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "Needs at least $1M of the round in equity"
+   ]
+  },
+  "offers": "Sakan Homes buys apartments and lets long-term residents rent them with part of the rent building toward ownership. 48 families housed, 3% monthly churn, partnered with two developers."
+ },
+ "f-amal": {
+  "terms": {
+   "valuation": {
+    "low": 3800000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 65000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": [
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money (pre-seed investment)."
+ },
+ "f-oliver": {
+  "terms": {
+   "valuation": null,
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": 120000.0,
+      "high": 165000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": {
+      "low": 0.5,
+      "high": 1.0,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "remote"
+     ]
+    },
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": 100000.0,
+      "high": null,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": {
+      "low": 0.5,
+      "high": 1.0,
+      "currency": "%",
+      "low_private": false,
+      "high_private": false
+     },
+     "work": [
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Co-founder of Kiln AI, building bilingual AI support agents for Gulf businesses."
+ },
+ "f-sana": {
+  "terms": {
+   "valuation": null,
+   "hires": [
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 105000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": {
+      "low": null,
+      "high": 1.2,
+      "currency": "%",
+      "low_private": false,
+      "high_private": true
+     },
+     "work": [
+      "onsite"
+     ]
+    },
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 110000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": null,
+     "work": [
+      "remote"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Rahma Care matches families with licensed home nurses and physiotherapists in Saudi Arabia."
+ },
+ "f-hassan": {
+  "terms": {
+   "valuation": {
+    "low": 9500000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 105000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": false
+     },
+     "equity": null,
+     "work": [
+      "hybrid"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Connections to manufacturers in the UAE and Oman, carbon accounting expertise, and a product for emissions measurement."
+ },
+ "f-ines": {
+  "terms": {
+   "valuation": {
+    "low": 3000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 95000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": [
+      "remote",
+      "onsite"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "AI trip planning platform for pilgrims and Gulf tourism, used by 30 travel agencies in pilot."
+ },
+ "f-bilal": {
+  "terms": {
+   "valuation": {
+    "low": 8500000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "engineer",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 120000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": [
+      "remote",
+      "onsite"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Mobile puzzle games made for Arabic players, with two live titles, 1.4M installs, and profitability in Saudi Arabia."
+ },
+ "f-dana": {
+  "terms": {
+   "valuation": {
+    "low": 30000000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "hires": [
+    {
+     "kind": "operator",
+     "title": "",
+     "salary": {
+      "low": null,
+      "high": 180000.0,
+      "currency": "USD",
+      "low_private": false,
+      "high_private": true
+     },
+     "equity": null,
+     "work": [
+      "onsite"
+     ]
+    }
+   ],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Job-ready training and placement for Gulf nationals, with 2,100 graduates placed in Kuwait and Saudi Arabia."
+ },
+ "i-youssef": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 12000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money (investments of $250k–$1M) to founders building AI products with early paying customers in MENA."
+ },
+ "i-noura": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 12000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Invests in proptech or consumer startups."
+ },
+ "i-david": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 38000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Leads Series A rounds in B2B software with a growing portfolio in the Middle East and South Asia."
+ },
+ "i-mansour": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": [
+    "wants a right of first refusal on any future sale"
+   ]
+  },
+  "offers": "Distribution through our channels"
+ },
+ "i-elif": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 12000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Invests in software and hardware that cut emissions in manufacturing, construction and logistics across Turkey and the Gulf."
+ },
+ "i-zara": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 6000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "First cheques of $50k–$150k for technical founders in AI or fintech."
+ },
+ "i-tomas": {
+  "terms": {
+   "valuation": {
+    "low": null,
+    "high": 32000000.0,
+    "currency": "USD",
+    "low_private": false,
+    "high_private": true
+   },
+   "hires": [],
+   "salary": null,
+   "equity": null,
+   "work": [],
+   "other": []
+  },
+  "offers": "Money as an investor backing edtech and workforce companies."
+ },
+ "t-fares": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 125000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.3,
+    "high": null,
+    "currency": "%",
+    "low_private": true,
+    "high_private": false
+   },
+   "work": [
+    "hybrid",
+    "onsite"
+   ],
+   "other": []
+  },
+  "offers": "Skills in building loan origination and credit scoring services using Java, Kotlin, Postgres, and event-driven systems."
+ },
+ "t-mei": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 140000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": null,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [
+    "remote",
+    "onsite"
+   ],
+   "other": []
+  },
+  "offers": "LLM engineering skills in retrieval, evaluation, and agents, with experience in Python, PyTorch, vector search, and fluency in English and Mandarin."
+ },
+ "t-joao": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 90000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "remote"
+   ],
+   "other": [
+    "Will not relocate"
+   ]
+  },
+  "offers": "Senior Unity engineering skills for casual and puzzle games, including live ops and A/B testing for monetisation."
+ },
+ "t-nadine": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 75000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "remote"
+   ],
+   "other": []
+  },
+  "offers": ""
+ },
+ "t-rashid": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 90000.0,
+    "high": 105000.0,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": null,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [
+    "onsite"
+   ],
+   "other": []
+  },
+  "offers": "Strong network in Qatar and Oman for partnerships with banks, payroll providers, and employers."
+ },
+ "t-chloe": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 100000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": 1.0,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [],
+   "other": []
+  },
+  "offers": "Enterprise SaaS sales skills and experience building a sales team from zero to $4M in annual revenue in the Gulf region."
+ },
+ "t-yasmin": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 42000.0,
+    "high": null,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": null,
+   "work": [
+    "onsite",
+    "remote"
+   ],
+   "other": []
+  },
+  "offers": "Community and creator growth expertise, scaling from 5k to 300k members, and experience running creator programs for a regional streaming app."
+ },
+ "t-kofi": {
+  "terms": {
+   "valuation": null,
+   "hires": [],
+   "salary": {
+    "low": 105000.0,
+    "high": 140000.0,
+    "currency": "USD",
+    "low_private": true,
+    "high_private": false
+   },
+   "equity": {
+    "low": 0.5,
+    "high": null,
+    "currency": "%",
+    "low_private": false,
+    "high_private": false
+   },
+   "work": [
+    "onsite"
+   ],
+   "other": []
+  },
+  "offers": "Scaled supply and operations for a home services marketplace across four cities, managing 1,500 service providers."
+ }
+}
