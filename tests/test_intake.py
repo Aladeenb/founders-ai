@@ -13,11 +13,13 @@ def script(monkeypatch, turns):
 
     def fake(messages, schema, max_tokens=0, timeout=0):
         sent.append(messages)
-        nxt = queue.pop(0)
+        nxt = queue.pop(0) if len(queue) > 1 or not sent[:-1] else (queue[0] if queue else fake.last)
+        fake.last = nxt
         if isinstance(nxt, Exception):
             raise nxt
         return schema.model_validate(nxt), "fake"
 
+    fake.last = turns[-1] if turns else None
     monkeypatch.setattr(llm, "chat_json", fake)
     return sent
 
@@ -225,3 +227,62 @@ def test_vision_outage_is_explained(tmp_path, monkeypatch):
     monkeypatch.setattr(llm, "read_image", lambda *a, **k: (_ for _ in ()).throw(llm.LLMError("down")))
     with pytest.raises(documents.DocumentError, match="mostly images"):
         documents.read(tmp_path / "deck.pdf")
+
+
+def test_delta_mode_merges_only_what_changed(monkeypatch):
+    monkeypatch.setenv("INTAKE_MODE", "delta")
+    script(monkeypatch, [{"role": "founder", "profile": FOUNDER, "reply": "a"},
+                         {"profile": {"public_terms": {"timeline": "Q1 2027"}, "stage": "series a"}, "reply": "b"}])
+    sid = ob.start()["session_id"]
+    ob.send(sid, "x")
+    p = ob.send(sid, "we're series A, closing Q1 2027")["profile"]
+    assert p["public_terms"] == {"raising": "$2M", "timeline": "Q1 2027"}      # old keys kept, new key added
+    assert p["stage"] == "series a" and p["display_name"] == "Mariam" and p["role"] == "founder"
+
+
+def test_full_mode_is_the_original_prompt(monkeypatch):
+    monkeypatch.setenv("INTAKE_MODE", "full")
+    sent = script(monkeypatch, [{"role": "founder", "profile": FOUNDER, "reply": "a"}])
+    ob.send(ob.start()["session_id"], "x")
+    assert "WRITE ONLY CHANGES" not in sent[0][0]["content"] and "terms_so_far" not in sent[0][1]["content"]
+
+
+def test_looking_for_is_written_from_terms_when_the_model_skips_it(monkeypatch):
+    prof = {**FOUNDER, "looking_for": "", "public_terms": {"raising": "$1.5M", "roles": "backend engineer"}}
+    script(monkeypatch, [{"role": "founder", "profile": prof, "reply": "ok"}])
+    sid = ob.start()["session_id"]
+    p = ob.send(sid, "raising 1.5M, hiring a backend engineer")["profile"]
+    assert p["looking_for"] == "Looking for a lead or investor for a $1.5M round and to hire: backend engineer."
+    assert not any(m.startswith("who or what") for m in ob.missing(ob.get_session(sid)))
+
+
+def test_raise_and_wanted_roles_come_from_the_members_words(monkeypatch):
+    prof = {**FOUNDER, "public_terms": {}, "seeking": [], "looking_for": "A lead investor who knows fintech, and a backend engineer."}
+    script(monkeypatch, [{"role": "founder", "profile": prof, "reply": "ok"}])
+    sid = ob.start()["session_id"]
+    p = ob.send(sid, "im raising 1.5 million dollars and need a lead investor, also hiring a backend engineer")["profile"]
+    assert p["public_terms"]["raising"] == "$1.5M"
+    assert p["seeking"] == ["investor", "engineer"]
+    assert not ob._required(ob.get_session(sid))
+
+
+def test_rewritten_hire_keeps_its_known_salary(monkeypatch):
+    script(monkeypatch, [
+        {"role": "founder", "profile": FOUNDER, "terms": {"hires": [{"kind": "engineer", "salary": {"high": 105000}}]},
+         "reply": "a"},
+        {"profile": {}, "terms": {"hires": [{"kind": "engineer", "title": "Senior backend engineer", "work": ["hybrid"]}]},
+         "reply": "b"}])
+    sid = ob.start()["session_id"]
+    ob.send(sid, "x")
+    ob.send(sid, "y")
+    h = ob.get_session(sid).terms.hires[0]
+    assert h.salary.high == 105000 and h.work == ["hybrid"] and h.title == "Senior backend engineer"
+
+
+def test_investor_stage_cheque_and_focus_come_from_their_words(monkeypatch):
+    script(monkeypatch, [{"role": "investor", "profile": {"display_name": "Khalifa", "location": "Doha, Qatar",
+                                                          "tags": ["healthtech", "GCC"]}, "reply": "ok"}])
+    sid = ob.start()["session_id"]
+    p = ob.send(sid, "Seed stage only. Cheques of 500k to 1 million dollars.")["profile"]
+    assert p["public_terms"]["stages"] == "seed" and p["public_terms"]["cheque_size"] == "$500k–$1M"
+    assert p["looking_for"] == "Founders at seed stage in healthtech, GCC."

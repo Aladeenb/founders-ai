@@ -15,6 +15,7 @@ to filter matches: no prompt about other people ever contains them.
 from __future__ import annotations
 
 import json
+import os
 import re
 import logging
 import threading
@@ -36,6 +37,21 @@ MAX_MESSAGE = 4000        # characters kept from one chat message
 HISTORY_TURNS = 12        # recent messages sent to the model each turn
 TURN_TIMEOUT = 40         # seconds; each turn rewrites the whole profile
 
+
+def delta_mode() -> bool:
+    """INTAKE_MODE=delta (default): the model writes only what changed this turn, code merges it (faster turns).
+    INTAKE_MODE=full: the model rewrites the whole profile every turn (the original behaviour). Switch any time."""
+    return (os.getenv("INTAKE_MODE") or "delta").lower() != "full"
+
+
+DELTA_RULES = """
+WRITE ONLY CHANGES: the profile and terms you have so far are in CONTEXT. In "profile" and "terms", include ONLY the \
+fields that are new or changed because of the member's latest message (or a new document); leave everything else out. \
+If you change a list (tags, seeking, private_limits, hires, work, other), write the complete new list for that field. \
+Filling an EMPTY field counts as a change: CONTEXT lists "empty_fields"; whenever the member's messages or document \
+give information for one of them (e.g. their role, who they're looking for, where they're based), write it. If \
+"role" is in empty_fields and their words show it ("I'm a backend engineer" -> engineer), set it. If nothing changed, use empty objects: "profile": {}, "terms": {}."""
+
 GREETING = ("Hi, I'm your Handshake agent. Tell me what you're working on and I'll find the people worth your time. "
             "Upload anything about you or your business (a CV, a pitch deck, a fund deck), or just tell me.")
 ERROR_REPLY = ("I'm having trouble reaching the AI service right now, so I didn't catch that. Nothing is lost: "
@@ -53,7 +69,9 @@ _ROLE_NEEDS = {
     "founder": [
         ("your startup's sector and what it does", lambda d, t: len(d.tags) >= 2),
         ("your stage (pre-seed, seed, Series A or B)", lambda d, t: bool(d.stage)),
-        ("what you're raising or hiring for", lambda d, t: _has(d, "raising", "hiring", "role", "roles")),
+        ("what you're raising or hiring for", lambda d, t: _has(d, "raising", "hiring", "role", "roles")
+         or bool(t and t.hires) or bool(re.search(r"rais|round|invest|hir|engineer|operator|developer|cto|coo",
+                                                   d.looking_for, re.I))),
     ],
     "investor": [
         ("the sectors you invest in", lambda d, t: _has(d, "sectors") or len(d.tags) >= 2),
@@ -234,10 +252,18 @@ def _required(s: Session) -> list[str]:
 
 def _has_rules(s: Session) -> bool:
     """The member has stated at least one deal-breaker (in words or as a number)."""
+    return bool(_rules(s))
+
+
+def _rules(s: Session) -> tuple:
+    """Everything that counts as a deal-breaker, as a comparable value. A job's work mode ("hybrid in Doha") is a
+    description of the role, not a deal-breaker, so it doesn't count."""
     t = s.terms
-    numbers = bool(t and (t.valuation or t.salary or t.equity or t.work or t.other
-                          or any(h.salary or h.equity or h.work for h in t.hires)))
-    return bool(s.draft.private_limits) or numbers
+    if t is None:
+        return tuple(s.draft.private_limits)
+    nums = [r.model_dump_json() for r in (t.valuation, t.salary, t.equity) if r] + list(t.work) + list(t.other)
+    nums += [r.model_dump_json() for h in t.hires for r in (h.salary, h.equity) if r]
+    return tuple(s.draft.private_limits) + tuple(nums)
 
 
 def missing(s: Session) -> list[str]:
@@ -271,12 +297,80 @@ def _protect(draft: profiles.Draft, role: str | None) -> profiles.Draft:
     return draft
 
 
+def _fill_looking_for(s: Session) -> None:
+    """If the model left "looking for" empty but the member already said it through their terms, write it in code.
+
+    The model sometimes skips this field even after a clear answer, which stalls the conversation on a question the
+    member has already answered.
+    """
+    d = s.draft
+    if d.looking_for or not s.role:
+        return
+    t = {k.lower(): str(v) for k, v in d.public_terms.items() if str(v).strip()}
+    if s.role == "founder":
+        bits = ([f"a lead or investor for a {t['raising']} round" if "raising" in t else ""] +
+                [f"to hire: {t.get('roles') or t.get('role') or t.get('hiring')}"
+                 if (t.get("roles") or t.get("role") or t.get("hiring")) else ""])
+        bits = [b for b in bits if b]
+        if bits:
+            d.looking_for = "Looking for " + " and ".join(bits) + "."
+    elif s.role == "investor" and (t.get("stages") or t.get("sectors")):
+        d.looking_for = (f"Founders at {t.get('stages', 'early')} stage"
+                         + (f" in {t['sectors']}" if t.get("sectors") else "") + ".")
+    elif s.role in ("engineer", "operator") and t.get("role"):
+        d.looking_for = f"A {t['role']} role at a startup."
+
+
+_ROLE_WORDS = {"investor": r"investor|lead|vc\b|angel|fund|raise|raising|round",
+               "engineer": r"engineer|developer|cto\b|programmer|technical|backend|frontend|full.?stack|ml\b",
+               "operator": r"operator|operations|\bops\b|coo\b|head of|growth|sales|marketing"}
+
+
+def _fill_from_words(s: Session) -> None:
+    """Facts the member clearly said that the model sometimes leaves out, filled in code."""
+    d = s.draft
+    said = " ".join(m["content"] for m in s.history if m["role"] == "user")
+    if s.role == "investor":
+        from core.matching import ALL_STAGES, _stages
+        if not _has(d, "stages"):
+            found = _stages(said)
+            if found:
+                d.public_terms = {**d.public_terms, "stages": ", ".join(x for x in ALL_STAGES if x in found)}
+        if not _has(d, "cheque_size", "check_size", "ticket"):
+            m = re.search(r"(?:cheques?|checks?|tickets?)\D{0,25}?(\$?\d[\d.,]*\s*(?:k|m|million|thousand)?)"
+                          r"(?:\s*(?:to|-|–)\s*(\$?\d[\d.,]*\s*(?:k|m|million|thousand)?))?", said, re.I)
+            if m:
+                fmt = lambda x: "$" + x.strip().lower().replace("million", "M").replace("thousand", "k").replace(" ", "").lstrip("$").replace("m", "M")
+                d.public_terms = {**d.public_terms,
+                                  "cheque_size": fmt(m.group(1)) + (f"–{fmt(m.group(2))}" if m.group(2) else "")}
+        if not d.looking_for and (d.tags or _has(d, "sectors", "stages")):
+            t = {k.lower(): v for k, v in d.public_terms.items()}
+            focus = t.get("sectors") or ", ".join(d.tags[:3])
+            d.looking_for = f"Founders at {t.get('stages', 'early')} stage" + (f" in {focus}" if focus else "") + "."
+        return
+    if s.role != "founder":
+        return
+    if not _has(d, "raising"):
+        m = re.search(r"rais\w*\s+(?:a\s+)?(\$?\s?\d[\d.,]*\s*(?:m\b|mn\b|million|k\b|thousand)?)", said, re.I)
+        if m:
+            amount = m.group(1).strip().lower().replace("million", "M").replace("mn", "M").replace("thousand", "k")
+            amount = amount.replace(" ", "").upper().replace("K", "k")
+            d.public_terms = {**d.public_terms, "raising": amount if amount.startswith("$") else "$" + amount}
+    text = f"{d.looking_for} {said}".lower()
+    wanted = [r for r, pat in _ROLE_WORDS.items() if re.search(pat, text)]
+    if wanted and set(d.seeking) == {"investor", "engineer", "operator"} and len(wanted) < 3:
+        d.seeking = wanted   # the default "everyone" is replaced by the roles they actually asked for
+
+
 def _merge(old: profiles.Draft, new: profiles.Draft) -> profiles.Draft:
     """The model's update, but a field it left empty keeps its old value (models drop fields between turns)."""
     merged = {}
     for name in profiles.Draft.model_fields:
         value = getattr(new, name)
-        merged[name] = value if value not in (None, "", [], {}) else getattr(old, name)
+        if delta_mode() and isinstance(value, dict) and isinstance(getattr(old, name), dict):
+            merged[name] = {**getattr(old, name), **value}      # public_terms: merge key by key
+        else:
+            merged[name] = value if value not in (None, "", [], {}) else getattr(old, name)
     return profiles.Draft(**merged)
 
 
@@ -287,6 +381,11 @@ def _merge_terms(old: RawTerms | None, new: RawTerms) -> RawTerms:
     for name in RawTerms.model_fields:
         value = getattr(new, name)
         data[name] = value if value not in (None, [], "") else getattr(old, name)
+    # A rewritten hire keeps the salary, equity and work mode already known for that kind of role.
+    before = {h.kind: h for h in old.hires}
+    data["hires"] = [h.model_copy(update={k: getattr(before[h.kind], k) for k in ("salary", "equity", "work")
+                                          if getattr(h, k) in (None, []) and getattr(before[h.kind], k)})
+                     if h.kind in before else h for h in data["hires"]]
     return RawTerms(**data)
 
 
@@ -369,7 +468,17 @@ def _messages(s: Session, need: list[str]) -> list[dict]:
     last = next((m["content"] for m in reversed(s.history) if m["role"] == "user"), "")
     if _arabic_share(last) > 0.3:
         doc += "\n\nThe member is writing in Arabic: reply in Modern Standard Arabic."
-    return [{"role": "system", "content": SYSTEM},
+    system = SYSTEM
+    if delta_mode():
+        context["terms_so_far"] = s.raw_terms.model_dump(exclude_none=True) if s.raw_terms else {}
+        context["empty_fields"] = [k for k in ("display_name", "headline", "public_bio", "looking_for", "location",
+                                               "stage", "tags", "seeking")
+                                   if getattr(s.draft, k) in (None, "", [], {})
+                                   and not (k == "stage" and s.role not in (None, "founder"))]
+        if not s.role:
+            context["empty_fields"].insert(0, "role")
+        system = SYSTEM + "\n" + DELTA_RULES
+    return [{"role": "system", "content": system},
             {"role": "user", "content": "CONTEXT:\n" + json.dumps(context, ensure_ascii=False) + doc},
             *s.history[-HISTORY_TURNS:]]
 
@@ -409,7 +518,7 @@ def _turn(session_id: str, text: str, file, stream: bool):
 
     s.history.append({"role": "user", "content": text})
     s.user_turns += 1
-    had_rules = _has_rules(s)
+    rules_before = _rules(s)
     need = missing(s)
     # At the deal-breaker step the reply may be replaced (see below), so voice waits for it instead of streaming.
     live = stream and not (need and need[0].startswith(DEALBREAKER_ITEM))
@@ -441,6 +550,8 @@ def _turn(session_id: str, text: str, file, stream: bool):
         canon = _stages(s.draft.public_terms["stages"])
         if canon:  # "early stage" -> "pre-seed, seed", so the summary shows exactly what will be searched
             s.draft.public_terms["stages"] = ", ".join(x for x in ALL_STAGES if x in canon)
+    _fill_looking_for(s)
+    _fill_from_words(s)
     s.offers = turn.offers.strip() or s.offers
     said = "\n".join(m["content"] for m in s.history if m["role"] == "user") + "\n" + s.document
     s.raw_terms = fix_units(mark_private(_merge_terms(s.raw_terms, turn.terms), s.draft.private_limits), said,
@@ -453,7 +564,9 @@ def _turn(session_id: str, text: str, file, stream: bool):
         s.dealbreakers_asked = True  # asked once ("none" is fine); never ask again after a summary
     asks_more = re.search(r"deal.?breaker|rule (?:someone|anyone|people) out|anything else|any other|other requirement",
                           turn.reply, re.I) and "?" in turn.reply
-    if not had_rules and _has_rules(s) and not _required(s) and asks_more:
+    # Once they've just given deal-breakers and nothing required is missing, the next step is the summary: any other
+    # question here (more deal-breakers, equity, timeline...) would make their next "yes" ambiguous.
+    if _rules(s) != rules_before and _has_rules(s) and not _required(s) and (asks_more or turn.asks != "summary"):
         # They just gave their deal-breakers; asking "any others?" makes the next "yes" ambiguous (and the
         # model's own asks label can't be trusted here). Ask once more with a direct instruction.
         note = [{"role": "user", "content": "(Note from Handshake: the member has just given their deal-breakers. "
