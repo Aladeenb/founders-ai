@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from core import storage
 from core.schemas import Hire, Profile, Range, Terms, WorkMode
@@ -66,8 +66,26 @@ class RawRange(BaseModel):
 
 
 class RawHire(BaseModel):
-    kind: Literal["engineer", "operator"]
+    kind: Literal["engineer", "operator"] = "engineer"
     title: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _tolerate(cls, data):
+        """Models write hires in different shapes: {"role": "head of ops", "work": "hybrid"}, a bare string, ..."""
+        if isinstance(data, str):
+            data = {"title": data}
+        if isinstance(data, dict):
+            data = dict(data)
+            title = str(data.get("title") or data.get("role") or data.get("position") or "")
+            data.setdefault("title", title)
+            kind = str(data.get("kind") or "").lower()
+            if kind not in ("engineer", "operator"):
+                ops = ("operat", "ops", "coo", "growth", "sales", "partnership", "marketing", "finance", "head of")
+                data["kind"] = "operator" if any(w in (kind + " " + title).lower() for w in ops) else "engineer"
+            if isinstance(data.get("work"), str):
+                data["work"] = [data["work"]]
+        return data
     salary: RawRange | None = None
     equity: RawRange | None = None
     work: list[WorkMode] = Field(default_factory=list)
@@ -83,7 +101,12 @@ class RawTerms(BaseModel):
     work: list[WorkMode] = Field(default_factory=list)
     other: list[str] = Field(default_factory=list)
 
-    _w = field_validator("work", mode="before")(lambda cls, v: _work_modes(v))
+    _w = field_validator("work", mode="before")(lambda cls, v: _work_modes([v] if isinstance(v, str) else v))
+
+    @field_validator("hires", mode="before")
+    @classmethod
+    def _hires(cls, v):
+        return [v] if isinstance(v, (dict, str)) else (v or [])
 
     @field_validator("other", mode="before")
     @classmethod

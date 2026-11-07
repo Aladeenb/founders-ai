@@ -1,0 +1,9 @@
+# Voice on a GPU Space: speech-to-text (Whisper) and speech output (Kokoro, MMS) run locally on the GPU.
+# Not needed for text chat; without these, voice falls back to Hugging Face Inference and replies are text-only.
+torch==2.15.0
+transformers==5.22.2
+accelerate==1.15.0
+soundfile==0.14.0
+kokoro==0.9.4
+misaki[en]==0.9.4
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl

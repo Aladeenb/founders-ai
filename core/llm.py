@@ -141,3 +141,90 @@ def read_image(png: bytes, prompt: str, max_tokens: int = 700) -> str:
         except Exception as exc:
             log.warning("Vision call failed model=%s: %s", model, exc)
     raise LLMError("Couldn't read that image right now.")
+
+
+# ---------------- streaming (for voice: speak the first sentence before the rest is written) ----------------
+
+def _partial_string(buf: str, field: str) -> tuple[str, bool]:
+    """The value of a JSON string field as far as it has streamed, and whether it is complete."""
+    m = re.search(r'"' + re.escape(field) + r'"\s*:\s*"', buf)
+    if not m:
+        return "", False
+    out, i, esc = [], m.end(), {"n": "\n", "t": "\t", '"': '"', "\\": "\\", "/": "/", "r": "", "b": "", "f": ""}
+    while i < len(buf):
+        c = buf[i]
+        if c == "\\":
+            if i + 1 >= len(buf):
+                break
+            n = buf[i + 1]
+            if n == "u":
+                if i + 6 > len(buf):
+                    break
+                try:
+                    out.append(chr(int(buf[i + 2:i + 6], 16)))
+                except ValueError:
+                    pass
+                i += 6
+                continue
+            out.append(esc.get(n, n))
+            i += 2
+            continue
+        if c == '"':
+            return "".join(out), True
+        out.append(c)
+        i += 1
+    return "".join(out), False
+
+
+_SENTENCE_END = re.compile(r"[.!?؟](?=\s)|\n")
+
+
+def stream_json(messages: list[dict], schema: type[T], field: str = "reply", max_tokens: int = DEFAULT_MAX_TOKENS,
+                timeout: float = TIMEOUT_SECONDS):
+    """Like chat_json, but yields ("sentence", text) as `field` streams in, then ("result", (obj, model)).
+
+    Any streaming problem falls back to chat_json, so callers always get a result (or LLMError).
+    """
+    from core import cache
+    key = {"schema": schema.__name__, "messages": messages, "max_tokens": max_tokens}
+    hit = cache.get("chat", key)
+    if hit is not None:
+        try:
+            obj = schema.model_validate(hit["data"])
+            for s in re.split(r"(?<=[.!?؟])\s+", str(hit["data"].get(field, ""))):
+                if s.strip():
+                    yield ("sentence", s.strip())
+            yield ("result", (obj, hit["model"]))
+            return
+        except ValidationError:
+            pass
+    client = _client(timeout)
+    for model in models():
+        buf, said = "", 0
+        try:
+            kwargs = {"response_format": {"type": "json_object"}}
+            for chunk in client.chat.completions.create(model=model, messages=messages, max_tokens=max_tokens,
+                                                        temperature=0.4, stream=True, **kwargs):
+                delta = chunk.choices[0].delta.content if chunk.choices else None
+                if not delta:
+                    continue
+                buf += delta
+                text, done = _partial_string(buf, field)
+                ends = [m.end() for m in _SENTENCE_END.finditer(text, said)]
+                cut = len(text) if done else (ends[-1] if ends else said)
+                if cut > said:
+                    piece = text[said:cut].strip()
+                    said = cut
+                    if piece:
+                        yield ("sentence", piece)
+            data = extract_json(buf)
+            obj = schema.model_validate(data)
+            cache.put("chat", key, {"data": data, "model": model})
+            yield ("result", (obj, model))
+            return
+        except Exception as exc:
+            log.warning("Streaming failed model=%s: %s", model, exc)
+            if said:   # part of a reply was already spoken; finish with a normal call
+                break
+    obj, model = chat_json(messages, schema, max_tokens=max_tokens, timeout=timeout)
+    yield ("result", (obj, model))

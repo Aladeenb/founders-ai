@@ -164,11 +164,11 @@ confirm before using them.
 4. confirmed: true only if the member's latest message clearly confirms your summary. When confirmed, reply in one \
 short sentence that you're now finding people for them; do not ask anything else.
 
-Reply with JSON only:
-{"role": null, "profile": {"display_name": "", "headline": "", "public_bio": "", "looking_for": "", "seeking": [], \
-"tags": [], "location": "", "stage": null, "public_terms": {}, "private_limits": []}, "offers": "", \
+Reply with JSON only, with "reply" as the FIRST key:
+{"reply": "", "role": null, "profile": {"display_name": "", "headline": "", "public_bio": "", "looking_for": "", \
+"seeking": [], "tags": [], "location": "", "stage": null, "public_terms": {}, "private_limits": []}, "offers": "", \
 "terms": {"valuation": null, "hires": [], "salary": null, "equity": null, "work": [], "other": []}, \
-"asks": "detail", "confirmed": false, "reply": ""}"""
+"asks": "detail", "confirmed": false}"""
 
 
 class _Turn(BaseModel):
@@ -376,6 +376,19 @@ def _messages(s: Session, need: list[str]) -> list[dict]:
 
 def send(session_id: str, text: str = "", file: str | Path | None = None) -> dict:
     """One member message (and optionally an upload). Never raises for model or file errors."""
+    state = {}
+    for kind, data in _turn(session_id, text, file, stream=False):
+        if kind == "state":
+            state = data
+    return state
+
+
+def send_stream(session_id: str, text: str = "", file: str | Path | None = None):
+    """Same as send(), for voice: yields ("say", sentence) as the reply is written, then ("state", dict)."""
+    yield from _turn(session_id, text, file, stream=True)
+
+
+def _turn(session_id: str, text: str, file, stream: bool):
     s = get_session(session_id)
     text = (text or "").strip()[:MAX_MESSAGE]
     if file:
@@ -385,20 +398,41 @@ def send(session_id: str, text: str = "", file: str | Path | None = None) -> dic
         except documents.DocumentError as exc:
             reply = str(exc)
             s.history.append({"role": "assistant", "content": reply})
-            return _state(s, reply)
+            yield ("say", reply)
+            yield ("state", _state(s, reply))
+            return
     if not text:
-        return _state(s, "Tell me a bit about yourself, or upload something about you or your business.")
+        reply = "Tell me a bit about yourself, or upload something about you or your business."
+        yield ("say", reply)
+        yield ("state", _state(s, reply))
+        return
 
     s.history.append({"role": "user", "content": text})
     s.user_turns += 1
     had_rules = _has_rules(s)
+    need = missing(s)
+    # At the deal-breaker step the reply may be replaced (see below), so voice waits for it instead of streaming.
+    live = stream and not (need and need[0].startswith(DEALBREAKER_ITEM))
+    spoken = []
     try:
-        turn, _ = llm.chat_json(_messages(s, missing(s)), _Turn, max_tokens=1500, timeout=TURN_TIMEOUT)
+        if live:
+            turn = None
+            for kind, data in llm.stream_json(_messages(s, need), _Turn, max_tokens=1500, timeout=TURN_TIMEOUT):
+                if kind == "sentence":
+                    spoken.append(data)
+                    yield ("say", data)
+                else:
+                    turn = data[0]
+        else:
+            turn, _ = llm.chat_json(_messages(s, need), _Turn, max_tokens=1500, timeout=TURN_TIMEOUT)
     except llm.LLMError as exc:
         log.warning("Intake turn failed: %s", exc)
         s.history.pop()
         s.user_turns -= 1
-        return _state(s, ERROR_REPLY_AR if _arabic_share(text) > 0.3 else ERROR_REPLY)
+        reply = ERROR_REPLY_AR if _arabic_share(text) > 0.3 else ERROR_REPLY
+        yield ("say", reply)
+        yield ("state", _state(s, reply))
+        return
 
     s.role = turn.role or s.role
     s.draft = _protect(_merge(s.draft, turn.profile), s.role)
@@ -434,7 +468,14 @@ def send(session_id: str, text: str = "", file: str | Path | None = None) -> dic
             pass
     reply = turn.reply.strip() or ERROR_REPLY
     s.history.append({"role": "assistant", "content": reply})
-    return _state(s, reply)
+    if stream:
+        heard = " ".join(spoken)
+        rest = reply[len(heard):].strip() if heard and reply.startswith(heard[:40]) else ("" if heard else reply)
+        if heard and not reply.startswith(heard[:40]):
+            rest = reply                      # the reply was replaced after streaming: say the final one
+        if rest:
+            yield ("say", rest)
+    yield ("state", _state(s, reply))
 
 
 def to_profile(s: Session) -> Profile:

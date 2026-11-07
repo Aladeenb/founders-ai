@@ -83,3 +83,11 @@ def test_units_are_fixed_from_the_members_words():
     sar = RawTerms(salary=RawRange(low=20000))
     terms.fix_units(sar, "at least 20k riyals per month", "Riyadh, Saudi Arabia")
     assert sar.salary.currency == "SAR"
+
+
+def test_hire_shapes_from_different_models_are_accepted():
+    raw = RawTerms.model_validate({"hires": [{"role": "backend engineer", "work": "hybrid"},
+                                             {"title": "Head of operations"}, "Data engineer"], "work": "remote-friendly"})
+    assert [h.kind for h in raw.hires] == ["engineer", "operator", "engineer"]
+    assert raw.hires[0].work == ["hybrid"] and raw.work == ["remote"]
+    assert RawTerms.model_validate({"hires": {"role": "COO"}}).hires[0].kind == "operator"
