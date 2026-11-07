@@ -1,7 +1,8 @@
 """Handshake: your AI agent meets the startup ecosystem for you.
 
 Sections: Home (your agent's dashboard), Matches (live search), Conversations (agent-to-agent
-negotiations with the verdict inline), Intros (your decisions), My agent (profile and limits).
+negotiations with the verdict inline), Intros (your decisions), My profile (what your agent
+knows about you, what it protects, and what the matcher indexes).
 Styling lives in ui.py; negotiation, matching and safety logic live in core/.
 """
 
@@ -20,7 +21,8 @@ import gradio as gr
 from dotenv import load_dotenv
 
 from core import llm, matching, negotiation, profiles, storage
-from core.schemas import AgentTurn, Negotiation, Profile
+from core import terms as terms_mod
+from core.schemas import AgentTurn, Negotiation, Profile, Terms
 import ui
 
 load_dotenv()
@@ -323,6 +325,7 @@ SEEK_CHOICES = [("Investors", "investor"), ("Engineers", "engineer"), ("Operator
 STAGE_CHOICES = [("Pre-seed", "pre-seed"), ("Seed", "seed"), ("Series A", "series a"), ("Series B", "series b")]
 
 N_QUESTIONS = 3
+N_CARDS = 12  # editable card fields, in _card_values order
 
 
 def user_id(profile: gr.OAuthProfile | None) -> str | None:
@@ -333,11 +336,11 @@ def user_id(profile: gr.OAuthProfile | None) -> str | None:
 
 def signin_note(profile: gr.OAuthProfile | None) -> str:
     if profile is not None:
-        return f"Signed in as **{esc(profile.username)}**. Your agent will be saved."
+        return f"Signed in as **{esc(profile.username)}**. Your profile will be saved."
     if LOGIN_ENABLED:
-        return ("You're not signed in. You can try everything, but your agent won't be saved and other people "
+        return ("You're not signed in. You can try everything, but your profile won't be saved and other people "
                 "won't find you. Sign in on **Home** to save it.")
-    return "Sign-in is available on the Space. Here your agent lasts for this session only."
+    return "Sign-in is available on the Space. Here your profile lasts for this session only."
 
 
 def founder_fields(role: str):
@@ -349,7 +352,7 @@ def _card_values(d: profiles.Draft | None, role: str, name: str = ""):
     """Values for the editable cards, in CARD order."""
     d = d or profiles.Draft(display_name=name)
     founder = role == "founder"
-    return (d.display_name or name, d.headline, d.public_bio, d.looking_for,
+    return (d.display_name or name, d.headline, d.public_bio, d.looking_for, getattr(d, "offers", ""),
             gr.CheckboxGroup(value=d.seeking if founder else [], visible=founder),
             ", ".join(d.tags), d.location,
             gr.Dropdown(value=d.stage if founder else None, visible=founder),
@@ -360,18 +363,30 @@ def _card_values(d: profiles.Draft | None, role: str, name: str = ""):
 def _question_boxes(questions: list[str]):
     boxes = [gr.Textbox(label=questions[i], value="", visible=True) if i < len(questions)
              else gr.Textbox(value="", visible=False) for i in range(N_QUESTIONS)]
-    return [gr.Group(visible=bool(questions)), *boxes]
+    return [gr.Column(visible=bool(questions)), *boxes]
 
 
-def build_agent(role, about, questions, a1, a2, a3, profile: gr.OAuthProfile | None):
+def checks_html(t) -> str:
+    """What the matcher checks exactly, shown under the private card. `t` is a Terms dict from state, or None."""
+    lines = profiles.checked_lines(Terms.model_validate(t) if t else None)
+    if not lines:
+        return ("<p class='checks none'>No exact checks yet. Write a number in your limits, like a minimum salary "
+                "or a maximum valuation, and your agent will filter on it.</p>")
+    items = "".join(f"<li>{icon('check', 'sm')}<span>{esc(x)}</span></li>" for x in lines)
+    return (f"<div class='checks'><span class='label'>Checked exactly, before anyone is matched</span>"
+            f"<ul>{items}</ul></div>")
+
+
+def draft_profile(role, about, questions, a1, a2, a3, profile: gr.OAuthProfile | None):
     """Extract a draft from the description (plus any follow-up answers).
 
-    outputs: status, questions_state, q_group, q1..q3, cards_group, CARD...
+    outputs: status, questions_state, q_group, q1..q3, cards_group, CARD..., terms_state, terms_seen, checks,
+             describe_col, described_row, described
     """
     if not role:
         raise gr.Error("Choose your role first.")
     if len((about or "").strip()) < 20:
-        raise gr.Error("Tell your agent a bit more about yourself: who you are and what you want.")
+        raise gr.Error("Tell us a bit more about yourself: who you are and what you want.")
     name = (profile.name or profile.username) if profile else ""
     answers = {q: a for q, a in zip(questions or [], (a1, a2, a3)) if (a or "").strip()}
     try:
@@ -381,43 +396,104 @@ def build_agent(role, about, questions, a1, a2, a3, profile: gr.OAuthProfile | N
     if draft is None:
         status = ui.status("The AI couldn't read that right now. Fill in the cards below yourself, "
                            "or try again in a moment.", "warn")
-        return (status, [], *_question_boxes([]), gr.Group(visible=True), *_card_values(None, role, name))
+        return (status, [], *_question_boxes([]), gr.Column(visible=True), *_card_values(None, role, name),
+                None, None, checks_html(None), gr.Column(visible=True), gr.Column(visible=False), "")
+    said = "\n".join([about, *answers.values()])
+    t = profiles.structured_terms(draft.terms, said, draft.private_limits, draft.location)
+    tj = t.model_dump() if t else None
     asked = [] if answers else draft.follow_up_questions
-    status = ui.status("Here's your agent. A few quick questions would make it sharper. Answer what you like, "
-                       "then update, or review the cards and activate." if asked else
-                       "Here's your agent. Check both cards, edit anything, then activate it.", "ok")
-    return (status, asked, *_question_boxes(asked), gr.Group(visible=True), *_card_values(draft, role, name))
+    status = ui.status("Here's your draft. A few quick questions would make it sharper: answer what you like and "
+                       "update, or review the cards and save." if asked else
+                       "Here's your draft. Check both cards, edit anything, then save.", "ok")
+    cards = _card_values(draft, role, name)
+    seen = _terms_key(cards[CARD_TERMS], cards[CARD_LIMITS])
+    return (status, asked, *_question_boxes(asked), gr.Column(visible=True), *cards, tj, seen, checks_html(tj),
+            gr.Column(visible=False), gr.Column(visible=True), described_html(role, about))
 
 
-def activate_agent(role, name, headline, bio, looking_for, seeking, tags, location, stage, terms, limits, secrets,
-                   profile: gr.OAuthProfile | None):
+def described_html(role: str, about: str) -> str:
+    """Step 1, folded once there is a draft: what the member wrote, in one line."""
+    label = dict((v, k) for k, v in ROLE_CHOICES).get(role, "")
+    text = " ".join((about or "").split())
+    return (f"<div class='described'><span class='step'>1</span><div><b>{esc(label)}</b>"
+            f"<span>{esc(text[:160] + ('…' if len(text) > 160 else ''))}</span></div></div>")
+
+
+CARD_TERMS, CARD_LIMITS = 9, 10  # positions of public terms and private limits in _card_values
+
+
+def _terms_key(terms: str, limits: str) -> str:
+    """What the structured terms were read from; if the cards change, the numbers are read again on save."""
+    return (terms or "").strip() + "\n--\n" + "\n".join(profiles.lines(limits))
+
+
+def save_my_profile(role, name, headline, bio, looking_for, offers, seeking, tags, location, stage, terms, limits,
+                    secrets, terms_state, terms_seen, prev_viewer, profile: gr.OAuthProfile | None):
+    """outputs: viewer_id, status, secrets, terms_state, terms_seen, checks, first_save"""
+    prev = storage.get_profile(prev_viewer) if prev_viewer else None
+    first = prev is None or prev.is_demo
+    # Unsigned members keep the same id across edits, so their conversations stay theirs.
+    session_id = prev.id if prev is not None and prev.id.startswith("s-") else None
+    t = Terms.model_validate(terms_state) if terms_state else None
+    reread_failed = False
+    if _terms_key(terms, limits) != terms_seen:
+        try:
+            t = profiles.extract_terms(role, terms, profiles.lines(limits), location or "")
+        except llm.LLMError:
+            # Never keep numbers the member has since edited away: save without exact checks instead.
+            t, reread_failed = None, True
     try:
         p = profiles.build_profile(
-            profile_id=user_id(profile), role=role, display_name=name, headline=headline, public_bio=bio,
-            looking_for=looking_for, seeking=seeking or [], tags=tags, location=location, stage=stage,
-            public_terms=terms, private_limits=limits, secret_terms=secrets,
+            profile_id=user_id(profile) or session_id, role=role, display_name=name, headline=headline,
+            public_bio=bio, looking_for=looking_for, offers=offers, seeking=seeking or [], tags=tags, location=location, stage=stage,
+            public_terms=terms, private_limits=limits, secret_terms=secrets, terms=t,
             hub_username=profile.username if profile else None)
     except ValueError as exc:
         raise gr.Error(str(exc))
     if profile is not None:
         storage.save_profile(p)
-        note = ui.status("Saved. Other people's agents can now find yours.", "ok")
     else:
         storage.register_session_profile(p)
-        note = ui.status("Your agent is active for this session.", "ok")
-    return p.id, note, ", ".join(p.secret_terms)
+    indexed = matching.index(p)
+    if profile is not None:
+        msg = "Saved. Other people's agents can now find you." if indexed else \
+            "Saved. Search uses tags for now, until the AI service is back."
+    else:
+        msg = "Your profile is ready for this session." if indexed else \
+            "Your profile is ready for this session. Search uses tags for now."
+    if not first:
+        msg += " Run a new search from Matches to use your changes."
+    if reread_failed:
+        msg += " Your limits changed but couldn't be re-read, so nothing is checked exactly yet. Save again later."
+    tj = p.terms.model_dump() if p.terms else None
+    return (p.id, ui.status(msg, "warn" if reread_failed or not indexed else "ok"), ", ".join(p.secret_terms),
+            tj, _terms_key(terms, limits), checks_html(tj), first)
+
+
+def search_after_first_save(first, viewer_id, presenter):
+    """A new profile goes straight to its matches; an edit stays on My profile."""
+    if first:
+        yield from run_search(viewer_id, presenter)
+    else:
+        yield noop()
 
 
 def load_saved(profile: gr.OAuthProfile | None):
-    """On page load: greet signed-in users and refill their saved agent."""
+    """On page load: greet signed-in users and refill their saved profile.
+
+    returns: note, greeting, cards_group, role, CARD..., terms_state, terms_seen, checks
+    """
     uid = user_id(profile)
     saved = storage.get_profile(uid) if uid else None
     note = signin_note(profile)
     if saved is None:
-        return (note, greet(profile), gr.Group(), gr.Radio(), *[gr.update()] * 11)
-    d = profiles.Draft(**saved.model_dump(include=set(profiles.Draft.model_fields)))
-    return (note + " Welcome back, your saved agent is loaded below.", greet(profile), gr.Group(visible=True),
-            gr.Radio(value=saved.role), *_card_values(d, saved.role))
+        return (note, greet(profile), gr.Column(), gr.Radio(), *[gr.update()] * N_CARDS, None, None, checks_html(None))
+    d = profiles.FormDraft(**saved.model_dump(include=set(profiles.Draft.model_fields)), offers=saved.offers)
+    cards = _card_values(d, saved.role)
+    tj = saved.terms.model_dump() if saved.terms else None
+    return (note + " Welcome back, your saved profile is loaded below.", greet(profile), gr.Column(visible=True),
+            gr.Radio(value=saved.role), *cards, tj, _terms_key(cards[CARD_TERMS], cards[CARD_LIMITS]),
+            checks_html(tj))
 
 
 # =====================================================================
@@ -601,7 +677,9 @@ def dashboard_html(viewer_id: str | None, my_negs: list[str], search: dict | Non
              f"{person_row(viewer, 'lg', viewer.headline, True)}"
              f"<p class='looking'><span class='muted'>Looking for</span> {esc(viewer.looking_for)}</p>"
              f"{limits_list(viewer)}<p class='note' style='margin-top:12px'>Only you can see these limits. "
-             f"Your agent never says them.</p></div>")
+             f"Your agent never says them.</p>"
+             f"<div class='row-auto' style='margin-top:14px'>{btn('Edit profile', 'goto', 'profile', '', 'arrow')}</div>"
+             f"</div>")
     acts = _activity(viewer, threads, search)
     feed = "".join(f"<li class='ev'><span class='i {tone}'>{icon(ic, 'sm')}</span><span>{tx}</span>"
                    f"<span class='tm'>{ago(ts)}</span></li>" for ts, ic, tone, tx in acts) \
@@ -615,21 +693,35 @@ def dashboard_html(viewer_id: str | None, my_negs: list[str], search: dict | Non
             f"<ul class='feed' style='display:flex;flex-direction:column;flex:1'>{feed}</ul></div></div>")
 
 
-def agent_summary_html(viewer_id: str | None) -> str:
+def profile_summary_html(viewer_id: str | None) -> str:
+    """The top of My profile: the page head always, then the saved profile as others and the matcher see it."""
     viewer = storage.get_profile(viewer_id) if viewer_id else None
+    head = (f"<div class='page-head'>{ui.art('ملفي')}<h1 class='rise'>My <em>profile</em></h1><p class='rise d1'>"
+            + ("What other agents can read, and what yours keeps to itself." if viewer else
+               "Build it once. Your agent uses it to find people and to speak for you.") + "</p></div>")
     if viewer is None:
-        return ""
+        return head
     terms = "".join(f"<div class='term'><span>{esc(k.replace('_', ' '))}</span>{esc(v)}</div>"
                     for k, v in viewer.public_terms.items())
     tags = "".join(ui.tag(esc(t)) for t in viewer.tags)
-    return (f"<div class='page-head'>{ui.art('وكيلي')}<h1 class='rise'>My <em>agent</em></h1><p class='rise d1'>"
-            f"What other agents can read, and what yours keeps to itself.</p></div><div class='agent-grid'><div class='card'><span class='label'>{icon('globe', 'sm')} "
+    offers = terms_mod.offers_for(viewer)
+    sample = (f"<p class='note'>{icon('eye', 'sm')} You're viewing a sample member. Create your own profile below."
+              "</p>" if viewer.is_demo else "")
+    rows = profiles.limits_with_checks(viewer.private_limits, terms_mod.terms_for(viewer))
+    items = "".join(f"<li>{icon('lock')}<span>{esc(x)}</span>"
+                    + (f"<span class='chk'>{icon('check', 'sm')}Checked exactly</span>" if exact else "") + "</li>"
+                    for x, exact in rows)
+    limits = f"<ul class='limits'>{items or '<li class=none>No private limits set</li>'}</ul>"
+    return (f"{head}{sample}<div class='agent-grid'><div class='card'><span class='label'>{icon('globe', 'sm')} "
             f"Public profile · other agents see this</span>{person_row(viewer, 'lg', None, True)}"
             f"<p class='bio'>{esc(viewer.public_bio)}</p><p class='bio'><span class='muted'>Looking for</span> "
-            f"{esc(viewer.looking_for)}</p><div class='tags' style='margin-top:14px'>{tags}</div>"
+            f"{esc(viewer.looking_for)}</p>"
+            + (f"<p class='bio'><span class='muted'>Offers</span> {esc(offers)}</p>" if offers else "")
+            + f"<div class='tags' style='margin-top:14px'>{tags}</div>"
             f"{'<div class=terms>' + terms + '</div>' if terms else ''}</div>"
             f"<div class='vault'><h4>{icon('lock')}Private limits</h4><p class='note'>Only you see these. Your agent "
-            f"protects them in every conversation.</p>{limits_list(viewer)}</div></div>")
+            f"protects them in every conversation. Checked limits rule people out before your agent meets them.</p>"
+            f"{limits}</div></div>")
 
 
 # =====================================================================
@@ -796,6 +888,13 @@ def intros_html(viewer_id: str | None, my_negs: list[str]) -> str:
 # Refreshing everything that depends on who you are
 # =====================================================================
 
+def form_label(viewer_id: str | None) -> str:
+    viewer = storage.get_profile(viewer_id) if viewer_id else None
+    if viewer is None:
+        return "Create your profile"
+    return "Create your own profile" if viewer.is_demo else "Edit your profile"
+
+
 def refresh(viewer_id, my_negs, search, presenter, selected=None) -> dict:
     has = bool(viewer_id)
     return {
@@ -804,7 +903,8 @@ def refresh(viewer_id, my_negs, search, presenter, selected=None) -> dict:
         C.dash_html: dashboard_html(viewer_id, my_negs, search),
         C.convo_list: convo_list_html(viewer_id, my_negs, selected),
         C.intros_box: intros_html(viewer_id, my_negs),
-        C.agent_summary: agent_summary_html(viewer_id),
+        C.profile_summary: profile_summary_html(viewer_id),
+        C.profile_form: gr.Accordion(label=form_label(viewer_id)),
         C.matches_empty: gr.HTML(visible=not has), C.matches_body: gr.Column(visible=has),
     }
 
@@ -814,7 +914,7 @@ def start_as(pid, my_negs, presenter):
     out = refresh(pid, my_negs, None, presenter)
     out.update({C.viewer_id: pid, C.match_ids: [], C.search: None, C.tabs: go("home"),
                 C.search_box: "", C.no_match: gr.HTML(visible=False), C.send_all_btn: gr.Button(visible=False),
-                C.picker: gr.Column(visible=False), C.agent_form: gr.Accordion(open=False),
+                C.picker: gr.Column(visible=False), C.profile_form: gr.Accordion(open=False, label=form_label(pid)),
                 **{c: gr.Column(visible=False) for c in C.match_cols},
                 **conversation_view(None, None)})
     return out
@@ -823,7 +923,7 @@ def start_as(pid, my_negs, presenter):
 def switch_account(my_negs, presenter):
     out = refresh(None, my_negs, None, presenter)
     out.update({C.viewer_id: None, C.tabs: go("home"), C.picker: gr.Column(visible=True),
-                C.agent_form: gr.Accordion(open=True), **conversation_view(None, None)})
+                C.profile_form: gr.Accordion(open=True, label=form_label(None)), **conversation_view(None, None)})
     return out
 
 
@@ -1154,7 +1254,7 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
                 C.landing = landing
                 C.landing_html = gr.HTML(landing_html())
                 with gr.Row(elem_classes="row-auto"):
-                    create_btn = gr.Button("Create your agent", variant="primary", size="lg", scale=0, elem_classes="cta")
+                    create_btn = gr.Button("Create your profile", variant="primary", size="lg", scale=0, elem_classes="cta")
                     if LOGIN_ENABLED:
                         gr.LoginButton(value="Sign in with Hugging Face", size="lg", scale=0, variant="secondary")
                 C.signed_in = gr.HTML()
@@ -1171,8 +1271,8 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
 
         # ---------------- Matches ----------------
         with gr.Tab("Matches", id="matches"):
-            C.matches_empty = gr.HTML(ui.empty("users", "Set up your agent first", "Create your agent or try a sample "
-                                               "member on Home."))
+            C.matches_empty = gr.HTML(ui.empty("users", "Create your profile first", "Your agent needs it to search. "
+                                               "Create one in My profile, or try a sample member on Home."))
             with gr.Column(visible=False) as matches_body:
                 C.matches_body = matches_body
                 with gr.Row(equal_height=False, elem_classes="head-row"):
@@ -1242,15 +1342,19 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
                     "An intro unlocks only when both people say yes.</p></div>")
             C.intros_box = gr.HTML(intros_html(None, []), js_on_load=ui.DELEGATE_JS)
 
-        # ---------------- My agent ----------------
-        with gr.Tab("My agent", id="agent"):
-            C.agent_summary = gr.HTML()
-            with gr.Accordion("Create your own agent", open=True, elem_classes="hs-section") as agent_form:
-                C.agent_form = agent_form
-                gr.HTML("<p class='form-intro'>Describe who you are and what you want, in English or Arabic. "
-                        "Mention anything your agent must protect, like a minimum salary or a maximum valuation.</p>")
-                signin_md = gr.Markdown(signin_note(None), elem_classes="note")
-                with gr.Column(elem_classes="form-card"):
+        # ---------------- My profile ----------------
+        with gr.Tab("My profile", id="profile"):
+            C.profile_summary = gr.HTML(profile_summary_html(None))
+            with gr.Accordion(form_label(None), open=True, elem_classes="hs-section") as profile_form:
+                C.profile_form = profile_form
+                signin_md = gr.Markdown(signin_note(None), elem_classes="signin-note")
+                with gr.Row(visible=False, elem_classes="described-row") as described_row:
+                    described = gr.HTML()
+                    redescribe_btn = gr.Button("Change", variant="secondary", size="sm", scale=0, min_width=90)
+                with gr.Column(elem_classes="form-card") as describe_col:
+                    gr.HTML(f"<div class='form-head'><span class='step'>1</span><h3>Describe yourself</h3><p>Who you "
+                            "are and what you want, in English or Arabic. Mention anything your agent must protect, "
+                            "like a minimum salary or a maximum valuation.</p></div>")
                     role_in = gr.Radio(ROLE_CHOICES, label="I am a", elem_classes="pills")
                     about_in = gr.Textbox(
                         label="About you", lines=6, max_length=profiles.MAX_TEXT,
@@ -1258,24 +1362,32 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
                                      "join an early fintech as a founding engineer. Hybrid is fine. Privately, I won't "
                                      "go below $90k.\n\nأو اكتب بالعربية: أنا مؤسسة شركة ناشئة في الدوحة…"))
                     with gr.Row(elem_classes="row-auto"):
-                        build_btn = gr.Button("Build my agent", variant="primary", scale=0)
+                        build_btn = gr.Button("Draft my profile", variant="primary", scale=0)
                 build_status = gr.HTML()
                 questions_state = gr.State([])
-                with gr.Group(visible=False) as q_group:
+                terms_state = gr.State(None)   # structured deal-breakers (Terms as a dict)
+                terms_seen = gr.State(None)    # the card text they were read from
+                first_save = gr.State(False)
+                with gr.Column(visible=False) as q_group:
                     with gr.Column(elem_classes="form-card"):
-                        gr.HTML("<div class='form-head'><h3>A few quick questions</h3><p>Answer what you like.</p></div>")
+                        gr.HTML("<div class='form-head'><span class='step'>2</span><h3>A few quick questions</h3>"
+                                "<p>Optional. Answer what you like, then update the draft.</p></div>")
                         q_boxes = [gr.Textbox(visible=False, lines=1) for _ in range(N_QUESTIONS)]
                         with gr.Row(elem_classes="row-auto"):
-                            refine_btn = gr.Button("Update my agent", variant="secondary", scale=0)
-                with gr.Group(visible=False) as cards_group:
+                            refine_btn = gr.Button("Update draft", variant="secondary", scale=0)
+                with gr.Column(visible=False) as cards_group:
+                    gr.HTML("<div class='form-head' style='margin:8px 0 14px'><span class='step'>3</span><h3>Review "
+                            "and save</h3><p>Edit anything. Saving makes you searchable.</p></div>")
                     with gr.Row(equal_height=False):
                         with gr.Column(min_width=280, elem_classes="form-card"):
                             gr.HTML(f"<div class='form-head'><h3>{icon('globe')}Public profile</h3><p>What other "
-                                    "agents can read.</p></div>")
+                                    "agents can read, and what search matches on.</p></div>")
                             f_name = gr.Textbox(label="Name")
                             f_headline = gr.Textbox(label="Headline")
                             f_bio = gr.Textbox(label="Bio", lines=3)
                             f_looking = gr.Textbox(label="Looking for")
+                            f_offers = gr.Textbox(label="What you offer", info="Capital, pilots, introductions, "
+                                                  "skills. Helps the right people find you.")
                             f_seeking = gr.CheckboxGroup(SEEK_CHOICES, label="I want to meet", visible=False)
                             f_tags = gr.Textbox(label="Tags", info="Comma separated")
                             f_location = gr.Textbox(label="Location")
@@ -1285,20 +1397,21 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
                             gr.HTML(f"<div class='form-head'><h3>{icon('lock')}Private limits</h3><p>What your agent "
                                     "protects. Only you see this.</p></div>")
                             f_limits = gr.Textbox(label="Limits and deal-breakers", lines=5, info="One per line")
+                            checks_box = gr.HTML(checks_html(None))
                             f_secrets = gr.Textbox(
                                 label="Protected terms", info="Exact numbers and phrases the leak check blocks. "
                                 "Numbers in your limits are added automatically.")
                     with gr.Row(elem_classes="row-auto"):
-                        activate_btn = gr.Button("Activate my agent", variant="primary", size="lg", scale=0)
+                        activate_btn = gr.Button("Save profile", variant="primary", size="lg", scale=0)
                     activate_status = gr.HTML()
 
     # =================================================================
     # Wiring
     # =================================================================
     ctx = [C.viewer_id, C.my_negs, C.search, C.presenter]
-    everything = [C.brand, C.landing, C.dash, C.dash_html, C.convo_list, C.intros_box, C.agent_summary,
+    everything = [C.brand, C.landing, C.dash, C.dash_html, C.convo_list, C.intros_box, C.profile_summary,
                   C.matches_empty, C.matches_body, C.viewer_id, C.match_ids, C.search, C.tabs, C.search_box,
-                  C.no_match, C.send_all_btn, C.picker, C.agent_form, *C.match_cols, *C.match_cards, C.match_ids,
+                  C.no_match, C.send_all_btn, C.picker, C.profile_form, *C.match_cols, *C.match_cards, C.match_ids,
                   C.conv_empty, C.conv_detail, C.batch_view, C.batch_head, C.batch_box, C.their_banner, C.conv_head,
                   C.conv_progress, C.conv_chat, C.conv_panel, C.conv_status, C.memo_section, C.memo_box, C.memo_lang,
                   C.decide_row, C.note, C.decision_html, C.current_neg, C.side, C.pending_reply, C.live_used, C.my_negs,
@@ -1311,7 +1424,7 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
         return noop()
 
     C.brand.click(on_brand, inputs=[C.my_negs, C.presenter], outputs=everything, show_progress="hidden")
-    create_btn.click(lambda: {C.tabs: go("agent"), C.agent_form: gr.Accordion(open=True)}, outputs=everything,
+    create_btn.click(lambda: {C.tabs: go("profile"), C.profile_form: gr.Accordion(open=True)}, outputs=everything,
                      show_progress="hidden")
 
     def on_gallery(evt: gr.EventData, my_negs, presenter):
@@ -1372,34 +1485,41 @@ with gr.Blocks(title="Handshake · مصافحة") as demo:
     tabs.select(lambda v, m, s, pr, cur: refresh(v, m, s, pr, selected=cur),
                 inputs=[*ctx, C.current_neg], outputs=everything, show_progress="hidden")
 
-    # ---- creating your own agent ----
-    card_fields = [f_name, f_headline, f_bio, f_looking, f_seeking, f_tags, f_location, f_stage, f_terms,
+    # ---- my profile ----
+    card_fields = [f_name, f_headline, f_bio, f_looking, f_offers, f_seeking, f_tags, f_location, f_stage, f_terms,
                    f_limits, f_secrets]
+    terms_io = [terms_state, terms_seen, checks_box]
     role_in.change(founder_fields, inputs=role_in, outputs=[f_seeking, f_stage])
-    build_outputs = [build_status, questions_state, q_group, *q_boxes, cards_group, *card_fields]
-    build_btn.click(lambda: ui.status("Your agent is reading about you.", "busy"), outputs=build_status).then(
-        build_agent, inputs=[role_in, about_in, gr.State([]), *q_boxes], outputs=build_outputs)
-    refine_btn.click(lambda: ui.status("Updating your agent with your answers.", "busy"), outputs=build_status).then(
-        build_agent, inputs=[role_in, about_in, questions_state, *q_boxes], outputs=build_outputs)
-    activate_btn.click(activate_agent, inputs=[role_in, *card_fields], outputs=[C.viewer_id, activate_status, f_secrets]
-                       ).success(lambda v, m, pr: {**refresh(v, m, None, pr), C.agent_form: gr.Accordion(open=False)},
-                                 inputs=[C.viewer_id, C.my_negs, C.presenter], outputs=everything,
-                                 show_progress="hidden"
-                       ).then(run_search, inputs=[C.viewer_id, C.presenter], outputs=everything, show_progress="hidden")
+    build_outputs = [build_status, questions_state, q_group, *q_boxes, cards_group, *card_fields, *terms_io,
+                     describe_col, described_row, described]
+    redescribe_btn.click(lambda: (gr.Column(visible=True), gr.Row(visible=False)),
+                         outputs=[describe_col, described_row], show_progress="hidden")
+    build_btn.click(lambda: ui.status("Reading about you.", "busy"), outputs=build_status).then(
+        draft_profile, inputs=[role_in, about_in, gr.State([]), *q_boxes], outputs=build_outputs)
+    refine_btn.click(lambda: ui.status("Updating your draft with your answers.", "busy"), outputs=build_status).then(
+        draft_profile, inputs=[role_in, about_in, questions_state, *q_boxes], outputs=build_outputs)
+    activate_btn.click(lambda: ui.status("Saving and indexing your profile.", "busy"), outputs=activate_status).then(
+        save_my_profile, inputs=[role_in, *card_fields, terms_state, terms_seen, C.viewer_id],
+        outputs=[C.viewer_id, activate_status, f_secrets, *terms_io, first_save]
+    ).success(lambda v, m, pr: {**refresh(v, m, None, pr), C.profile_form: gr.Accordion(open=False, label=form_label(v))},
+              inputs=[C.viewer_id, C.my_negs, C.presenter], outputs=everything, show_progress="hidden"
+    ).then(search_after_first_save, inputs=[first_save, C.viewer_id, C.presenter], outputs=everything,
+           show_progress="hidden")
 
     def on_load(request: gr.Request, profile: gr.OAuthProfile | None):
         presenter = request.query_params.get("demo") in ("1", "true", "yes")
-        note, greeting_html, cards_vis, role_val, *cards = load_saved(profile)
+        note, greeting_html, cards_vis, role_val, *cards, tj, seen, checks = load_saved(profile)
         uid = user_id(profile)
         viewer = uid if uid and storage.get_profile(uid) else None
         out = refresh(viewer, [], None, presenter)
         out.update({C.presenter: presenter, C.viewer_id: viewer, C.signed_in: greeting_html, signin_md: note,
                     cards_group: cards_vis, role_in: role_val, **dict(zip(card_fields, cards)),
-                    C.agent_form: gr.Accordion(open=viewer is None)})
+                    terms_state: tj, terms_seen: seen, checks_box: checks,
+                    C.profile_form: gr.Accordion(open=viewer is None, label=form_label(viewer))})
         return out
 
     demo.load(on_load, outputs=list(dict.fromkeys([*everything, C.presenter, C.signed_in, signin_md, cards_group,
-                                                   role_in, *card_fields])), show_progress="hidden")
+                                                   role_in, *card_fields, *terms_io])), show_progress="hidden")
 
 demo.queue(default_concurrency_limit=4, max_size=32)
 

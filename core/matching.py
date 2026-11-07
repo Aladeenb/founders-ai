@@ -83,8 +83,9 @@ def candidates(viewer: Profile, pool: list[Profile]) -> list[Profile]:
 # ---------- embeddings ----------
 
 def passage_text(p: Profile) -> str:
+    offers = f"Offers: {p.offers} " if p.offers else ""
     return (f"passage: {p.role}. {p.headline}. {p.public_bio} Looking for: {p.looking_for} "
-            f"Tags: {', '.join(p.tags)}. Location: {p.location}.")
+            f"{offers}Tags: {', '.join(p.tags)}. Location: {p.location}.")
 
 
 def query_text(p: Profile) -> str:
@@ -129,6 +130,14 @@ def vectors(p: Profile) -> tuple[np.ndarray, np.ndarray] | None:
             log.warning("Embedding failed for %s: %s", p.id, exc)
             return None
     return _live_cache[key]
+
+
+def index(p: Profile) -> bool:
+    """Embed a profile now, so it is searchable (and its own search is fast) right after saving.
+
+    False means embeddings are unavailable; matching then falls back to tag overlap.
+    """
+    return vectors(p) is not None
 
 
 # ---------- ranking ----------
